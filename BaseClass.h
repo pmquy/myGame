@@ -13,7 +13,7 @@ class BaseClass {
 		SDL_Rect getRect();
 		SDL_Texture* getTexture();
 		void loadImage(SDL_Renderer* renderer, std::string path);
-		void render(SDL_Renderer* renderer, const SDL_Rect *clip = nullptr);
+		virtual void render(SDL_Renderer* renderer, const SDL_Rect *clip = nullptr);
 		void free();
 	protected:
 		SDL_Texture* mTexture;

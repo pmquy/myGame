@@ -21,10 +21,8 @@ void BaseClass::loadImage(SDL_Renderer* renderer, std::string path) {
 	SDL_Surface* loadedSurface = IMG_Load(path.c_str());
 	//SDL_SetColorKey(loadedSurface, SDL_TRUE, SDL_MapRGB(loadedSurface->format, 0, 0, 0));
 	mTexture = SDL_CreateTextureFromSurface(renderer, loadedSurface);
-	//mRect.w = loadedSurface->w;
-	//mRect.h = loadedSurface->h;
-	mRect.w = 1200;
-	mRect.h = 600;
+	mRect.w = loadedSurface->w;
+	mRect.h = loadedSurface->h;
 }
 
 void BaseClass::render(SDL_Renderer* renderer, const SDL_Rect* clip) {
