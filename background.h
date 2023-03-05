@@ -9,6 +9,7 @@ public:
 	~Background();
 	void handleMove();
 	void render(SDL_Renderer* renderer, const SDL_Rect* clip = nullptr);
+	
 private:
 	UINT32 startTime;
 };

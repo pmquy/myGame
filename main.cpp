@@ -1,4 +1,6 @@
-#include "background.h"
+#include "Background.h"
+#include "Character.h"
+#include "Bot.h"
 
 bool isQuit = false;
 
@@ -25,11 +27,21 @@ int main(int argc, char* argv[]) {
 	Init();
 
 	Background background;
-	background.loadImage(gRenderer, "bg.jpg");
+	background.loadImage(gRenderer, "image_folder/bg.jpg");
 	background.setRect(0, 0, 1200, 600);
+														
 
+
+	Character hero;
+	hero.loadImage(gRenderer, "image_folder/hero.png");
+	hero.setRect(0, 200, 64, 91);
+
+	Bot bot1;
+	bot1.loadImage(gRenderer, "image_folder/threat.png");
+	
+	/*
 	BaseClass character;
-	character.loadImage(gRenderer, "character.png");
+	character.loadImage(gRenderer, "image_folder/character.png");
 	character.setRect(100, 250, 1200/8, 573/3);
 
 	SDL_Rect clips[8];
@@ -43,17 +55,36 @@ int main(int argc, char* argv[]) {
 
 	UINT32 startTime = 0;
 	int ii = 0;
+	*/
 
 	while (!isQuit) {
+
+
+		background.handleMove();
+		background.render(gRenderer);
+
+
 		while (SDL_PollEvent(&gEvent)) {
 			if (gEvent.type == SDL_QUIT) {
 				isQuit = true;
 			}
+			
+			hero.handleAction(gEvent);
 		}
-		
-		background.handleMove();
-		background.render(gRenderer);
 
+		hero.handleMove();
+		hero.render(gRenderer);
+		//hero.renderHeart(gRenderer);
+
+
+		bot1.handleMove();
+		bot1.render(gRenderer);
+		
+		
+		SDL_RenderPresent(gRenderer);
+
+
+		/*
 		character.setRect(ii, 250);
 		character.render(gRenderer, &clips[j]);
 		UINT32 time = SDL_GetTicks() - startTime;
@@ -62,10 +93,9 @@ int main(int argc, char* argv[]) {
 			if (j == 8) j = 0;
 			startTime = SDL_GetTicks();
 			ii += 20;
-			if (ii >= 1000) ii = 0;
+			if (ii >= 1200) ii = 0;
 		}
-		SDL_Delay(20);
-		SDL_RenderPresent(gRenderer);
+		*/
 	}
 
 

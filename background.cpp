@@ -7,14 +7,13 @@ Background::Background() {
 }
 
 Background::~Background() {
-	
+	free();
 }
 
 void Background::handleMove() {
 	int duration = SDL_GetTicks() - startTime;
 	if (duration >= 20) {
 		mRect.x--;
-		std::cout << mRect.x << "\n";
 		if (mRect.x <= -1200) mRect.x = 0;
 		startTime = SDL_GetTicks();
 	}

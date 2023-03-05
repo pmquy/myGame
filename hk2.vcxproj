@@ -132,12 +132,22 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Airplane.cpp" />
+    <ClCompile Include="Background.cpp" />
+    <ClCompile Include="Bullet.cpp" />
+    <ClCompile Include="Character.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="TextureClass.cpp" />
+    <ClCompile Include="BaseClass.cpp" />
+    <ClCompile Include="Bot.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Common.h" />
-    <ClInclude Include="TextureClass.h" />
+    <ClInclude Include="Airplane.h" />
+    <ClInclude Include="Background.h" />
+    <ClInclude Include="Bullet.h" />
+    <ClInclude Include="Character.h" />
+    <ClInclude Include="CommonFunction.h" />
+    <ClInclude Include="BaseClass.h" />
+    <ClInclude Include="Bot.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

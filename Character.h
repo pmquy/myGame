@@ -1,12 +1,12 @@
 #ifndef  CHARATER_H_
 #define CHARACTER_H_
 
-#include "BaseClass.h"
-class Character : public BaseClass {
+#include "Airplane.h"
+class Character : public Airplane {
 public:
 	Character();
 	~Character();
-	void handleAction(SDL_Event event);
+	void handleAction(const SDL_Event &event);
 	void handleMove();
 private:
 	int mXVal;

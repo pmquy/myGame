@@ -1,5 +1,5 @@
-#ifndef COMMON_
-#define COMMON_
+#ifndef COMMON_FUNCTION_
+#define COMMON_FUNCTION_
 
 #include <SDL.h>
 #include <SDL_image.h>
@@ -8,6 +8,8 @@
 #include <string>
 #include <Windows.h>
 #include <iostream>
+
+
 
 const int SCREEN_WIDTH = 1200;
 const int SCREEN_HEIGHT = 600;
