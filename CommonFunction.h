@@ -18,6 +18,9 @@ const int SCREEN_BMP = 32;
 static SDL_Window* gWindow = nullptr;
 static SDL_Renderer* gRenderer = nullptr;
 static SDL_Event gEvent;
+//static TTF_Font* gFont = nullptr;
+static SDL_Color gTextColor = { 100, 100, 100 };
+
 
 
 

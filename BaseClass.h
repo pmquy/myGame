@@ -5,7 +5,6 @@
 
 
 class BaseClass {
-
 	public:
 		BaseClass();
 		~BaseClass();
