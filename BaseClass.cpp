@@ -40,3 +40,7 @@ void BaseClass::free() {
 		mRect.x = mRect.y = mRect.w = mRect.h = 0;
 	}
 }
+
+SDL_Rect BaseClass::getRect() {
+	return mRect;
+}

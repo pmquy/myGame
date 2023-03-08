@@ -11,7 +11,7 @@ public:
 	void setIsMove(bool state);
 	bool getIsMove();
 private:
-	bool mIsMove;
+	bool mIsMove = false;
 };
 
 

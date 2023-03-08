@@ -6,8 +6,9 @@ class Character : public Airplane {
 public:
 	Character();
 	~Character();
-	void handleAction(const SDL_Event &event);
+	void handleAction(const SDL_Event &event, SDL_Renderer* renderer);
 	void handleMove();
+	void handleBulletMove();
 private:
 	int mXVal;
 	int mYVal;

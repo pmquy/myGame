@@ -20,12 +20,13 @@ void Close() {
 	gWindow = nullptr;
 	SDL_DestroyRenderer(gRenderer);
 	gRenderer = nullptr;
-
-
 	SDL_Quit();
 	IMG_Quit();
 	TTF_Quit();
 }
+
+
+
 
 
 int main(int argc, char* argv[]) {
@@ -40,15 +41,12 @@ int main(int argc, char* argv[]) {
 
 	Character hero;
 	hero.loadImage(gRenderer, "image_folder/hero.png");
-	hero.setRect(0, 200, 64, 91);
+	hero.setRect(0, 200);
 
 	Bot bot1;
-	bot1.loadImage(gRenderer, "image_folder/threat.png");
+	bot1.loadImage(gRenderer, "image_folder/plane.png");
+	bot1.setRect(200, 200);
 
-	Text fps;
-	fps.loadText(gRenderer, "vipfjdkfj");
-	fps.setRect(0, 0);
-	
 
 	while (!isQuit) {
 
@@ -56,28 +54,30 @@ int main(int argc, char* argv[]) {
 			if (gEvent.type == SDL_QUIT) {
 				isQuit = true;
 			}
-			hero.handleAction(gEvent);
+			hero.handleAction(gEvent, gRenderer);
 		}
 
 		background.handleMove();
 		background.render(gRenderer);
 
-		SDL_Rect temp = { 0,0,300, 100 };
-
-
 
 		hero.handleMove();
+		hero.handleBulletMove();
 		hero.render(gRenderer);
+	
 
 
 		bot1.handleMove();
 		bot1.render(gRenderer);
 
-		fps.render(gRenderer);
-		
+		for (int i = 0; i < int(hero.getBulletList().size()); i++) {
+			if (checkConllision(bot1, *hero.getBulletList()[i])) {
+				bot1.getDamage(hero.getAttack());
+				hero.getBulletList()[i]->setIsMove(false);
+			}
+		}
 		
 		SDL_RenderPresent(gRenderer);
-
 	}
 
 

@@ -2,6 +2,7 @@
 #define AIRPLANE_
 
 #include "BaseClass.h"
+#include "Bullet.h"
 
 class Airplane :public BaseClass {
 public:
@@ -14,15 +15,20 @@ public:
 	void setAttack(int attack);
 	int getAmor();
 	void setAmor(int amor);
-	void renderHeart(SDL_Renderer *renderer);
 	virtual void handleMove() = 0;
 	void render(SDL_Renderer* renderer);
-	bool checkToMove();
+	std::vector<Bullet*>& getBulletList();
+
 protected:
-	int mHeart;
-	int mAttack;
-	int mAmor;
+	bool checkToMove();
+	void renderHeart(SDL_Renderer *renderer);
+	void renderBullet(SDL_Renderer *renderer);
+
+	int mHeart = 100;
+	int mAttack = 0;
+	int mAmor = 0;
 	UINT64 mStartTime = 0;
+	std::vector<Bullet*> mBulletList;
 };
 
 

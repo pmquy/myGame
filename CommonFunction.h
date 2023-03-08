@@ -8,7 +8,7 @@
 #include <string>
 #include <Windows.h>
 #include <iostream>
-
+#include <vector>
 
 
 const int SCREEN_WIDTH = 1200;
@@ -20,8 +20,6 @@ static SDL_Renderer* gRenderer = nullptr;
 static SDL_Event gEvent;
 //static TTF_Font* gFont = nullptr;
 static SDL_Color gTextColor = { 100, 100, 100 };
-
-
 
 
 #endif 

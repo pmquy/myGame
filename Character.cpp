@@ -4,6 +4,7 @@ Character::Character() {
 	mXVal = 0;
 	mYVal = 0;
 	mHeart = 100;
+	mAttack = 3;
 }
 
 Character::~Character() {
@@ -11,25 +12,26 @@ Character::~Character() {
 }
 
 
-void Character::handleAction(const SDL_Event &event) {
+void Character::handleAction(const SDL_Event &event, SDL_Renderer* renderer) {
 	if (event.type == SDL_KEYDOWN) {
 		switch (event.key.keysym.sym) {
 		case SDLK_UP:
-			mYVal -= 1;
+			mYVal = -1;
 			break;
 		case SDLK_DOWN:
-			mYVal += 1;
+			mYVal = 1;
 			break;
 		case SDLK_RIGHT:
-			mXVal += 1;
+			mXVal = 1;
 			break;
 		case SDLK_LEFT:
-			mXVal -= 1;
+			mXVal = -1;
 			break;
 		}
+		
 	}
 	else if (event.type == SDL_KEYUP) {
-	
+		
 		switch (event.key.keysym.sym) {
 		case SDLK_UP:
 			mYVal = 0;
@@ -46,8 +48,12 @@ void Character::handleAction(const SDL_Event &event) {
 		}
 	}
 	else if (event.type == SDL_MOUSEBUTTONDOWN) {
-		getDamage(10);
-		if (mHeart <= 0) mHeart = 100;
+		Bullet *newBullet = new Bullet();
+		newBullet->setRect(mRect.x + mRect.w, mRect.y + mRect.h/2);
+		newBullet->setIsMove(true);
+		newBullet->loadImage(renderer, "image_folder/laser.png");
+
+		mBulletList.push_back(newBullet);
 	}
 	else if (event.type == SDL_MOUSEBUTTONUP) {
 
@@ -67,3 +73,15 @@ void Character::handleMove() {
 	if (mRect.y >= 600 - 91) mRect.y = 600 - 91;
 }
 
+
+
+void Character::handleBulletMove() {
+	for (int i = 0; i < int(mBulletList.size()); i++) {
+		SDL_Rect rect = mBulletList[i]->getRect();
+		rect.x = rect.x + 2;
+		mBulletList[i]->setRect(rect.x, rect.y);
+		if (rect.x >= 1000) {
+			mBulletList[i]->setIsMove(false);
+		}
+	}
+}

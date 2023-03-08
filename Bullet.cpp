@@ -1,8 +1,9 @@
 #include "Bullet.h"
 
 Bullet::Bullet() {
-
+	mIsMove = false;
 };
+
 
 Bullet::~Bullet() {
 
@@ -10,8 +11,8 @@ Bullet::~Bullet() {
 
 
 void Bullet::handleMove() {
-	mRect.x -= 1;
-	if (mRect.x <= 30) {
+	mRect.x += 1;
+	if (mRect.x >= 400) {
 		mIsMove = false;
 	}
 }
