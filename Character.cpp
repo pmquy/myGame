@@ -71,6 +71,8 @@ void Character::handleMove() {
 	if (mRect.x >= 1200 - 64) mRect.x = 1200 - 64;
 	if (mRect.y <= 0) mRect.y = 0;
 	if (mRect.y >= 600 - 91) mRect.y = 600 - 91;
+
+	handleBulletMove();
 }
 
 
@@ -80,7 +82,7 @@ void Character::handleBulletMove() {
 		SDL_Rect rect = mBulletList[i]->getRect();
 		rect.x = rect.x + 2;
 		mBulletList[i]->setRect(rect.x, rect.y);
-		if (rect.x >= 1000) {
+		if (rect.x >= SCREEN_WIDTH) {
 			mBulletList[i]->setIsMove(false);
 		}
 	}

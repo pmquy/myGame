@@ -40,12 +40,17 @@ int main(int argc, char* argv[]) {
 
 
 	Character hero;
-	hero.loadImage(gRenderer, "image_folder/hero.png");
+	hero.loadImage(gRenderer, "craftpix-net-786503-free-spaceship-pixel-art-sprite-sheets/Fighter/Idle.png", "craftpix-net-786503-free-spaceship-pixel-art-sprite-sheets/Fighter/Destroyed.png");
 	hero.setRect(0, 200);
+	hero.setAttack(20);
 
 	Bot bot1;
-	bot1.loadImage(gRenderer, "image_folder/plane.png");
-	bot1.setRect(200, 200);
+	bot1.loadImage(gRenderer, "craftpix-net-786503-free-spaceship-pixel-art-sprite-sheets/Corvette/Idle.png", "craftpix-net-786503-free-spaceship-pixel-art-sprite-sheets/Corvette/Destroyed.png");
+	bot1.setRect(SCREEN_WIDTH, 100);
+
+	Bot bot2;
+	bot2.loadImage(gRenderer, "craftpix-net-786503-free-spaceship-pixel-art-sprite-sheets/Corvette/Idle.png", "craftpix-net-786503-free-spaceship-pixel-art-sprite-sheets/Corvette/Destroyed.png");
+	bot2.setRect(SCREEN_WIDTH, 300);
 
 
 	while (!isQuit) {
@@ -62,13 +67,16 @@ int main(int argc, char* argv[]) {
 
 
 		hero.handleMove();
-		hero.handleBulletMove();
 		hero.render(gRenderer);
 	
 
-
 		bot1.handleMove();
 		bot1.render(gRenderer);
+
+		bot2.handleMove();
+		bot2.render(gRenderer);
+
+
 
 		for (int i = 0; i < int(hero.getBulletList().size()); i++) {
 			if (checkConllision(bot1, *hero.getBulletList()[i])) {
@@ -76,10 +84,18 @@ int main(int argc, char* argv[]) {
 				hero.getBulletList()[i]->setIsMove(false);
 			}
 		}
+
+		for (int i = 0; i < int(hero.getBulletList().size()); i++) {
+			if (checkConllision(bot2, *hero.getBulletList()[i])) {
+				bot2.getDamage(hero.getAttack());
+				hero.getBulletList()[i]->setIsMove(false);
+			}
+		}
+
+
 		
 		SDL_RenderPresent(gRenderer);
 	}
-
 
 	Close();
 	return 0;

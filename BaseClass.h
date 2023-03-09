@@ -11,7 +11,7 @@ class BaseClass {
 		void setRect(const int& x, const int& y, const int& w = 0, const int& h = 0);
 		SDL_Rect getRect();
 		SDL_Texture* getTexture();
-		void loadImage(SDL_Renderer* renderer, std::string path);
+		virtual void loadImage(SDL_Renderer* renderer, std::string path);
 		virtual void render(SDL_Renderer* renderer, const SDL_Rect *clip = nullptr);
 		void free();
 

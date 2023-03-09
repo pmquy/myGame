@@ -12,10 +12,10 @@ Bot::~Bot() {
 }
 
 
-
 void Bot::handleMove() {
+
 	if (checkToMove()) {
-		mRect.x -= 3;
+		mRect.x -= 2;
 	}
 	if (mRect.x <= 0) {
 		mRect.x = SCREEN_WIDTH;

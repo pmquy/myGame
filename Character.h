@@ -8,8 +8,8 @@ public:
 	~Character();
 	void handleAction(const SDL_Event &event, SDL_Renderer* renderer);
 	void handleMove();
-	void handleBulletMove();
 private:
+	void handleBulletMove();
 	int mXVal;
 	int mYVal;
 };
