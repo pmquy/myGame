@@ -22,5 +22,6 @@ static SDL_Event gEvent;
 static SDL_Color gTextColor = { 100, 100, 100 };
 
 
+
 #endif 
 
