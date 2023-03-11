@@ -65,14 +65,17 @@ int main(int argc, char* argv[]) {
 		background.handleMove();
 		background.render(gRenderer);
 
-		//hero.handleMove();
-		//hero.render(gRenderer);	
+		hero.handleMove();
+		hero.render(gRenderer);	
 
 		bot1.handleMove();
+		bot1.handleState();
 		bot1.render(gRenderer);
 
 		bot2.handleMove();
+		bot2.handleState();
 		bot2.render(gRenderer);
+
 
 		for (int i = 0; i < int(hero.getBulletList().size()); i++) {
 			if (checkConllision(bot1, *hero.getBulletList()[i])) {

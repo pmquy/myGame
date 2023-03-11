@@ -43,11 +43,8 @@ void Airplane::getDamage(int damage) {
 	if (mState != DESTROYED) {
 		mHeart -= damage;
 	}
-
-	if (mHeart <= 0 && mState != DESTROYED) {
+	if (mHeart <= 0) {
 		mHeart = 0;
-		mState = DESTROYED;
-		mCurrentFrame = mMaxFrames[int(mState)] - 1;
 	}
 }
 
@@ -113,10 +110,9 @@ void Airplane::renderBullet(SDL_Renderer* renderer) {
 			mBulletList[i] = nullptr;
 			mBulletList.erase(mBulletList.begin() + i);
 		}
-		else {
+		else if(mState != DESTROYED){
 			
 			mBulletList[i]->render(renderer);
-			
 		}
 	}
 }
@@ -165,11 +161,4 @@ bool Airplane::checkToMove1() {
 		return true;
 	}
 	return false;
-}
-
-
-void Airplane::reborn() {
-	mState = NORMAL;
-	mCurrentFrame = mMaxFrames[int(NORMAL)]-1;
-	mHeart = 100;
 }

@@ -92,3 +92,7 @@ void Character::handleBulletMove() {
 		
 	}
 }
+
+void Character::handleState() {
+
+}

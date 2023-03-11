@@ -28,7 +28,8 @@ public:
 	virtual void render(SDL_Renderer* renderer);
 	std::vector<Bullet*>& getBulletList();
 	void loadImage(SDL_Renderer* renderer, std::string s1, std::string s2, std::string s3);
-	void reborn();
+	virtual void handleState() = 0;
+
 
 protected:
 	bool checkToMove();

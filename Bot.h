@@ -9,8 +9,9 @@ public:
 	Bot();
 	~Bot();
 	void handleMove();
-	void handleBulletMove();
+	void handleState();
 private:
+	void handleBulletMove();
 	
 };
 
