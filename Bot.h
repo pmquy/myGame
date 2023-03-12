@@ -10,9 +10,11 @@ public:
 	~Bot();
 	void handleMove();
 	void handleState();
+	void handleAction(SDL_Renderer *);
 private:
 	void handleBulletMove();
-	
+	void fire(SDL_Renderer *);
+	UINT64 mFireTime = 0;
 };
 
 

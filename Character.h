@@ -9,6 +9,7 @@ public:
 	void handleAction(const SDL_Event &event, SDL_Renderer* renderer);
 	void handleMove();
 	void handleState();
+	bool checkIsDestroyed();
 private:
 	void handleBulletMove();
 	int mXVal;

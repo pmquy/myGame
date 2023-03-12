@@ -14,6 +14,7 @@ enum State {
 
 class Airplane :public BaseClass {
 public:
+
 	Airplane();
 	~Airplane();
 	void getDamage(int damage);
@@ -23,18 +24,27 @@ public:
 	void setAttack(int attack);
 	int getAmor();
 	void setAmor(int amor);
+	
 	virtual void handleMove() = 0;
 	virtual void handleBulletMove() = 0;
-	virtual void render(SDL_Renderer* renderer);
+	virtual void handleState() = 0;
+	virtual void render(SDL_Renderer* renderer, int i);
+
 	std::vector<Bullet*>& getBulletList();
 	void loadImage(SDL_Renderer* renderer, std::string s1, std::string s2, std::string s3);
-	virtual void handleState() = 0;
+	void reborn();
+	int getCurrentFrame() {
+		return mCurrentFrame;
+	}
 
+	std::vector<int>& getMaxFrames() {
+		return mMaxFrames;
+	}
 
 protected:
 	bool checkToMove();
 	bool checkToMove1();
-	bool checkToMove2();
+
 	void renderHeart(SDL_Renderer *renderer);
 	void renderBullet(SDL_Renderer *renderer);
 
@@ -44,7 +54,7 @@ protected:
 	int mAmor = 0;
 	UINT64 mStartTime = 0;
 	UINT64 mStartTime1 = 0;
-	UINT64 mStartTime2 = 0;
+
 
 	std::vector<Bullet*> mBulletList;
 	std::vector<SDL_Texture*> mTextures;

@@ -4,6 +4,62 @@
 #include "Text.h"
 
 bool isQuit = false;
+Background background;
+Character hero;
+Bot bot1;
+Bot bot2;
+
+
+void loadResource() {
+
+	background.loadImage(gRenderer, "Image_Folder/background/Level_1.jpg", "Image_Folder/background/Lose.png");
+	background.setRect(0, 0, 1200, 600);
+
+	hero.loadImage(gRenderer, "Image_Folder/Airplane/Fighter/Idle.png", "Image_Folder/Airplane/Fighter/Destroyed.png", "Image_Folder/Airplane/Fighter/Attack_1.png");
+	hero.setRect(0, 200);
+	hero.setAttack(20);
+
+	bot1.loadImage(gRenderer, "Image_Folder/Airplane/Corvette/Idle.png", "Image_Folder/Airplane/Corvette/Destroyed.png", "Image_Folder/Airplane/Corvette/Attack_1.png");
+	bot1.setRect(SCREEN_WIDTH, 100);
+	bot1.setAttack(5);
+
+
+	bot2.loadImage(gRenderer, "Image_Folder/Airplane/Corvette/Idle.png", "Image_Folder/Airplane/Corvette/Destroyed.png", "Image_Folder/Airplane/Corvette/Attack_1.png");
+	bot2.setRect(SCREEN_WIDTH, 300);
+	bot2.setAttack(5);
+
+}
+
+
+void handleColision() {
+
+	for (int i = 0; i < int(hero.getBulletList().size()); i++) {
+		if (checkConllision(bot1, *hero.getBulletList()[i])) {
+			bot1.getDamage(hero.getAttack());
+			hero.getBulletList()[i]->setIsMove(false);
+		}
+	}
+
+	for (int i = 0; i < int(hero.getBulletList().size()); i++) {
+		if (checkConllision(bot2, *hero.getBulletList()[i])) {
+			bot2.getDamage(hero.getAttack());
+			hero.getBulletList()[i]->setIsMove(false);
+		}
+	}
+
+	for (int i = 0; i < int(bot1.getBulletList().size()); i++) {
+		if (checkConllision(hero, *bot1.getBulletList()[i])) {
+			hero.getDamage(bot1.getAttack());
+			bot1.getBulletList()[i]->setIsMove(false);
+		}
+	}
+	for (int i = 0; i < int(bot2.getBulletList().size()); i++) {
+		if (checkConllision(hero, *bot2.getBulletList()[i])) {
+			hero.getDamage(bot2.getAttack());
+			bot2.getBulletList()[i]->setIsMove(false);
+		}
+	}
+}
 
 void Init() {
 	SDL_Init(SDL_INIT_EVERYTHING);
@@ -13,6 +69,8 @@ void Init() {
 	gWindow = SDL_CreateWindow("minhquy", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
 	gRenderer = SDL_CreateRenderer(gWindow, -1, SDL_RENDERER_ACCELERATED);
 }
+
+
 
 
 void Close() {
@@ -28,69 +86,46 @@ void Close() {
 
 
 int main(int argc, char* argv[]) {
-
 	Init();
-
-	Background background;
-	background.loadImage(gRenderer, "image_folder/bg.jpg");
-	background.setRect(0, 0, 1200, 600);
-
-	Character hero;
-	hero.loadImage(gRenderer, "image_folder/airplane/Fighter/Idle.png", "image_folder/airplane/Fighter/Destroyed.png", "image_folder/airplane/Fighter/Attack_1.png");
-	hero.setRect(0, 200);
-	hero.setAttack(20);
-
-	Bot bot1;
-	bot1.loadImage(gRenderer, "image_folder/airplane/Corvette/Idle.png", "image_folder/airplane/Corvette/Destroyed.png", "image_folder/airplane/Corvette/Attack_1.png");
-	bot1.setRect(SCREEN_WIDTH, 100);
-	bot1.getBulletList()[0]->loadImage(gRenderer, "image_folder/airplane/Corvette/Charge_1.png");
-	bot1.getBulletList()[0]->setIsMove(true);
-
-
-	Bot bot2;
-	bot2.loadImage(gRenderer, "image_folder/airplane/Corvette/Idle.png", "image_folder/airplane/Corvette/Destroyed.png", "image_folder/airplane/Corvette/Attack_1.png");
-	bot2.setRect(SCREEN_WIDTH, 300);
-	bot2.getBulletList()[0]->loadImage(gRenderer, "image_folder/airplane/Corvette/Charge_1.png");
-	bot2.getBulletList()[0]->setIsMove(true);
+	loadResource();
 
 	while (!isQuit) {
+
+		background.handleMove();
+		background.handleState(hero.checkIsDestroyed());
+		background.render(gRenderer);
 
 		while (SDL_PollEvent(&gEvent)) {
 			if (gEvent.type == SDL_QUIT) {
 				isQuit = true;
 			}
+			else if (gEvent.type == SDL_MOUSEBUTTONDOWN && hero.checkIsDestroyed()) {
+				hero.reborn();
+			}
 			hero.handleAction(gEvent, gRenderer);
 		}
 
-		background.handleMove();
-		background.render(gRenderer);
+		if (!hero.checkIsDestroyed()) {
 
-		hero.handleMove();
-		hero.render(gRenderer);	
+			hero.handleMove();
+			bot1.handleMove();
+			bot2.handleMove();
 
-		bot1.handleMove();
-		bot1.handleState();
-		bot1.render(gRenderer);
+			bot1.handleAction(gRenderer);
+			bot2.handleAction(gRenderer);
 
-		bot2.handleMove();
-		bot2.handleState();
-		bot2.render(gRenderer);
+			hero.handleState();
+			bot1.handleState();
+			bot2.handleState();
 
+			handleColision();
 
-		for (int i = 0; i < int(hero.getBulletList().size()); i++) {
-			if (checkConllision(bot1, *hero.getBulletList()[i])) {
-				bot1.getDamage(hero.getAttack());
-				hero.getBulletList()[i]->setIsMove(false);
-			}
+			hero.render(gRenderer, 1);
+			bot1.render(gRenderer, -1);
+			bot2.render(gRenderer, -1);
 		}
-
-		for (int i = 0; i < int(hero.getBulletList().size()); i++) {
-			if (checkConllision(bot2, *hero.getBulletList()[i])) {
-				bot2.getDamage(hero.getAttack());
-				hero.getBulletList()[i]->setIsMove(false);
-			}
-		}
-
+	
+		
 		SDL_RenderPresent(gRenderer);
 	}
 

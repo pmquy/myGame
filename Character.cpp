@@ -51,9 +51,8 @@ void Character::handleAction(const SDL_Event &event, SDL_Renderer* renderer) {
 		Bullet *newBullet = new Bullet();
 		newBullet->setRect(mRect.x + mRect.w, mRect.y + mRect.h/2);
 		newBullet->setIsMove(true);
-		newBullet->loadImage(renderer, "image_folder/laser.png");
+		newBullet->loadImage(renderer, "Image_folder/Airplane/Fighter/Charge_1.png");
 		mBulletList.push_back(newBullet);
-
 	}
 	else if (event.type == SDL_MOUSEBUTTONUP) {
 
@@ -88,11 +87,32 @@ void Character::handleBulletMove() {
 
 		if (rect.x >= SCREEN_WIDTH) {
 			mBulletList[i]->setIsMove(false);
-		}
-		
+		}	
 	}
 }
 
 void Character::handleState() {
+	if (mHeart == 0 && mState != DESTROYED) {
+		mState = DESTROYED;
+		mCurrentFrame = 0;
+	}
+	
+	if (mState == DESTROYED) {
+		for (int i = 0; i < int(mBulletList.size()); i++) {
+			mBulletList[i]->free();
+			delete mBulletList[i];
+			mBulletList[i] = nullptr;
+			mBulletList.erase(mBulletList.begin() + i);
+		}
+	}
 
+	if (mState == DESTROYED && mCurrentFrame == mMaxFrames[int(mState)] - 1) {
+		reborn();
+	}
+
+}
+
+
+bool Character::checkIsDestroyed() {
+	return mState == DESTROYED && mCurrentFrame == mMaxFrames[int(mState)] - 1;
 }

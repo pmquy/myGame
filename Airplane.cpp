@@ -1,8 +1,8 @@
 #include "Airplane.h"
 
 Airplane::Airplane() {
-	mStartTime = 0;
 	mHeart = 100;
+	mStartTime = 0;
 	mState = NORMAL;
 	mCurrentFrame = 0;
 }
@@ -12,6 +12,7 @@ Airplane::~Airplane() {
 		SDL_DestroyTexture(it);
 		it = nullptr;
 	}
+	free();
 }
 
 int Airplane::getAmor() {
@@ -53,7 +54,6 @@ void Airplane::renderHeart(SDL_Renderer *renderer) {
 	SDL_Rect rectBg = { mRect.x, mRect.y + mRect.h + 10, mRect.w, 5 };
 	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 0);
 	SDL_RenderFillRect(renderer, &rectBg);
-
 	
 	SDL_Rect rectHeart = { mRect.x, mRect.y + mRect.h + 10, mHeart * mRect.w / 100 , 5 };
 	SDL_SetRenderDrawColor(renderer, 255, 0, 0, 0);
@@ -62,7 +62,7 @@ void Airplane::renderHeart(SDL_Renderer *renderer) {
 }
 
 
-void Airplane::render(SDL_Renderer* renderer) {
+void Airplane::render(SDL_Renderer* renderer, int i) {
 
 	mTexture = mTextures[int(mState)];
 
@@ -73,11 +73,14 @@ void Airplane::render(SDL_Renderer* renderer) {
 	renderBullet(renderer);
 
 	if (checkToMove1()) {
-		mCurrentFrame--;
+		mCurrentFrame += i;
 	}
 
 	if (mCurrentFrame <= 0) {
 		mCurrentFrame = 0;
+	}
+	if (mCurrentFrame == mMaxFrames[int(mState)]) {
+		mCurrentFrame = mMaxFrames[int(mState)] - 1;
 	}
 }
 
@@ -85,15 +88,6 @@ bool Airplane::checkToMove() {
 	UINT64 now = SDL_GetTicks64();
 	if (int(now - mStartTime) >= 20) {
 		mStartTime = now;
-		return true;
-	}
-	return false;
-}
-
-bool Airplane::checkToMove2() {
-	UINT64 now2 = SDL_GetTicks64();
-	if (int(now2 - mStartTime2) >= 5000) {
-		mStartTime = now2;
 		return true;
 	}
 	return false;
@@ -111,7 +105,6 @@ void Airplane::renderBullet(SDL_Renderer* renderer) {
 			mBulletList.erase(mBulletList.begin() + i);
 		}
 		else if(mState != DESTROYED){
-			
 			mBulletList[i]->render(renderer);
 		}
 	}
@@ -161,4 +154,10 @@ bool Airplane::checkToMove1() {
 		return true;
 	}
 	return false;
+}
+
+void Airplane::reborn() {
+	mHeart = 100;
+	mState = NORMAL;
+	mCurrentFrame = 0;
 }

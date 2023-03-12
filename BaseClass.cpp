@@ -20,7 +20,6 @@ void BaseClass::setRect(const int& x, const int& y, const int& w, const int& h) 
 
 void BaseClass::loadImage(SDL_Renderer* renderer, std::string path) {
 	SDL_Surface* loadedSurface = IMG_Load(path.c_str());
-	//SDL_SetColorKey(loadedSurface, SDL_TRUE, SDL_MapRGB(loadedSurface->format, 0, 0, 0));
 	mTexture = SDL_CreateTextureFromSurface(renderer, loadedSurface);
 	mRect.w = loadedSurface->w;
 	mRect.h = loadedSurface->h;
@@ -31,7 +30,6 @@ void BaseClass::loadImage(SDL_Renderer* renderer, std::string path) {
 
 
 void BaseClass::render(SDL_Renderer* renderer, const SDL_Rect* clip) {
-
 	SDL_Rect renderQuad = { mRect.x, mRect.y, mRect.w, mRect.h };
 	SDL_RenderCopy(renderer, mTexture, clip, &renderQuad);
 }
@@ -47,4 +45,8 @@ void BaseClass::free() {
 
 SDL_Rect BaseClass::getRect() {
 	return mRect;
+}
+
+SDL_Texture* BaseClass::getTexture() {
+	return mTexture;
 }
