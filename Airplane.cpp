@@ -72,7 +72,7 @@ void Airplane::render(SDL_Renderer* renderer, int i) {
 	renderHeart(renderer);
 	renderBullet(renderer);
 
-	if (checkToMove1()) {
+	if (checkToMove1(100)) {
 		mCurrentFrame += i;
 	}
 
@@ -84,9 +84,9 @@ void Airplane::render(SDL_Renderer* renderer, int i) {
 	}
 }
 
-bool Airplane::checkToMove() {
+bool Airplane::checkToMove(int t) {
 	UINT64 now = SDL_GetTicks64();
-	if (int(now - mStartTime) >= 20) {
+	if (int(now - mStartTime) >= t) {
 		mStartTime = now;
 		return true;
 	}
@@ -116,28 +116,17 @@ std::vector<Bullet*>& Airplane::getBulletList() {
 
 
 
-void Airplane::loadImage(SDL_Renderer* renderer, std::string s1, std::string s2, std::string s3) {
+void Airplane::loadImage(SDL_Renderer* renderer, const std::vector<std::string>& listName) {
 	SDL_Surface* loadedSurface = nullptr;
-	std::string s;
 
-	for (int i = 1; i <= 3; i++) {
-		if (i == 1) {
-			s = s1;
-		}
-		else if (i == 2) {
-			s = s2;
-		}
-		else if (i == 3) {
-			s = s3;
-		}
-		loadedSurface = IMG_Load(s.c_str());
+	for (int i = 0; i < 3; i++) {
+		loadedSurface = IMG_Load(listName[i].c_str());
 		SDL_Texture* temp = SDL_CreateTextureFromSurface(renderer, loadedSurface);
 
-		if (i == 1) {
+		if (i == 0) {
 			mRect.w = loadedSurface->w;
 			mRect.h = loadedSurface->h;
 		}
-
 		mTextures.push_back(temp);
 		mMaxFrames.push_back(loadedSurface->w / mRect.w);
 	}
@@ -147,9 +136,9 @@ void Airplane::loadImage(SDL_Renderer* renderer, std::string s1, std::string s2,
 }
 
 
-bool Airplane::checkToMove1() {
+bool Airplane::checkToMove1(int t) {
 	UINT64 now = SDL_GetTicks64();
-	if (int(now - mStartTime1) >= 100) {
+	if (int(now - mStartTime1) >= t) {
 		mStartTime1 = now;
 		return true;
 	}

@@ -15,7 +15,7 @@ public:
 	void handleMove();
 	void render(SDL_Renderer* renderer, const SDL_Rect* clip = nullptr);
 	void handleState(bool);
-	void loadImage(SDL_Renderer* renderer, std::string s1, std::string s2);
+	void loadImage(SDL_Renderer* renderer, const std::vector<std::string> &listName);
 	BKG mState;
 private:
 	UINT32 startTime;

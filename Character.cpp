@@ -64,16 +64,16 @@ void Character::handleAction(const SDL_Event &event, SDL_Renderer* renderer) {
 
 void Character::handleMove() {
 
-		mRect.x += mXVal;
-		mRect.y += mYVal;
-		
-		if (mRect.x <= 0) mRect.x = 0;
-		if (mRect.x >= 1200 - 64) mRect.x = 1200 - 64;
-		if (mRect.y <= 0) mRect.y = 0;
-		if (mRect.y >= 600 - 91) mRect.y = 600 - 91;
+	mRect.x += mXVal;
+	mRect.y += mYVal;
+	
+	if (mRect.x <= 0) mRect.x = 0;
+	if (mRect.x >= 1200 - 64) mRect.x = 1200 - 64;
+	if (mRect.y <= 0) mRect.y = 0;
+	if (mRect.y >= 600 - 91) mRect.y = 600 - 91;
 
-		handleBulletMove();
-
+	handleBulletMove();
+	
 }
 
 

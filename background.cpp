@@ -28,13 +28,12 @@ void Background::render(SDL_Renderer* renderer, const SDL_Rect* clip) {
 	mRect.x -= 1200;
 }
 
-void Background::loadImage(SDL_Renderer* renderer, std::string s1, std::string s2) {
-	SDL_Texture* loadedTexture1 = nullptr;
-	SDL_Texture* loadedTexture2 = nullptr;
-	loadedTexture1 = loadTexture(renderer, s1);
-	loadedTexture2 = loadTexture(renderer, s2);
-	mTextures.push_back(loadedTexture1);
-	mTextures.push_back(loadedTexture2);
+void Background::loadImage(SDL_Renderer* renderer, const std::vector<std::string>& listName) {
+	SDL_Texture* loadedTexture = nullptr;
+	for (std::string s : listName) {
+		loadedTexture = loadTexture(renderer, s);
+		mTextures.push_back(loadedTexture);
+	}
 }
 
 void Background::handleState(bool isLose) {

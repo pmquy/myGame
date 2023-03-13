@@ -9,6 +9,7 @@ enum State {
 	NORMAL,
 	DESTROYED,
 	FIRING,
+	NOT_APPEAR,
 };
 
 
@@ -31,7 +32,7 @@ public:
 	virtual void render(SDL_Renderer* renderer, int i);
 
 	std::vector<Bullet*>& getBulletList();
-	void loadImage(SDL_Renderer* renderer, std::string s1, std::string s2, std::string s3);
+	void loadImage(SDL_Renderer* renderer, const std::vector<std::string>& listName);
 	void reborn();
 	int getCurrentFrame() {
 		return mCurrentFrame;
@@ -42,8 +43,8 @@ public:
 	}
 
 protected:
-	bool checkToMove();
-	bool checkToMove1();
+	bool checkToMove(int);
+	bool checkToMove1(int);
 
 	void renderHeart(SDL_Renderer *renderer);
 	void renderBullet(SDL_Renderer *renderer);

@@ -2,9 +2,13 @@
 #define BULLET_H_
 #include "BaseClass.h"
 
+enum Type {
+	FIGHTER
+};
 
 class Bullet : public BaseClass {
 public:
+	
 	Bullet();
 	~Bullet();
 	void handleMove();

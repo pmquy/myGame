@@ -12,7 +12,7 @@ Bot::~Bot() {
 
 
 void Bot::handleMove() {
-	if (checkToMove()) {
+	if (checkToMove(20)) {
 		mRect.x -= 2;
 		handleBulletMove();
 	}
@@ -45,7 +45,6 @@ void Bot::handleState() {
 		mCurrentFrame = mMaxFrames[int(mState)] - 1;
 		mHeart = 100;
 		mRect.x = SCREEN_WIDTH;
-		srand(SDL_GetTicks());
 		mRect.y = rand() % 400;
 	}
 	if (mState == DESTROYED) {
@@ -59,17 +58,22 @@ void Bot::handleState() {
 }
 
 void Bot::fire(SDL_Renderer *renderer) {
-	UINT64 now = SDL_GetTicks64();
-	if (now - mFireTime >= 500) {
-		mFireTime = now;
 		Bullet* newBullet = new Bullet();
 		newBullet->loadImage(renderer, "Image_folder/Airplane/Bomber/Charge_1.png");
 		newBullet->setIsMove(true);
 		newBullet->setRect(mRect.x, mRect.y + 100);
 		mBulletList.push_back(newBullet);
+}
+bool Bot::checkToFire(int t) {
+	if (SDL_GetTicks64() - mFireTime >= 500) {
+		mFireTime = SDL_GetTicks64();
+		return true;
 	}
+	return false;
 }
 
 void Bot::handleAction(SDL_Renderer *renderer) {
-	fire(renderer);
+	if (checkToFire(1000)) {
+		fire(renderer);
+	}
 }
