@@ -62,6 +62,10 @@ protected:
 	std::vector<int> mMaxFrames;
 	State mState;
 	int mCurrentFrame = 0;
+
+	
+	bool checkToFire(int t);
+	UINT64 mFireTime = 0;
 };
 
 

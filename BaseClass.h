@@ -24,7 +24,6 @@ class BaseClass {
 			int y21 = b.getRect().y;
 			int x22 = b.getRect().x + b.getRect().w;
 			int y22 = b.getRect().y + b.getRect().h;
-
 			if (x12 < x21 || x22 < x11 || y11 > y22 || y12 < y21) return false;
 			return true;
 		}

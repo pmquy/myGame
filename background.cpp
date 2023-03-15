@@ -4,7 +4,7 @@
 Background::Background() {
 	startTime = 0;
 	mRect.x = mRect.y = mRect.w = mRect.h = 0;
-	mState = LEVEL_1;
+	mState = START;
 }
 
 Background::~Background() {
@@ -13,7 +13,7 @@ Background::~Background() {
 
 void Background::handleMove() {
 	int duration = SDL_GetTicks() - startTime;
-	if (duration >= 20 && mState != LOSE) {
+	if (duration >= 20 && mState == LEVEL_1) {
 		mRect.x--;
 		if (mRect.x <= -1200) mRect.x = 0;
 		startTime = SDL_GetTicks();
@@ -22,10 +22,15 @@ void Background::handleMove() {
 
 void Background::render(SDL_Renderer* renderer, const SDL_Rect* clip) {
 	mTexture = mTextures[int(mState)];
-	BaseClass::render(renderer);
-	mRect.x += 1200;
-	BaseClass::render(renderer);
-	mRect.x -= 1200;
+	if (mState == LEVEL_1) {
+		BaseClass::render(renderer);
+		mRect.x += 1200;
+		BaseClass::render(renderer);
+		mRect.x -= 1200;
+	}
+	else {
+		BaseClass::render(renderer);
+	}
 }
 
 void Background::loadImage(SDL_Renderer* renderer, const std::vector<std::string>& listName) {
@@ -36,14 +41,22 @@ void Background::loadImage(SDL_Renderer* renderer, const std::vector<std::string
 	}
 }
 
-void Background::handleState(bool isLose) {
-	if (isLose) {
-		mState = LOSE;
+void Background::handleState(SDL_Renderer* renderer, std::pair<int, int>& mouse) {
+	if (mState == DEAD) {
+		mState = DEAD;
 		mTexture = mTextures[int(mState)];
 		setRect(0, 0);
 	}
-	else {
-		mState = LEVEL_1;
-		mTexture = mTextures[int(mState)];
+	 
+	if (mState == START) {
+		
 	}
+
+	if (mState == LEVEL_1) {
+		mState = LEVEL_1;
+	}
+
+
+
 }
+

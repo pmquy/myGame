@@ -23,7 +23,6 @@ void BaseClass::loadImage(SDL_Renderer* renderer, std::string path) {
 	mTexture = SDL_CreateTextureFromSurface(renderer, loadedSurface);
 	mRect.w = loadedSurface->w;
 	mRect.h = loadedSurface->h;
-
 	SDL_FreeSurface(loadedSurface);
 	loadedSurface = nullptr;
 }

@@ -13,9 +13,7 @@ public:
 	void handleAction(SDL_Renderer *);
 private:
 	void handleBulletMove();
-	void fire(SDL_Renderer *);
-	bool checkToFire(int t);
-	UINT64 mFireTime = 0;
+	void fire(SDL_Renderer*);
 };
 
 

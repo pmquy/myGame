@@ -3,7 +3,10 @@
 #include "BaseClass.h"
 
 enum Type {
-	FIGHTER
+	XUOI,
+	NGUOC,
+	CHEOLEN,
+	CHEOXUONG
 };
 
 class Bullet : public BaseClass {
@@ -14,8 +17,12 @@ public:
 	void handleMove();
 	void setIsMove(bool state);
 	bool getIsMove();
+	Type getType();
+	void setType(const Type&);
+	
 private:
 	bool mIsMove = false;
+	Type mType;
 };
 
 

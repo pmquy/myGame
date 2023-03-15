@@ -150,3 +150,13 @@ void Airplane::reborn() {
 	mState = NORMAL;
 	mCurrentFrame = 0;
 }
+
+
+
+bool Airplane::checkToFire(int t) {
+	if (SDL_GetTicks64() - mFireTime >= t) {
+		mFireTime = SDL_GetTicks64();
+		return true;
+	}
+	return false;
+}

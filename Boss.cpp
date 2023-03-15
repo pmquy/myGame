@@ -12,32 +12,8 @@ Boss::~Boss() {
 void Boss::handleMove() {
 	if (mState != NOT_APPEAR) {
 		if (checkToMove(20)) {
-			int choice = rand() % 2;
-			if (choice == 0) {
-				mRect.x -= 5;
-			}
-			else if (choice == 1) {
-				mRect.x += 5;
-			}
-			else if (choice == 2) {
-				mRect.y -= 5;
-			}
-			else {
-				mRect.y += 5;
-			}
-
-			if (mRect.x <= 500) {
-				mRect.x = 500;
-			}
-			if (mRect.x >= 1000) {
-				mRect.x = 1000;
-			}
-			if (mRect.y <= 0) {
-				mRect.y = 0;
-			}
-			if (mRect.y >= 400) {
-				mRect.y = 400;
-			}
+			
+			mRect.x -= 1;
 
 			handleBulletMove();
 		}
@@ -45,7 +21,7 @@ void Boss::handleMove() {
 	}
 }
 void Boss::handleAction(SDL_Renderer *renderer) {
-	if (mState == NORMAL && checkToFire(1000)) {
+	if (mState == NORMAL) {
 		fire(renderer);
 	}
 }
@@ -54,14 +30,7 @@ void Boss::handleAction(SDL_Renderer *renderer) {
 
 void Boss::handleBulletMove() {
 	for (int i = 0; i < mBulletList.size(); i++) {
-		SDL_Rect rect = mBulletList[i]->getRect();
-		rect.x = rect.x - 10;
-		rect.y = mRect.y + 100;
-		mBulletList[i]->setRect(rect.x, rect.y);
-
-		if (rect.x <= 0) {
-			mBulletList[i]->setIsMove(false);
-		}
+		mBulletList[i]->handleMove();
 	}
 }
 
@@ -97,13 +66,6 @@ void Boss::handleState() {
 }
 
 
-bool Boss::checkToFire(int t) {
-	if (SDL_GetTicks64() - mFireTime >= t) {
-		mFireTime = SDL_GetTicks64();
-		return true;
-	}
-	return false;
-}
 
 bool Boss::checkToAppear(int t) {
 	if (SDL_GetTicks64() - mAppearTime >= t) {
@@ -113,13 +75,29 @@ bool Boss::checkToAppear(int t) {
 	return false;
 }
 void Boss::fire(SDL_Renderer* renderer) {
-	
-	Bullet* newBullet = new Bullet();
-	newBullet->loadImage(renderer, "Image_folder/Airplane/Bomber/Charge_1.png");
-	newBullet->setIsMove(true);
-	newBullet->setRect(mRect.x, mRect.y + 100);
-	mBulletList.push_back(newBullet);
-	
+	if (checkToFire(3000)) {
+		Bullet* newBullet1 = new Bullet();
+		Bullet* newBullet2 = new Bullet();
+		Bullet* newBullet3 = new Bullet();
+		newBullet1->loadImage(renderer, "Image_folder/sphere.png");
+		newBullet1->setIsMove(true);
+		newBullet1->setType(Type::CHEOLEN);
+		newBullet1->setRect(mRect.x, mRect.y + mRect.h/2);
+
+		newBullet2->loadImage(renderer, "Image_folder/sphere.png");
+		newBullet2->setIsMove(true);
+		newBullet2->setType(Type::NGUOC);
+		newBullet2->setRect(mRect.x, mRect.y + mRect.h/2);
+
+		newBullet3->loadImage(renderer, "Image_folder/sphere.png");
+		newBullet3->setIsMove(true);
+		newBullet3->setType(Type::CHEOXUONG);
+		newBullet3->setRect(mRect.x, mRect.y + mRect.h/2);
+
+		mBulletList.push_back(newBullet1);
+		mBulletList.push_back(newBullet2);
+		mBulletList.push_back(newBullet3);
+	}
 }
 
 void Boss::render(SDL_Renderer *renderer, int i) {

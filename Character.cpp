@@ -51,7 +51,8 @@ void Character::handleAction(const SDL_Event &event, SDL_Renderer* renderer) {
 		Bullet *newBullet = new Bullet();
 		newBullet->setRect(mRect.x + mRect.w, mRect.y + mRect.h/2);
 		newBullet->setIsMove(true);
-		newBullet->loadImage(renderer, "Image_folder/Airplane/Fighter/Charge_1.png");
+		newBullet->setType(Type::XUOI);
+		newBullet->loadImage(renderer, "Image_folder/laser.png");
 		mBulletList.push_back(newBullet);
 	}
 	else if (event.type == SDL_MOUSEBUTTONUP) {
@@ -68,26 +69,19 @@ void Character::handleMove() {
 	mRect.y += mYVal;
 	
 	if (mRect.x <= 0) mRect.x = 0;
-	if (mRect.x >= 1200 - 64) mRect.x = 1200 - 64;
+	if (mRect.x >= 1200 - 192) mRect.x = 1200 - 192;
 	if (mRect.y <= 0) mRect.y = 0;
-	if (mRect.y >= 600 - 91) mRect.y = 600 - 91;
+	if (mRect.y >= 600 - 192) mRect.y = 600 - 192;
 
-	handleBulletMove();
+	if (checkToMove(10)) {
+		handleBulletMove();
+	}
 	
 }
 
-
-
 void Character::handleBulletMove() {
 	for (int i = 0; i < int(mBulletList.size()); i++) {
-
-		SDL_Rect rect = mBulletList[i]->getRect();
-		rect.x = rect.x + 2;
-		mBulletList[i]->setRect(rect.x, rect.y);
-
-		if (rect.x >= SCREEN_WIDTH) {
-			mBulletList[i]->setIsMove(false);
-		}	
+		mBulletList[i]->handleMove();
 	}
 }
 
@@ -96,7 +90,7 @@ void Character::handleState() {
 		mState = DESTROYED;
 		mCurrentFrame = 0;
 	}
-	
+
 	if (mState == DESTROYED) {
 		for (int i = 0; i < int(mBulletList.size()); i++) {
 			mBulletList[i]->free();

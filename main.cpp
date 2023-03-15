@@ -12,11 +12,11 @@ Bot bot2;
 Boss boss;
 std::pair<int, int> gMouse;
 
+
 void loadResource() {
-	
 	std::vector<std::string> listName;
 
-	listName = { "Image_Folder/background/Level_1.jpg", "Image_Folder/background/Lose2.png"};
+	listName = { "Image_Folder/Background/Lose2.png", "Image_Folder/Background/Level_1.jpg", "Image_Folder/Background/Lose2.png"};
 	background.loadImage(gRenderer, listName);
 	background.setRect(0, 0, 1200, 600);
 
@@ -28,17 +28,21 @@ void loadResource() {
 	listName = { "Image_Folder/Airplane/Bomber/Idle.png", "Image_Folder/Airplane/Bomber/Destroyed.png", "Image_Folder/Airplane/Bomber/Attack_1.png" };
 	bot1.loadImage(gRenderer, listName);
 	bot1.setRect(SCREEN_WIDTH, 100);
-	bot1.setAttack(5);
+	bot1.setAttack(1);
 
 	listName = { "Image_Folder/Airplane/Bomber/Idle.png", "Image_Folder/Airplane/Bomber/Destroyed.png", "Image_Folder/Airplane/Bomber/Attack_1.png" };
 	bot2.loadImage(gRenderer, listName);
 	bot2.setRect(SCREEN_WIDTH, 300);
-	bot2.setAttack(5);
+	bot2.setAttack(1);
 
 	listName = { "Image_Folder/Airplane/Corvette/Idle.png", "Image_Folder/Airplane/Corvette/Destroyed.png", "Image_Folder/Airplane/Corvette/Attack_1.png" };
 	boss.loadImage(gRenderer, listName);
 	boss.setAttack(5);
+	boss.setHeart(100);
 }
+
+
+
 
 
 void handleColision() {
@@ -48,15 +52,17 @@ void handleColision() {
 			bot1.getDamage(hero.getAttack());
 			hero.getBulletList()[i]->setIsMove(false);
 		}
-	}
 
-	for (int i = 0; i < int(hero.getBulletList().size()); i++) {
 		if (checkConllision(bot2, *hero.getBulletList()[i])) {
 			bot2.getDamage(hero.getAttack());
 			hero.getBulletList()[i]->setIsMove(false);
 		}
+		
+		if (checkConllision(boss, *hero.getBulletList()[i])) {
+			boss.getDamage(hero.getAttack());
+			hero.getBulletList()[i]->setIsMove(false);
+		}
 	}
-
 	for (int i = 0; i < int(bot1.getBulletList().size()); i++) {
 		if (checkConllision(hero, *bot1.getBulletList()[i])) {
 			hero.getDamage(bot1.getAttack());
@@ -69,13 +75,22 @@ void handleColision() {
 			bot2.getBulletList()[i]->setIsMove(false);
 		}
 	}
+	for (int i = 0; i < int(boss.getBulletList().size()); i++) {
+		if (checkConllision(hero, *boss.getBulletList()[i])) {
+			hero.getDamage(boss.getAttack());
+			boss.getBulletList()[i]->setIsMove(false);
+		}
+	}
+
+
+
+
 }
 
 void Init() {
 	SDL_Init(SDL_INIT_EVERYTHING);
 	TTF_Init();
 	IMG_Init(IMG_INIT_JPG | IMG_INIT_PNG);
-
 	gWindow = SDL_CreateWindow("minhquy", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
 	gRenderer = SDL_CreateRenderer(gWindow, -1, SDL_RENDERER_ACCELERATED);
 }
@@ -95,33 +110,44 @@ void Close() {
 }
 
 
+
 int main(int argc, char* argv[]) {
+	
 	srand(time(0));
 	Init();
 	loadResource();
 
+	BKG gState = BKG::START;
+
 	while (!isQuit) {
 
-		background.handleMove();
-		background.handleState(hero.checkIsDestroyed());
-		background.render(gRenderer);
-
-
 		while (SDL_PollEvent(&gEvent)) {
-
 			SDL_GetMouseState(&gMouse.first, &gMouse.second);
-
 			if (gEvent.type == SDL_QUIT) {
 				isQuit = true;
 			}
-			else if (gEvent.type == SDL_MOUSEBUTTONDOWN && hero.checkIsDestroyed() && gMouse.first >= 560 && gMouse.first <= 630 && gMouse.second >= 230 && gMouse.second <= 260) {
-				hero.reborn();
+			if (gState == START && gEvent.type == SDL_MOUSEBUTTONDOWN && gMouse.first >= 560 && gMouse.first <= 620 && gMouse.second >= 220 && gMouse.second <= 260) {
+				gState = LEVEL_1;
+				background.setState(BKG::LEVEL_1);
 			}
-			hero.handleAction(gEvent, gRenderer);
+
+			if (gState == DEAD && gEvent.type == SDL_MOUSEBUTTONDOWN && gMouse.first >= 560 && gMouse.first <= 620 && gMouse.second >= 220 && gMouse.second <= 260) {
+				gState = LEVEL_1;
+				background.setState(BKG::LEVEL_1);
+			}
+			if (gState == LEVEL_1) {
+				hero.handleAction(gEvent, gRenderer);	
+			}
 		}
 
-		if (!hero.checkIsDestroyed()) {
 
+		background.handleState(gRenderer, gMouse);
+		background.handleMove();
+		background.render(gRenderer);
+
+
+		if (gState == LEVEL_1) {
+	
 			hero.handleMove();
 			bot1.handleMove();
 			bot2.handleMove();
@@ -142,10 +168,12 @@ int main(int argc, char* argv[]) {
 			bot1.render(gRenderer, -1);
 			bot2.render(gRenderer, -1);
 			boss.render(gRenderer, -1);
-			
 		}
-	
-		
+
+		if (hero.checkIsDestroyed()) {
+			gState = DEAD;
+			background.setState(gState);
+		}
 		SDL_RenderPresent(gRenderer);
 	}
 

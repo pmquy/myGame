@@ -21,14 +21,7 @@ void Bot::handleMove() {
 
 void Bot::handleBulletMove() {
 	for (int i = 0; i < mBulletList.size(); i++) {
-		SDL_Rect rect = mBulletList[i]->getRect();
-		rect.x = rect.x - 10;
-		rect.y = mRect.y + 100;
-		mBulletList[i]->setRect(rect.x, rect.y);
-
-		if (rect.x <= 0) {
-			mBulletList[i]->setIsMove(false);
-		}
+		mBulletList[i]->handleMove();
 	}
 }
 
@@ -57,23 +50,20 @@ void Bot::handleState() {
 	}
 }
 
-void Bot::fire(SDL_Renderer *renderer) {
+
+
+void Bot::handleAction(SDL_Renderer *renderer) {
+	fire(renderer);
+}
+
+
+void Bot::fire(SDL_Renderer* renderer) {
+	if (checkToFire(3000)) {
 		Bullet* newBullet = new Bullet();
 		newBullet->loadImage(renderer, "Image_folder/Airplane/Bomber/Charge_1.png");
 		newBullet->setIsMove(true);
+		newBullet->setType(Type::NGUOC);
 		newBullet->setRect(mRect.x, mRect.y + 100);
 		mBulletList.push_back(newBullet);
-}
-bool Bot::checkToFire(int t) {
-	if (SDL_GetTicks64() - mFireTime >= 500) {
-		mFireTime = SDL_GetTicks64();
-		return true;
-	}
-	return false;
-}
-
-void Bot::handleAction(SDL_Renderer *renderer) {
-	if (checkToFire(1000)) {
-		fire(renderer);
 	}
 }

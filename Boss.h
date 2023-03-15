@@ -14,8 +14,6 @@ private:
 	void handleBulletMove();
 	void fire(SDL_Renderer*);
 
-	UINT64 mFireTime = 0;
-	bool checkToFire(int t);
 	UINT64 mAppearTime = 0;
 	bool checkToAppear(int t);
 };
