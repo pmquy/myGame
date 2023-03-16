@@ -6,7 +6,8 @@ enum Type {
 	XUOI,
 	NGUOC,
 	CHEOLEN,
-	CHEOXUONG
+	CHEOXUONG,
+	XOAY
 };
 
 class Bullet : public BaseClass {

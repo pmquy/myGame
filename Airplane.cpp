@@ -160,3 +160,6 @@ bool Airplane::checkToFire(int t) {
 	}
 	return false;
 }
+bool Airplane::checkIsDestroyed() {
+	return mState == DESTROYED && mCurrentFrame == mMaxFrames[int(mState)] - 1;
+}

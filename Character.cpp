@@ -31,7 +31,6 @@ void Character::handleAction(const SDL_Event &event, SDL_Renderer* renderer) {
 		
 	}
 	else if (event.type == SDL_KEYUP) {
-		
 		switch (event.key.keysym.sym) {
 		case SDLK_UP:
 			mYVal = 0;
@@ -52,7 +51,12 @@ void Character::handleAction(const SDL_Event &event, SDL_Renderer* renderer) {
 		newBullet->setRect(mRect.x + mRect.w, mRect.y + mRect.h/2);
 		newBullet->setIsMove(true);
 		newBullet->setType(Type::XUOI);
-		newBullet->loadImage(renderer, "Image_folder/laser.png");
+		if (event.button.button == SDL_BUTTON_LEFT) {
+			newBullet->loadImage(renderer, "Image_folder/laser.png");
+		}
+		else if (event.button.button == SDL_BUTTON_RIGHT) {
+			newBullet->loadImage(renderer, "Image_folder/sphere.png");
+		}
 		mBulletList.push_back(newBullet);
 	}
 	else if (event.type == SDL_MOUSEBUTTONUP) {
@@ -107,6 +111,3 @@ void Character::handleState() {
 }
 
 
-bool Character::checkIsDestroyed() {
-	return mState == DESTROYED && mCurrentFrame == mMaxFrames[int(mState)] - 1;
-}

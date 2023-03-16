@@ -42,7 +42,7 @@ public:
 		return mMaxFrames;
 	}
 
-protected:
+public:
 	bool checkToMove(int);
 	bool checkToMove1(int);
 
@@ -63,7 +63,7 @@ protected:
 	State mState;
 	int mCurrentFrame = 0;
 
-	
+	bool checkIsDestroyed();
 	bool checkToFire(int t);
 	UINT64 mFireTime = 0;
 };

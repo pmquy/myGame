@@ -1,4 +1,4 @@
-#include "background.h"
+#include "Background.h"
 
 
 Background::Background() {
@@ -41,21 +41,21 @@ void Background::loadImage(SDL_Renderer* renderer, const std::vector<std::string
 	}
 }
 
-void Background::handleState(SDL_Renderer* renderer, std::pair<int, int>& mouse) {
-	if (mState == DEAD) {
-		mState = DEAD;
+void Background::handleState(BKG s, SDL_Renderer* renderer, std::pair<int, int>& mouse) {
+	mState = s;
+	if (mState == DEAD || mState == START || mState == SHOP) {
 		mTexture = mTextures[int(mState)];
 		setRect(0, 0);
 	}
-	 
-	if (mState == START) {
-		
-	}
-
-	if (mState == LEVEL_1) {
-		mState = LEVEL_1;
-	}
-
+	
+	// 
+	//if (mState == START) {
+	//	
+	//}
+	//
+	//if (mState == LEVEL_1) {
+	//	mState = LEVEL_1;
+	//}
 
 
 }

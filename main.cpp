@@ -11,12 +11,13 @@ Bot bot1;
 Bot bot2;
 Boss boss;
 std::pair<int, int> gMouse;
+BKG gState = BKG::START;
 
 
 void loadResource() {
 	std::vector<std::string> listName;
 
-	listName = { "Image_Folder/Background/Lose2.png", "Image_Folder/Background/Level_1.jpg", "Image_Folder/Background/Lose2.png"};
+	listName = { "Image_Folder/Background/Lose2.png", "Image_Folder/Background/Level_1.jpg", "Image_Folder/dead.png", "Image_Folder/shop.png"};
 	background.loadImage(gRenderer, listName);
 	background.setRect(0, 0, 1200, 600);
 
@@ -40,9 +41,6 @@ void loadResource() {
 	boss.setAttack(5);
 	boss.setHeart(100);
 }
-
-
-
 
 
 void handleColision() {
@@ -81,21 +79,16 @@ void handleColision() {
 			boss.getBulletList()[i]->setIsMove(false);
 		}
 	}
-
-
-
-
 }
 
 void Init() {
+	srand(time(0));
 	SDL_Init(SDL_INIT_EVERYTHING);
 	TTF_Init();
 	IMG_Init(IMG_INIT_JPG | IMG_INIT_PNG);
 	gWindow = SDL_CreateWindow("minhquy", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
 	gRenderer = SDL_CreateRenderer(gWindow, -1, SDL_RENDERER_ACCELERATED);
 }
-
-
 
 
 void Close() {
@@ -110,70 +103,92 @@ void Close() {
 }
 
 
-
 int main(int argc, char* argv[]) {
-	
-	srand(time(0));
 	Init();
 	loadResource();
-
-	BKG gState = BKG::START;
-
+	
 	while (!isQuit) {
 
-		while (SDL_PollEvent(&gEvent)) {
-			SDL_GetMouseState(&gMouse.first, &gMouse.second);
-			if (gEvent.type == SDL_QUIT) {
-				isQuit = true;
-			}
-			if (gState == START && gEvent.type == SDL_MOUSEBUTTONDOWN && gMouse.first >= 560 && gMouse.first <= 620 && gMouse.second >= 220 && gMouse.second <= 260) {
-				gState = LEVEL_1;
-				background.setState(BKG::LEVEL_1);
-			}
-
-			if (gState == DEAD && gEvent.type == SDL_MOUSEBUTTONDOWN && gMouse.first >= 560 && gMouse.first <= 620 && gMouse.second >= 220 && gMouse.second <= 260) {
-				gState = LEVEL_1;
-				background.setState(BKG::LEVEL_1);
-			}
-			if (gState == LEVEL_1) {
-				hero.handleAction(gEvent, gRenderer);	
-			}
-		}
-
-
-		background.handleState(gRenderer, gMouse);
-		background.handleMove();
+		background.handleState(gState, gRenderer, gMouse);
 		background.render(gRenderer);
+		
 
+		switch (gState) {
+		case START:
+			background.render(gRenderer);
+			while (SDL_PollEvent(&gEvent)) {
+				SDL_GetMouseState(&gMouse.first, &gMouse.second);
+				if (gEvent.type == SDL_MOUSEBUTTONDOWN && gMouse.first >= 560 && gMouse.first <= 620 && gMouse.second >= 220 && gMouse.second <= 260) {
+					gState = LEVEL_1;
+				}
+				if (gEvent.type == SDL_MOUSEBUTTONDOWN && gMouse.first >= 560 && gMouse.first <= 620 && gMouse.second >= 280 && gMouse.second <= 320) {
+					gState = SHOP;
+				}
+				if (gEvent.type == SDL_QUIT) {
+					isQuit = true;
+				}
+			}
+			break;
 
-		if (gState == LEVEL_1) {
-	
+		case LEVEL_1:
+			while (SDL_PollEvent(&gEvent)) {
+				if (gEvent.type == SDL_QUIT) {
+					isQuit = true;
+				}
+				hero.handleAction(gEvent, gRenderer);
+			}
+			background.handleMove();
+
 			hero.handleMove();
 			bot1.handleMove();
 			bot2.handleMove();
 			boss.handleMove();
-
+		
 			bot1.handleAction(gRenderer);
 			bot2.handleAction(gRenderer);
 			boss.handleAction(gRenderer);
-
+		
 			hero.handleState();
 			bot1.handleState();
 			bot2.handleState();
 			boss.handleState();
-
+		
 			handleColision();
-
+		
 			hero.render(gRenderer, 1);
 			bot1.render(gRenderer, -1);
 			bot2.render(gRenderer, -1);
 			boss.render(gRenderer, -1);
+				
+			if (hero.checkIsDestroyed()) {
+				gState = DEAD;
+			}
+			break;
+
+		case DEAD:
+			while (SDL_PollEvent(&gEvent)) {
+				SDL_GetMouseState(&gMouse.first, &gMouse.second);
+				if (gEvent.type == SDL_QUIT) {
+					isQuit = true;
+				}
+				else if (gState == DEAD && gEvent.type == SDL_MOUSEBUTTONDOWN && gMouse.first >= 560 && gMouse.first <= 620 && gMouse.second >= 220 && gMouse.second <= 260) {
+					gState = LEVEL_1;
+				}
+				else if (gEvent.type == SDL_MOUSEBUTTONDOWN && gMouse.first >= 560 && gMouse.first <= 620 && gMouse.second >= 280 && gMouse.second <= 320) {
+					gState = START;
+				}
+			}
+			break;
+
+		case SHOP:
+			while (SDL_PollEvent(&gEvent)) {
+				if (gEvent.type == SDL_QUIT) {
+					isQuit = true;
+				}
+			}
+			break;
 		}
 
-		if (hero.checkIsDestroyed()) {
-			gState = DEAD;
-			background.setState(gState);
-		}
 		SDL_RenderPresent(gRenderer);
 	}
 

@@ -13,7 +13,10 @@ void Boss::handleMove() {
 	if (mState != NOT_APPEAR) {
 		if (checkToMove(20)) {
 			
-			mRect.x -= 1;
+			mRect.x -= 2;
+			if (mRect.x <= 700) {
+				mRect.x = 700;
+			}
 
 			handleBulletMove();
 		}
@@ -38,7 +41,6 @@ void Boss::handleState() {
 	if (mState == NOT_APPEAR && checkToAppear(10000)) {
 		mState = NORMAL;
 		mCurrentFrame = mMaxFrames[int(mState)] -1;
-		std::cout << 1;
 	}
 
 	if (mState != NOT_APPEAR) {
@@ -47,13 +49,6 @@ void Boss::handleState() {
 			mCurrentFrame = mMaxFrames[int(mState)] - 1;
 		}
 
-		if ((mState == DESTROYED && mCurrentFrame == 0)) {
-			mState = NORMAL;
-			mCurrentFrame = mMaxFrames[int(mState)] - 1;
-			mHeart = 100;
-			mRect.x = SCREEN_WIDTH;
-			mRect.y = rand() % 400;
-		}
 		if (mState == DESTROYED) {
 			for (int i = 0; i < int(mBulletList.size()); i++) {
 				mBulletList[i]->free();
@@ -62,6 +57,14 @@ void Boss::handleState() {
 				mBulletList.erase(mBulletList.begin() + i);
 			}
 		}
+	}
+
+	if (checkIsDestroyed()) {
+		mState = NORMAL;
+		mCurrentFrame = mMaxFrames[int(mState)] - 1;
+		mHeart = 100;
+		mRect.x = SCREEN_WIDTH;
+		mRect.y = rand() % 400;
 	}
 }
 

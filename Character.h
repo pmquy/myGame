@@ -9,11 +9,19 @@ public:
 	void handleAction(const SDL_Event &event, SDL_Renderer* renderer);
 	void handleMove();
 	void handleState();
-	bool checkIsDestroyed();
+
+	int getCoin() {
+		return mCoin;
+	}
+	void setCoin(int c) {
+		mCoin = c;
+	}
+
 private:
 	void handleBulletMove();
 	int mXVal;
 	int mYVal;
+	int mCoin = 0;
 };
 
 #endif 

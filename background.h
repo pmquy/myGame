@@ -5,7 +5,8 @@
 enum BKG {
 	START,
 	LEVEL_1,
-	DEAD
+	DEAD,
+	SHOP
 };
 
 class Background : public BaseClass {
@@ -15,7 +16,7 @@ public:
 	~Background();
 	void handleMove();
 	void render(SDL_Renderer* renderer, const SDL_Rect* clip = nullptr);
-	void handleState(SDL_Renderer*, std::pair<int, int>&);
+	void handleState(BKG, SDL_Renderer*, std::pair<int, int>&);
 	void loadImage(SDL_Renderer* renderer, const std::vector<std::string> &listName);
 
 	BKG getState() {
@@ -24,6 +25,7 @@ public:
 	void setState(BKG s) {
 		mState = s;
 	}
+
 private:
 	BKG mState;
 	UINT32 startTime;
