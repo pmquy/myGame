@@ -11,6 +11,9 @@ public:
 	void handleMove();
 	void handleState();
 	void handleAction(SDL_Renderer *);
+	bool checkIsDestroyed() {
+		return mHeart == 0 && mCurrentFrame == 0 && mState == DESTROYED;
+	}
 private:
 	void handleBulletMove();
 	void fire(SDL_Renderer*);

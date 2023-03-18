@@ -33,7 +33,7 @@ public:
 
 	std::vector<Bullet*>& getBulletList();
 	void loadImage(SDL_Renderer* renderer, const std::vector<std::string>& listName);
-	void reborn();
+	virtual void reborn();
 	int getCurrentFrame() {
 		return mCurrentFrame;
 	}
@@ -63,7 +63,7 @@ public:
 	State mState;
 	int mCurrentFrame = 0;
 
-	bool checkIsDestroyed();
+	virtual bool checkIsDestroyed();
 	bool checkToFire(int t);
 	UINT64 mFireTime = 0;
 };

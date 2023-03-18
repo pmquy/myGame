@@ -33,7 +33,7 @@ void Bot::handleState() {
 		mCurrentFrame = mMaxFrames[int(mState)] - 1;
 	}
 
-	if (mRect.x <= 0 || (mState == DESTROYED && mCurrentFrame == 0)) {
+	if (mRect.x <= 0 || checkIsDestroyed()) {
 		mState = NORMAL;
 		mCurrentFrame = mMaxFrames[int(mState)] - 1;
 		mHeart = 100;

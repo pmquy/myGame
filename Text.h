@@ -7,6 +7,7 @@ class Text : public BaseClass {
 		Text();
 		~Text();
 		void loadText(SDL_Renderer *renderer, std::string content);
+		void loadNumber(SDL_Renderer* renderer, int);
 	private:
 		
 

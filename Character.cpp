@@ -16,16 +16,16 @@ void Character::handleAction(const SDL_Event &event, SDL_Renderer* renderer) {
 	if (event.type == SDL_KEYDOWN) {
 		switch (event.key.keysym.sym) {
 		case SDLK_UP:
-			mYVal = -1;
+			mYVal = -2;
 			break;
 		case SDLK_DOWN:
-			mYVal = 1;
+			mYVal = 2;
 			break;
 		case SDLK_RIGHT:
-			mXVal = 1;
+			mXVal = 2;
 			break;
 		case SDLK_LEFT:
-			mXVal = -1;
+			mXVal = -2;
 			break;
 		}
 		

@@ -39,11 +39,11 @@
     <ClCompile Include="Text.cpp">
       <Filter>Header Files</Filter>
     </ClCompile>
-    <ClCompile Include="CommonFunction.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Boss.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Header Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CommonFunction.cpp">
+      <Filter>Header Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

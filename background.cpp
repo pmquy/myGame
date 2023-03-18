@@ -13,7 +13,7 @@ Background::~Background() {
 
 void Background::handleMove() {
 	int duration = SDL_GetTicks() - startTime;
-	if (duration >= 20 && mState == LEVEL_1) {
+	if (duration >= 20 && (mState == LEVEL_1 || mState == LEVEL_2)) {
 		mRect.x--;
 		if (mRect.x <= -1200) mRect.x = 0;
 		startTime = SDL_GetTicks();
@@ -22,7 +22,7 @@ void Background::handleMove() {
 
 void Background::render(SDL_Renderer* renderer, const SDL_Rect* clip) {
 	mTexture = mTextures[int(mState)];
-	if (mState == LEVEL_1) {
+	if (mState == LEVEL_1 || mState == LEVEL_2) {
 		BaseClass::render(renderer);
 		mRect.x += 1200;
 		BaseClass::render(renderer);
@@ -41,22 +41,130 @@ void Background::loadImage(SDL_Renderer* renderer, const std::vector<std::string
 	}
 }
 
-void Background::handleState(BKG s, SDL_Renderer* renderer, std::pair<int, int>& mouse) {
+void Background::handleState(BKG &s, SDL_Renderer* renderer, std::pair<int, int>& mouse, SDL_Event &event) {
 	mState = s;
-	if (mState == DEAD || mState == START || mState == SHOP) {
-		mTexture = mTextures[int(mState)];
+
+	if (mState != LEVEL_1 && mState != LEVEL_2) {
 		setRect(0, 0);
 	}
 	
-	// 
-	//if (mState == START) {
-	//	
-	//}
-	//
-	//if (mState == LEVEL_1) {
-	//	mState = LEVEL_1;
-	//}
+	switch (mState) {
+	case START:
+		if (mouse.first >= 550 && mouse.first <= 650 && mouse.second >= 220 && mouse.second <= 270) {
+			if(event.type == SDL_MOUSEBUTTONDOWN)
+				mState = LEVEL_1;
+			SDL_Rect rect = { 550, 220, 100, 50 };
 
+			SDL_SetRenderDrawColor(renderer, 0, 253, 253, 150);
+			SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
+			SDL_RenderFillRect(renderer, &rect);
+			SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_NONE);
 
+		}
+		if (mouse.first >= 550 && mouse.first <= 650 && mouse.second >= 300 && mouse.second <= 350) {
+			if (event.type == SDL_MOUSEBUTTONDOWN)
+				mState = SHOP;
+			SDL_Rect rect = { 550, 300, 100, 50 };
+
+			SDL_SetRenderDrawColor(renderer, 0, 253, 253, 150);
+			SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
+			SDL_RenderFillRect(renderer, &rect);
+			SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_NONE);
+
+		}
+		break;
+	case LEVEL_1:
+		break;
+	case DEAD:
+		if (mouse.first >= 490 && mouse.first <= 710 && mouse.second >= 220 && mouse.second <= 270) {
+			if (event.type == SDL_MOUSEBUTTONDOWN)
+				mState = LEVEL_1;
+			SDL_Rect rect = { 490, 220, 220, 50 };
+
+			SDL_SetRenderDrawColor(renderer, 0, 253, 253, 150);
+			SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
+			SDL_RenderFillRect(renderer, &rect);
+			SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_NONE);
+
+		}
+		if (mouse.first >= 550 && mouse.first <= 650 && mouse.second >= 300 && mouse.second <= 350) {
+			if (event.type == SDL_MOUSEBUTTONDOWN)
+				mState = START;
+			SDL_Rect rect = { 550, 300, 100, 50 };
+
+			SDL_SetRenderDrawColor(renderer, 0, 253, 253, 150);
+			SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
+			SDL_RenderFillRect(renderer, &rect);
+			SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_NONE);
+
+		}
+		break;
+	case SHOP:
+		if (mouse.first >= 550 && mouse.first <= 650 && mouse.second >= 220 && mouse.second <= 270) {
+			if (event.type == SDL_MOUSEBUTTONDOWN)
+				std::cout << "BOUGHT ";
+			SDL_Rect rect = { 550, 220, 100, 50 };
+
+			SDL_SetRenderDrawColor(renderer, 0, 253, 253, 150);
+			SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
+			SDL_RenderFillRect(renderer, &rect);
+			SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_NONE);
+
+		}
+		if (mouse.first >= 550 && mouse.first <= 650 && mouse.second >= 300 && mouse.second <= 350) {
+			if (event.type == SDL_MOUSEBUTTONDOWN)
+				mState = START;
+			SDL_Rect rect = { 550, 300, 100, 50 };
+
+			SDL_SetRenderDrawColor(renderer, 0, 253, 253, 150);
+			SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
+			SDL_RenderFillRect(renderer, &rect);
+			SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_NONE);
+
+		}
+		break;
+
+	case VICTORY:
+		if (mouse.first >= 490 && mouse.first <= 710 && mouse.second >= 140 && mouse.second <= 190) {
+			
+			if (event.type == SDL_MOUSEBUTTONDOWN) {
+				mState = LEVEL_2;
+				std::cout << mState;
+			}
+				
+			SDL_Rect rect = { 490, 140, 220, 50 };
+
+			SDL_SetRenderDrawColor(renderer, 0, 253, 253, 150);
+			SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
+			SDL_RenderFillRect(renderer, &rect);
+			SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_NONE);
+
+		}
+
+		if (mouse.first >= 490 && mouse.first <= 710 && mouse.second >= 220 && mouse.second <= 270) {
+			if (event.type == SDL_MOUSEBUTTONDOWN)
+				mState = LEVEL_1;
+			SDL_Rect rect = { 490, 220, 220, 50 };
+
+			SDL_SetRenderDrawColor(renderer, 0, 253, 253, 150);
+			SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
+			SDL_RenderFillRect(renderer, &rect);
+			SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_NONE);
+
+		}
+		if (mouse.first >= 550 && mouse.first <= 650 && mouse.second >= 300 && mouse.second <= 350) {
+			if (event.type == SDL_MOUSEBUTTONDOWN)
+				mState = START;
+			SDL_Rect rect = { 550, 300, 100, 50 };
+
+			SDL_SetRenderDrawColor(renderer, 0, 253, 253, 150);
+			SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
+			SDL_RenderFillRect(renderer, &rect);
+			SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_NONE);
+		}
+		break;
+	}
+
+	s = mState;
 }
 

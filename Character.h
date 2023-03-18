@@ -10,6 +10,11 @@ public:
 	void handleMove();
 	void handleState();
 
+	bool checkIsDestroyed() {
+		return mHeart == 0 && mCurrentFrame == mMaxFrames[int(DESTROYED)] - 1 && mState == DESTROYED;
+	}
+
+
 	int getCoin() {
 		return mCoin;
 	}

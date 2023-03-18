@@ -51,11 +51,11 @@ void Airplane::getDamage(int damage) {
 
 void Airplane::renderHeart(SDL_Renderer *renderer) {
 
-	SDL_Rect rectBg = { mRect.x, mRect.y + mRect.h + 10, mRect.w, 5 };
+	SDL_Rect rectBg = { mRect.x, mRect.y + mRect.h - 50, mRect.w, 5 };
 	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 0);
 	SDL_RenderFillRect(renderer, &rectBg);
 	
-	SDL_Rect rectHeart = { mRect.x, mRect.y + mRect.h + 10, mHeart * mRect.w / 100 , 5 };
+	SDL_Rect rectHeart = { mRect.x, mRect.y + mRect.h - 50, mHeart * mRect.w / 100 , 5 };
 	SDL_SetRenderDrawColor(renderer, 255, 0, 0, 0);
 	SDL_RenderFillRect(renderer, &rectHeart);
 
