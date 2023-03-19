@@ -5,7 +5,7 @@ Text::Text() {
 }
 
 Text::~Text() {
-
+	BaseClass::free();
 }
 
 void Text::loadText(SDL_Renderer* renderer, std::string content) {
@@ -23,7 +23,7 @@ void Text::loadText(SDL_Renderer* renderer, std::string content) {
 
 void Text::loadNumber(SDL_Renderer* renderer, int number) {
 	if (number == 0) {
-		loadText(renderer, "0");
+		loadText(renderer, "Score: 0");
 		return;
 	}
 	std::string s = "";
@@ -31,5 +31,5 @@ void Text::loadNumber(SDL_Renderer* renderer, int number) {
 		s = std::string(1, number % 10 + '0') + s;
 		number /= 10;
 	}
-	loadText(renderer, s);
+	loadText(renderer, "Score: " + s);
 }

@@ -12,7 +12,7 @@ enum Type {
 
 class Bullet : public BaseClass {
 public:
-	
+	void free();
 	Bullet();
 	~Bullet();
 	void handleMove();

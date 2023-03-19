@@ -8,7 +8,7 @@ Character::Character() {
 }
 
 Character::~Character() {
-
+	free();
 }
 
 
@@ -56,6 +56,7 @@ void Character::handleAction(const SDL_Event &event, SDL_Renderer* renderer) {
 		}
 		else if (event.button.button == SDL_BUTTON_RIGHT) {
 			newBullet->loadImage(renderer, "Image_folder/sphere.png");
+			newBullet->setType(Type::CHEOLEN);
 		}
 		mBulletList.push_back(newBullet);
 	}
@@ -90,24 +91,15 @@ void Character::handleBulletMove() {
 }
 
 void Character::handleState() {
+
 	if (mHeart == 0 && mState != DESTROYED) {
 		mState = DESTROYED;
 		mCurrentFrame = 0;
 	}
 
-	if (mState == DESTROYED) {
-		for (int i = 0; i < int(mBulletList.size()); i++) {
-			mBulletList[i]->free();
-			delete mBulletList[i];
-			mBulletList[i] = nullptr;
-			mBulletList.erase(mBulletList.begin() + i);
-		}
-	}
-
 	if (mState == DESTROYED && mCurrentFrame == mMaxFrames[int(mState)] - 1) {
 		reborn();
 	}
-
 }
 
 

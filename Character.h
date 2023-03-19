@@ -13,7 +13,10 @@ public:
 	bool checkIsDestroyed() {
 		return mHeart == 0 && mCurrentFrame == mMaxFrames[int(DESTROYED)] - 1 && mState == DESTROYED;
 	}
-
+	void reborn() {
+		Airplane::reborn();
+		setRect(0, 0);
+	}
 
 	int getCoin() {
 		return mCoin;

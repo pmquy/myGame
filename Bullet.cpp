@@ -6,7 +6,12 @@ Bullet::Bullet() {
 
 
 Bullet::~Bullet() {
+	free();
+}
 
+void Bullet::free() {
+	BaseClass::free();
+	mIsMove = false;
 }
 
 

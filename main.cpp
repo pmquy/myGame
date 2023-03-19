@@ -2,14 +2,13 @@
 #include "Character.h"
 #include "Bot.h"
 #include "Text.h"
-#include "Boss.h"
 
 bool isQuit = false;
 Background background;
 Character hero;
 Bot bot1;
 Bot bot2;
-Boss boss;
+Bot boss;
 std::pair<int, int> gMouse;
 BKG gState = BKG::START;
 int score = 0;
@@ -32,16 +31,20 @@ void loadResource() {
 	bot1.loadImage(gRenderer, listName);
 	bot1.setRect(SCREEN_WIDTH, 100);
 	bot1.setAttack(1);
+	bot1.setShipType(ShipType::SHIP1);
 
 	listName = { "Image_Folder/Airplane/Bomber/Idle.png", "Image_Folder/Airplane/Bomber/Destroyed.png", "Image_Folder/Airplane/Bomber/Attack_1.png" };
 	bot2.loadImage(gRenderer, listName);
 	bot2.setRect(SCREEN_WIDTH, 300);
 	bot2.setAttack(1);
+	bot2.setShipType(ShipType::SHIP1);
 
 	listName = { "Image_Folder/Airplane/Corvette/Idle.png", "Image_Folder/Airplane/Corvette/Destroyed.png", "Image_Folder/Airplane/Corvette/Attack_1.png" };
 	boss.loadImage(gRenderer, listName);
 	boss.setAttack(5);
 	boss.setHeart(100);
+	boss.setShipType(ShipType::SHIP2);
+	
 
 	gScore.setRect(0, 0);
 	gScore.loadNumber(gRenderer, score);
@@ -179,12 +182,16 @@ int main(int argc, char* argv[]) {
 				score++;
 			}
 			if (boss.checkIsDestroyed()) {
-				score++;
+				score+=2;
 			}
 
-			if (score >= 2) {
+			if (score >= 10) {
 				gState = VICTORY;
 				score = 0;
+				bot1.reborn();
+				bot2.reborn();
+				hero.reborn();
+				boss.reborn();
 			}
 
 			background.handleState(gState, gRenderer, gMouse, gEvent);

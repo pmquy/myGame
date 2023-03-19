@@ -4,6 +4,12 @@
 #include "Airplane.h"
 #include "Bullet.h"
 
+enum ShipType {
+	SHIP1,
+	SHIP2,
+	SHIP3
+};
+
 class Bot : public Airplane {
 public:
 	Bot();
@@ -14,7 +20,14 @@ public:
 	bool checkIsDestroyed() {
 		return mHeart == 0 && mCurrentFrame == 0 && mState == DESTROYED;
 	}
+	void reborn();
+
+	void setShipType(const ShipType& t) {
+		mType = t;
+	}
+
 private:
+	ShipType mType;
 	void handleBulletMove();
 	void fire(SDL_Renderer*);
 };

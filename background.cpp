@@ -138,7 +138,6 @@ void Background::handleState(BKG &s, SDL_Renderer* renderer, std::pair<int, int>
 			SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
 			SDL_RenderFillRect(renderer, &rect);
 			SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_NONE);
-
 		}
 
 		if (mouse.first >= 490 && mouse.first <= 710 && mouse.second >= 220 && mouse.second <= 270) {
