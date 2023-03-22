@@ -9,6 +9,7 @@ enum State {
 	NORMAL,
 	DESTROYED,
 	FIRING,
+	BOOSTING
 };
 
 
@@ -54,6 +55,7 @@ public:
 	virtual void handleBulletMove() = 0;
 	virtual void render(SDL_Renderer* renderer, int i);
 	virtual void reborn();
+
 	void free();
 
 

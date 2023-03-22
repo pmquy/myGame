@@ -16,6 +16,7 @@ public:
 	void reborn() {
 		Airplane::reborn();
 		setRect(0, 0);
+		mXVal = mYVal = 0;
 	}
 
 	int getCoin() {

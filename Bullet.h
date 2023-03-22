@@ -2,7 +2,7 @@
 #define BULLET_H_
 #include "BaseClass.h"
 
-enum Type {
+enum BulletType {
 	XUOI,
 	NGUOC,
 	CHEOLEN,
@@ -18,12 +18,13 @@ public:
 	void handleMove();
 	void setIsMove(bool state);
 	bool getIsMove();
-	Type getType();
-	void setType(const Type&);
+	BulletType getBulletType();
+	void setBulletType(const BulletType&);
 	
+	bool mIsAppear = true;
 private:
-	bool mIsMove = false;
-	Type mType;
+	bool mIsMove = true;
+	BulletType mBulletType;
 };
 
 

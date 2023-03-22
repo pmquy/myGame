@@ -4,50 +4,44 @@
 #include "Text.h"
 
 bool isQuit = false;
+std::pair<int, int> gMouse;
+BackgroundType gState = BackgroundType::START;
+int score = 0;
 Background background;
 Character hero;
 Bot bot1;
 Bot bot2;
 Bot boss;
-std::pair<int, int> gMouse;
-BKG gState = BKG::START;
-int score = 0;
 Text gScore;
+Text gCoin;
 
 
 void loadResource() {
-	std::vector<std::string> listName;
 
-	listName = { "Image_Folder/Background/Start.png", "Image_Folder/Background/Level_1.jpg", "Image_Folder/Background/Level_2.png" , "Image_Folder/Background/Lose.png", "Image_Folder/Background/Shop.png", "Image_Folder/Background/Victory.png" };
-	background.loadImage(gRenderer, listName);
+	background.loadImage(gRenderer, BACKGROUND_PATHS);
 	background.setRect(0, 0, 1200, 600);
 
-	listName = { "Image_Folder/Airplane/Fighter/Idle.png", "Image_Folder/Airplane/Fighter/Destroyed.png", "Image_Folder/Airplane/Fighter/Attack_1.png" };
-	hero.loadImage(gRenderer, listName);
+	hero.loadImage(gRenderer, HERO_PATHS);
 	hero.setRect(0, 200);
 	hero.setAttack(20);
 	
-	listName = { "Image_Folder/Airplane/Bomber/Idle.png", "Image_Folder/Airplane/Bomber/Destroyed.png", "Image_Folder/Airplane/Bomber/Attack_1.png" };
-	bot1.loadImage(gRenderer, listName);
+	bot1.loadImage(gRenderer, BOT1_PATHS);
 	bot1.setRect(SCREEN_WIDTH, 100);
 	bot1.setAttack(1);
 	bot1.setShipType(ShipType::SHIP1);
 
-	listName = { "Image_Folder/Airplane/Bomber/Idle.png", "Image_Folder/Airplane/Bomber/Destroyed.png", "Image_Folder/Airplane/Bomber/Attack_1.png" };
-	bot2.loadImage(gRenderer, listName);
+	bot2.loadImage(gRenderer, BOT2_PATHS);
 	bot2.setRect(SCREEN_WIDTH, 300);
 	bot2.setAttack(1);
 	bot2.setShipType(ShipType::SHIP1);
 
-	listName = { "Image_Folder/Airplane/Corvette/Idle.png", "Image_Folder/Airplane/Corvette/Destroyed.png", "Image_Folder/Airplane/Corvette/Attack_1.png" };
-	boss.loadImage(gRenderer, listName);
+	boss.loadImage(gRenderer, BOT3_PATHS);
 	boss.setAttack(5);
 	boss.setHeart(100);
 	boss.setShipType(ShipType::SHIP2);
 	
-
 	gScore.setRect(0, 0);
-	gScore.loadNumber(gRenderer, score);
+	gCoin.setRect(0, 100);
 }
 
 
@@ -121,6 +115,7 @@ int main(int argc, char* argv[]) {
 		background.render(gRenderer);
 
 		switch (gState) {
+
 		case START:
 			background.render(gRenderer);
 			while (SDL_PollEvent(&gEvent)) {
@@ -137,8 +132,16 @@ int main(int argc, char* argv[]) {
 
 		case LEVEL_1:
 		case LEVEL_2:
-			gScore.loadNumber(gRenderer, score);
+			
+			gScore.loadNumber(gRenderer, score, "Score");
+			gScore.setRect(0, 0);
 			gScore.render(gRenderer);
+			
+			gCoin.loadNumber(gRenderer, hero.getCoin(), "Coin");
+			gCoin.setRect(0, 100);
+			gCoin.render(gRenderer);
+
+
 			while (SDL_PollEvent(&gEvent)) {
 				if (gEvent.type == SDL_QUIT) {
 					isQuit = true;
@@ -167,25 +170,30 @@ int main(int argc, char* argv[]) {
 			bot1.render(gRenderer, -1);
 			bot2.render(gRenderer, -1);
 			boss.render(gRenderer, -1);
-			
-			gScore.loadNumber(gRenderer, score);
-			gScore.render(gRenderer);
-
 				
 			if (hero.checkIsDestroyed()) {
+				bot1.reborn();
+				bot2.reborn();
+				hero.reborn();
+				boss.reborn();
+				hero.reborn();
 				gState = DEAD;
 			}
+
 			if (bot1.checkIsDestroyed()) {
 				score++;
+				hero.setCoin(hero.getCoin() + 1);
 			}
 			if (bot2.checkIsDestroyed()) {
 				score++;
+				hero.setCoin(hero.getCoin() + 1);
 			}
 			if (boss.checkIsDestroyed()) {
 				score+=2;
+				hero.setCoin(hero.getCoin() + 2);
 			}
 
-			if (score >= 10) {
+			if (score >= 4) {
 				gState = VICTORY;
 				score = 0;
 				bot1.reborn();
@@ -214,9 +222,9 @@ int main(int argc, char* argv[]) {
 				if (gEvent.type == SDL_QUIT) {
 					isQuit = true;
 				}
-				background.handleState(gState, gRenderer, gMouse, gEvent);
+				background.handleState(gState, gRenderer, gMouse, gEvent, &hero);
 			}
-			background.handleState(gState, gRenderer, gMouse, gEvent);
+			background.handleState(gState, gRenderer, gMouse, gEvent, &hero);
 			break;
 
 		case VICTORY:

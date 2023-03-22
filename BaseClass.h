@@ -27,6 +27,7 @@ class BaseClass {
 			if (x12 < x21 || x22 < x11 || y11 > y22 || y12 < y21) return false;
 			return true;
 		}
+
 	protected:
 		SDL_Texture* mTexture;
 		SDL_Rect mRect;

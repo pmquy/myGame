@@ -23,6 +23,14 @@ static SDL_Color gTextColor = { 100, 100, 100 };
 
 SDL_Texture* loadTexture(SDL_Renderer*, std::string);
 
+const std::vector<std::string> HERO_PATHS = { "Image_Folder/Airplane/Fighter/Idle.png", "Image_Folder/Airplane/Fighter/Destroyed.png", "Image_Folder/Airplane/Fighter/Attack_1.png","Image_Folder/Airplane/Fighter/Boost.png"  };
+const std::vector<std::string> BOT1_PATHS = { "Image_Folder/Airplane/Bomber/Idle.png", "Image_Folder/Airplane/Bomber/Destroyed.png", "Image_Folder/Airplane/Bomber/Attack_1.png" };
+const std::vector<std::string> BOT2_PATHS = { "Image_Folder/Airplane/Bomber/Idle.png", "Image_Folder/Airplane/Bomber/Destroyed.png", "Image_Folder/Airplane/Bomber/Attack_1.png" };
+const std::vector<std::string> BOT3_PATHS = { "Image_Folder/Airplane/Corvette/Idle.png", "Image_Folder/Airplane/Corvette/Destroyed.png", "Image_Folder/Airplane/Corvette/Attack_1.png" };
+const std::vector<std::string> BACKGROUND_PATHS = { "Image_Folder/Background/Start.png", "Image_Folder/Background/Level_1.jpg", "Image_Folder/Level_2.png" , "Image_Folder/Background/Lose.png", "Image_Folder/Background/Shop.png", "Image_Folder/Background/Victory.png" };
+
+
+
 
 #endif 
 

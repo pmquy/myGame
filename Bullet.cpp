@@ -16,21 +16,28 @@ void Bullet::free() {
 
 
 void Bullet::handleMove() {
-	if (mType == XUOI) {
-		mRect.x += 5;
-	}
-	else if (mType == NGUOC) {
-		mRect.x -= 5;
-	}
-	else if (mType == CHEOLEN) {
-		mRect.x -= 5;
-		mRect.y -= 1;
-	}
-	else if (mType == CHEOXUONG) {
-		mRect.x -= 5;
-		mRect.y += 1;
-	}
+	if (mIsMove == true && mIsAppear == true) {
 
+		if (mBulletType == XUOI) {
+			mRect.x += 5;
+		}
+		else if (mBulletType == NGUOC) {
+			mRect.x -= 5;
+		}
+		else if (mBulletType == CHEOLEN) {
+			mRect.x -= 5;
+			mRect.y -= 1;
+		}
+		else if (mBulletType == CHEOXUONG) {
+			mRect.x -= 5;
+			mRect.y += 1;
+		}
+		else if (mBulletType == XOAY) {
+			mRect.x += 5;
+			mRect.y += 3 - rand() % 7;
+		}
+
+	}
 	if (mRect.x <= 0 || mRect.x >= 1200 || mRect.y <= 0 || mRect.y >= 600) {
 		mIsMove = false;
 	}
@@ -43,10 +50,10 @@ bool Bullet::getIsMove() {
 	return mIsMove;
 }
 
-Type Bullet::getType() {
-	return mType;
+BulletType Bullet::getBulletType() {
+	return mBulletType;
 }
 
-void Bullet::setType(const Type& t) {
-	mType = t;
+void Bullet::setBulletType(const BulletType& t) {
+	mBulletType = t;
 }

@@ -19,6 +19,7 @@ void BaseClass::setRect(const int& x, const int& y, const int& w, const int& h) 
 
 
 void BaseClass::loadImage(SDL_Renderer* renderer, std::string path) {
+	free();
 	SDL_Surface* loadedSurface = IMG_Load(path.c_str());
 	mTexture = SDL_CreateTextureFromSurface(renderer, loadedSurface);
 	mRect.w = loadedSurface->w;

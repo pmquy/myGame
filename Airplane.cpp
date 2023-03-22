@@ -15,13 +15,17 @@ Airplane::~Airplane() {
 
 void Airplane::free() {
 	for (auto& it : mTextures) {
-		SDL_DestroyTexture(it);
-		it = nullptr;
+		if (it != nullptr) {
+			SDL_DestroyTexture(it);
+			it = nullptr;
+		}
 	}
 	for (auto& it : mBulletList) {
-		it->free();
-		delete it;
-		it = nullptr;
+		if (it != nullptr) {
+			it->free();
+			delete it;
+			it = nullptr;
+		}
 	}
 }
 
@@ -73,7 +77,7 @@ void Airplane::renderBullet(SDL_Renderer* renderer) {
 			mBulletList[i] = nullptr;
 			mBulletList.erase(mBulletList.begin() + i);
 		}
-		else if(mState != DESTROYED){
+		else if (mState != DESTROYED && mBulletList[i]->mIsAppear == true) {
 			mBulletList[i]->render(renderer);
 		}
 	}
@@ -84,9 +88,17 @@ void Airplane::renderBullet(SDL_Renderer* renderer) {
 
 
 void Airplane::loadImage(SDL_Renderer* renderer, const std::vector<std::string>& listName) {
-	SDL_Surface* loadedSurface = nullptr;
+	
+	for (int i = mTextures.size() - 1; i >= 0 ; i--) {
+		SDL_DestroyTexture(mTextures[i]);
+		mTextures[i] = nullptr;
+		mTextures.pop_back();
+		mMaxFrames.pop_back();
+	}
 
-	for (int i = 0; i < 3; i++) {
+
+	SDL_Surface* loadedSurface = nullptr;
+	for (int i = 0; i < int(listName.size()); i++) {
 		loadedSurface = IMG_Load(listName[i].c_str());
 		SDL_Texture* temp = SDL_CreateTextureFromSurface(renderer, loadedSurface);
 
