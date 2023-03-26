@@ -1,4 +1,5 @@
 #include "Background.h"
+#include "Character.h"
 
 
 
@@ -71,7 +72,6 @@ void Background::handleState(BackgroundType &s, SDL_Renderer* renderer, std::pai
 			SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
 			SDL_RenderFillRect(renderer, &rect);
 			SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_NONE);
-
 		}
 		break;
 	case LEVEL_1:
@@ -103,10 +103,12 @@ void Background::handleState(BackgroundType &s, SDL_Renderer* renderer, std::pai
 	case SHOP:
 		
 		if (mouse.first >= 550 && mouse.first <= 650 && mouse.second >= 240 && mouse.second <= 290) {
-			if (event.type == SDL_MOUSEBUTTONDOWN)
-				hero->loadImage(renderer, BOT1_PATHS);
+			if (event.type == SDL_MOUSEBUTTONDOWN) {
+				hero->loadImage(renderer, HERO_PATHS3);
+			}
+				
+			
 			SDL_Rect rect = { 550, 240, 100, 50 };
-
 			SDL_SetRenderDrawColor(renderer, 0, 253, 253, 150);
 			SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
 			SDL_RenderFillRect(renderer, &rect);
@@ -114,10 +116,11 @@ void Background::handleState(BackgroundType &s, SDL_Renderer* renderer, std::pai
 
 		}
 		else if (mouse.first >= 230 && mouse.first <= 330 && mouse.second >= 240 && mouse.second <= 290) {
-			if (event.type == SDL_MOUSEBUTTONDOWN)
-				hero->loadImage(renderer, BOT3_PATHS);
+			if (event.type == SDL_MOUSEBUTTONDOWN) {
+				hero->loadImage(renderer, HERO_PATHS1);
+			}
+				
 			SDL_Rect rect = { 230, 240, 100, 50 };
-
 			SDL_SetRenderDrawColor(renderer, 0, 253, 253, 150);
 			SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
 			SDL_RenderFillRect(renderer, &rect);
@@ -125,10 +128,12 @@ void Background::handleState(BackgroundType &s, SDL_Renderer* renderer, std::pai
 
 		}
 		else if (mouse.first >= 860 && mouse.first <= 960 && mouse.second >= 240 && mouse.second <= 290) {
-			if (event.type == SDL_MOUSEBUTTONDOWN)
-				std::cout << "BOUGHT ";
-			SDL_Rect rect = { 860, 240, 100, 50 };
+			if (event.type == SDL_MOUSEBUTTONDOWN) {
+				hero->loadImage(renderer, HERO_PATHS2);
+			}
+				
 
+			SDL_Rect rect = { 860, 240, 100, 50 };
 			SDL_SetRenderDrawColor(renderer, 0, 253, 253, 150);
 			SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
 			SDL_RenderFillRect(renderer, &rect);
@@ -138,8 +143,8 @@ void Background::handleState(BackgroundType &s, SDL_Renderer* renderer, std::pai
 		else if (mouse.first >= 550 && mouse.first <= 650 && mouse.second >= 380 && mouse.second <= 430) {
 			if (event.type == SDL_MOUSEBUTTONDOWN)
 				mState = START;
+			
 			SDL_Rect rect = { 550, 380, 100, 50 };
-
 			SDL_SetRenderDrawColor(renderer, 0, 253, 253, 150);
 			SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
 			SDL_RenderFillRect(renderer, &rect);

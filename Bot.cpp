@@ -33,10 +33,10 @@ void Bot::handleBulletMove() {
 
 void Bot::reborn() {
 	Airplane::reborn();
-	setRect(SCREEN_WIDTH, rand() % 400);
+	setRect(SCREEN_WIDTH + rand() % 400, rand() % 400);
 }
 
-void Bot::handleState() {
+void Bot::handleState(SDL_Renderer* renderer) {
 
 	if (mHeart == 0 && mState != DESTROYED) {
 		mState = DESTROYED;
@@ -52,6 +52,16 @@ void Bot::handleState() {
 
 	if (mRect.x <= 0 || checkIsDestroyed()) {
 		reborn();
+		int t = rand() % 3;
+		if (t == 0) {
+			loadImage(renderer, BOT1_PATHS);
+		}
+		else if (t == 1) {
+			loadImage(renderer, BOT2_PATHS);
+		}
+		else {
+			loadImage(renderer, BOT3_PATHS);
+		}
 	}
 
 	if (mState == FIRING && mCurrentFrame == 0) {

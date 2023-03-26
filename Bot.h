@@ -15,7 +15,7 @@ public:
 	Bot();
 	~Bot();
 	void handleMove();
-	void handleState();
+	void handleState(SDL_Renderer*);
 	void handleAction(SDL_Renderer *);
 	bool checkIsDestroyed() {
 		return mHeart == 0 && mCurrentFrame == 0 && mState == DESTROYED;

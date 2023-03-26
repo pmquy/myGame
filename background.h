@@ -13,6 +13,7 @@ enum BackgroundType {
 	VICTORY
 };
 
+
 class Background : public BaseClass {
 public:
 

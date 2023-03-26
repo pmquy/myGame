@@ -16,12 +16,14 @@ Text gScore;
 Text gCoin;
 
 
+
 void loadResource() {
+
 
 	background.loadImage(gRenderer, BACKGROUND_PATHS);
 	background.setRect(0, 0, 1200, 600);
 
-	hero.loadImage(gRenderer, HERO_PATHS);
+	hero.loadImage(gRenderer, HERO_PATHS1);
 	hero.setRect(0, 200);
 	hero.setAttack(20);
 	
@@ -42,6 +44,10 @@ void loadResource() {
 	
 	gScore.setRect(0, 0);
 	gCoin.setRect(0, 100);
+
+	collisionMusic = Mix_LoadWAV("Music_Folder/music1.wav");
+	backgroundMusic = Mix_LoadWAV("Music_Folder/music2.wav");
+
 }
 
 
@@ -52,34 +58,40 @@ void handleColision() {
 		if (checkConllision(bot1, *hero.getBulletList()[i])) {
 			bot1.getDamage(hero.getAttack());
 			hero.getBulletList()[i]->setIsMove(false);
+			//Mix_PlayChannel(-1, collisionMusic, 0);
 		}
 
 		if (checkConllision(bot2, *hero.getBulletList()[i])) {
 			bot2.getDamage(hero.getAttack());
 			hero.getBulletList()[i]->setIsMove(false);
+			//Mix_PlayChannel(-1, collisionMusic, 0);
 		}
 		
 		if (checkConllision(boss, *hero.getBulletList()[i])) {
 			boss.getDamage(hero.getAttack());
 			hero.getBulletList()[i]->setIsMove(false);
+			//Mix_PlayChannel(-1, collisionMusic, 0);
 		}
 	}
 	for (int i = 0; i < int(bot1.getBulletList().size()); i++) {
 		if (checkConllision(hero, *bot1.getBulletList()[i])) {
 			hero.getDamage(bot1.getAttack());
 			bot1.getBulletList()[i]->setIsMove(false);
+			//Mix_PlayChannel(-1, collisionMusic, 0);
 		}
 	}
 	for (int i = 0; i < int(bot2.getBulletList().size()); i++) {
 		if (checkConllision(hero, *bot2.getBulletList()[i])) {
 			hero.getDamage(bot2.getAttack());
 			bot2.getBulletList()[i]->setIsMove(false);
+			//Mix_PlayChannel(-1, collisionMusic, 0);
 		}
 	}
 	for (int i = 0; i < int(boss.getBulletList().size()); i++) {
 		if (checkConllision(hero, *boss.getBulletList()[i])) {
 			hero.getDamage(boss.getAttack());
 			boss.getBulletList()[i]->setIsMove(false);
+			//Mix_PlayChannel(-1, collisionMusic, 0);
 		}
 	}
 }
@@ -88,6 +100,7 @@ void Init() {
 	srand(time(0));
 	SDL_Init(SDL_INIT_EVERYTHING);
 	TTF_Init();
+	Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048);
 	IMG_Init(IMG_INIT_JPG | IMG_INIT_PNG);
 	gWindow = SDL_CreateWindow("minhquy", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
 	gRenderer = SDL_CreateRenderer(gWindow, -1, SDL_RENDERER_ACCELERATED);
@@ -103,6 +116,7 @@ void Close() {
 	SDL_Quit();
 	IMG_Quit();
 	TTF_Quit();
+	Mix_CloseAudio();
 }
 
 
@@ -110,8 +124,10 @@ int main(int argc, char* argv[]) {
 	Init();
 	loadResource();
 	
-	while (!isQuit) {
 
+	while (!isQuit) {
+		
+		Mix_PlayChannel(-1, backgroundMusic, 0);
 		background.render(gRenderer);
 
 		switch (gState) {
@@ -159,10 +175,10 @@ int main(int argc, char* argv[]) {
 			bot2.handleAction(gRenderer);
 			boss.handleAction(gRenderer);
 			
-			hero.handleState();
-			bot1.handleState();
-			bot2.handleState();
-			boss.handleState();
+			hero.handleState(gRenderer);
+			bot1.handleState(gRenderer);
+			bot2.handleState(gRenderer);
+			boss.handleState(gRenderer);
 		
 			handleColision();
 		

@@ -107,7 +107,7 @@ void Character::handleBulletMove() {
 	}
 }
 
-void Character::handleState() {
+void Character::handleState(SDL_Renderer* renderer) {
 
 	if (mHeart == 0 && mState != DESTROYED) {
 		mState = DESTROYED;

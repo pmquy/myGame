@@ -50,7 +50,7 @@ public:
 	}
 	
 
-	virtual void handleState() = 0;
+	virtual void handleState(SDL_Renderer*) = 0;
 	virtual void handleMove() = 0;
 	virtual void handleBulletMove() = 0;
 	virtual void render(SDL_Renderer* renderer, int i);
