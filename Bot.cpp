@@ -87,7 +87,7 @@ void Bot::fire(SDL_Renderer* renderer) {
 	
 	if (mType == SHIP1) {
 		Bullet* newBullet = new Bullet();
-		newBullet->loadImage(renderer, "Image_folder/laser.png");
+		newBullet->loadImage(renderer, "Image_folder/Airplane/Bullet/bullet2.png");
 		newBullet->setBulletType(BulletType::NGUOC);
 		newBullet->setIsMove(true);
 		newBullet->mIsAppear = false;
@@ -98,19 +98,19 @@ void Bot::fire(SDL_Renderer* renderer) {
 		Bullet* newBullet1 = new Bullet();
 		Bullet* newBullet2 = new Bullet();
 		Bullet* newBullet3 = new Bullet();
-		newBullet1->loadImage(renderer, "Image_folder/sphere.png");
+		newBullet1->loadImage(renderer, "Image_folder/Airplane/Bullet/bullet3.png");
 		newBullet1->setIsMove(true);
 		newBullet1->setBulletType(BulletType::CHEOLEN);
 		newBullet1->setRect(mRect.x, mRect.y + mRect.h / 2);
 		newBullet1->mIsAppear = false;
 
-		newBullet2->loadImage(renderer, "Image_folder/sphere.png");
+		newBullet2->loadImage(renderer, "Image_folder/Airplane/Bullet/bullet3.png");
 		newBullet2->setIsMove(true);
 		newBullet2->setBulletType(BulletType::NGUOC);
 		newBullet2->setRect(mRect.x, mRect.y + mRect.h / 2);
 		newBullet1->mIsAppear = false;
 
-		newBullet3->loadImage(renderer, "Image_folder/sphere.png");
+		newBullet3->loadImage(renderer, "Image_folder/Airplane/Bullet/bullet3.png");
 		newBullet3->setIsMove(true);
 		newBullet3->setBulletType(BulletType::CHEOXUONG);
 		newBullet3->setRect(mRect.x, mRect.y + mRect.h / 2);

@@ -18,19 +18,41 @@ void Character::handleAction(const SDL_Event &event, SDL_Renderer* renderer) {
 		switch (event.key.keysym.sym) {
 		case SDLK_UP:
 			mYVal = -3;
+			if (mState == NORMAL) {
+				mState = BOOSTING;
+			}
 			break;
 		case SDLK_DOWN:
 			mYVal = 3;
+			if (mState == NORMAL) {
+				mState = BOOSTING;
+			}
 			break;
 		case SDLK_RIGHT:
+			if (mState == NORMAL) {
+				mState = BOOSTING;
+			}
 			mXVal = 3;
 			break;
 		case SDLK_LEFT:
+			if (mState == NORMAL) {
+				mState = BOOSTING;
+			}
 			mXVal = -3;
 			break;
-		}
-		if (mState == NORMAL) {
-			mState = BOOSTING;
+		case SDLK_d:
+			if (mState == NORMAL) {
+				Bullet* newBullet = new Bullet();
+				newBullet->setRect(mRect.x + mRect.w, mRect.y + mRect.h / 2);
+				newBullet->setIsMove(true);
+				newBullet->mIsAppear = false;
+				newBullet->loadImage(renderer, "Image_folder/Airplane/Bullet/bullet1.png");
+				newBullet->setBulletType(BulletType::XUOI);
+				mBulletList.push_back(newBullet);
+				mCurrentFrame = 0;
+				mState = FIRING;
+			}
+			break;
 		}
 	}
 
@@ -38,43 +60,38 @@ void Character::handleAction(const SDL_Event &event, SDL_Renderer* renderer) {
 		switch (event.key.keysym.sym) {
 		case SDLK_UP:
 			mYVal = 0;
+			if (mState == BOOSTING) {
+				mCurrentFrame = 0;
+				mState = NORMAL;
+			}
 			break;
 		case SDLK_DOWN:
+			if (mState == BOOSTING) {
+				mCurrentFrame = 0;
+				mState = NORMAL;
+			}
 			mYVal = 0;
 			break;
 		case SDLK_RIGHT:
+			if (mState == BOOSTING) {
+				mCurrentFrame = 0;
+				mState = NORMAL;
+			}
 			mXVal = 0;
 			break;
 		case SDLK_LEFT:
+			if (mState == BOOSTING) {
+				mCurrentFrame = 0;
+				mState = NORMAL;
+			}
 			mXVal = 0;
 			break;
 		}
-		if (mState == BOOSTING) {
-			mCurrentFrame = 0;
-			mState = NORMAL;
-		}
+		
 
 	}
 	else if (event.type == SDL_MOUSEBUTTONDOWN) {
-		if (mState == NORMAL) {
-			Bullet *newBullet = new Bullet();
-			newBullet->setRect(mRect.x + mRect.w, mRect.y + mRect.h/2);
-			newBullet->setIsMove(true);
-			newBullet->mIsAppear = false;
 		
-			if (event.button.button == SDL_BUTTON_LEFT) {
-				newBullet->loadImage(renderer, "Image_folder/green.png");
-				newBullet->setBulletType(BulletType::XUOI);
-			}
-			else if (event.button.button == SDL_BUTTON_RIGHT) {
-				newBullet->loadImage(renderer, "Image_folder/sphere.png");
-				newBullet->setBulletType(BulletType::XOAY);
-			}
-
-			mBulletList.push_back(newBullet);
-			mCurrentFrame = 0;
-			mState = FIRING;
-		}
 	}
 	else if (event.type == SDL_MOUSEBUTTONUP) {
 

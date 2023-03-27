@@ -11,14 +11,13 @@ Background background;
 Character hero;
 Bot bot1;
 Bot bot2;
-Bot boss;
+Bot bot3;
 Text gScore;
 Text gCoin;
 
 
 
 void loadResource() {
-
 
 	background.loadImage(gRenderer, BACKGROUND_PATHS);
 	background.setRect(0, 0, 1200, 600);
@@ -37,10 +36,10 @@ void loadResource() {
 	bot2.setAttack(1);
 	bot2.setShipType(ShipType::SHIP1);
 
-	boss.loadImage(gRenderer, BOT3_PATHS);
-	boss.setAttack(5);
-	boss.setHeart(100);
-	boss.setShipType(ShipType::SHIP2);
+	bot3.loadImage(gRenderer, BOT3_PATHS);
+	bot3.setAttack(5);
+	bot3.setHeart(100);
+	bot3.setShipType(ShipType::SHIP2);
 	
 	gScore.setRect(0, 0);
 	gCoin.setRect(0, 100);
@@ -60,15 +59,13 @@ void handleColision() {
 			hero.getBulletList()[i]->setIsMove(false);
 			//Mix_PlayChannel(-1, collisionMusic, 0);
 		}
-
 		if (checkConllision(bot2, *hero.getBulletList()[i])) {
 			bot2.getDamage(hero.getAttack());
 			hero.getBulletList()[i]->setIsMove(false);
 			//Mix_PlayChannel(-1, collisionMusic, 0);
 		}
-		
-		if (checkConllision(boss, *hero.getBulletList()[i])) {
-			boss.getDamage(hero.getAttack());
+		if (checkConllision(bot3, *hero.getBulletList()[i])) {
+			bot3.getDamage(hero.getAttack());
 			hero.getBulletList()[i]->setIsMove(false);
 			//Mix_PlayChannel(-1, collisionMusic, 0);
 		}
@@ -87,10 +84,10 @@ void handleColision() {
 			//Mix_PlayChannel(-1, collisionMusic, 0);
 		}
 	}
-	for (int i = 0; i < int(boss.getBulletList().size()); i++) {
-		if (checkConllision(hero, *boss.getBulletList()[i])) {
-			hero.getDamage(boss.getAttack());
-			boss.getBulletList()[i]->setIsMove(false);
+	for (int i = 0; i < int(bot3.getBulletList().size()); i++) {
+		if (checkConllision(hero, *bot3.getBulletList()[i])) {
+			hero.getDamage(bot3.getAttack());
+			bot3.getBulletList()[i]->setIsMove(false);
 			//Mix_PlayChannel(-1, collisionMusic, 0);
 		}
 	}
@@ -112,7 +109,6 @@ void Close() {
 	gWindow = nullptr;
 	SDL_DestroyRenderer(gRenderer);
 	gRenderer = nullptr;
-
 	SDL_Quit();
 	IMG_Quit();
 	TTF_Quit();
@@ -123,7 +119,6 @@ void Close() {
 int main(int argc, char* argv[]) {
 	Init();
 	loadResource();
-	
 
 	while (!isQuit) {
 		
@@ -133,15 +128,12 @@ int main(int argc, char* argv[]) {
 		switch (gState) {
 
 		case START:
-			background.render(gRenderer);
 			while (SDL_PollEvent(&gEvent)) {
-
-				SDL_GetMouseState(&gMouse.first, &gMouse.second);
-				background.handleState(gState, gRenderer, gMouse, gEvent);
-
 				if (gEvent.type == SDL_QUIT) {
 					isQuit = true;
 				}
+				SDL_GetMouseState(&gMouse.first, &gMouse.second);
+				background.handleState(gState, gRenderer, gMouse, gEvent);
 			}
 			background.handleState(gState, gRenderer, gMouse, gEvent);
 			break;
@@ -165,34 +157,18 @@ int main(int argc, char* argv[]) {
 				hero.handleAction(gEvent, gRenderer);
 			}
 
-			background.handleMove();
-			hero.handleMove();
-			bot1.handleMove();
-			bot2.handleMove();
-			boss.handleMove();
-		
-			bot1.handleAction(gRenderer);
-			bot2.handleAction(gRenderer);
-			boss.handleAction(gRenderer);
-			
-			hero.handleState(gRenderer);
-			bot1.handleState(gRenderer);
-			bot2.handleState(gRenderer);
-			boss.handleState(gRenderer);
-		
 			handleColision();
+
+			background.handleMove(); hero.handleMove(); bot1.handleMove(); bot2.handleMove(); bot3.handleMove();
 		
-			hero.render(gRenderer, 1);
-			bot1.render(gRenderer, -1);
-			bot2.render(gRenderer, -1);
-			boss.render(gRenderer, -1);
+			bot1.handleAction(gRenderer); bot2.handleAction(gRenderer); bot3.handleAction(gRenderer);
+			
+			hero.handleState(gRenderer); bot1.handleState(gRenderer); bot2.handleState(gRenderer); bot3.handleState(gRenderer);
+		
+			hero.render(gRenderer, 1); bot1.render(gRenderer, -1); bot2.render(gRenderer, -1); bot3.render(gRenderer, -1);
 				
 			if (hero.checkIsDestroyed()) {
-				bot1.reborn();
-				bot2.reborn();
-				hero.reborn();
-				boss.reborn();
-				hero.reborn();
+				bot1.reborn(); bot2.reborn(); hero.reborn(); bot3.reborn(); hero.reborn();
 				gState = DEAD;
 			}
 
@@ -204,7 +180,7 @@ int main(int argc, char* argv[]) {
 				score++;
 				hero.setCoin(hero.getCoin() + 1);
 			}
-			if (boss.checkIsDestroyed()) {
+			if (bot3.checkIsDestroyed()) {
 				score+=2;
 				hero.setCoin(hero.getCoin() + 2);
 			}
@@ -215,7 +191,7 @@ int main(int argc, char* argv[]) {
 				bot1.reborn();
 				bot2.reborn();
 				hero.reborn();
-				boss.reborn();
+				bot3.reborn();
 			}
 
 			background.handleState(gState, gRenderer, gMouse, gEvent);

@@ -16,10 +16,12 @@ class BaseClass {
 		void free();
 
 		friend bool checkConllision(BaseClass& a, BaseClass& b) {
-			int x11 = a.getRect().x;
-			int y11 = a.getRect().y;
-			int x12 = a.getRect().x + a.getRect().w;
-			int y12 = a.getRect().y + a.getRect().h;
+			int x11 = a.getRect().x + 50;
+			int y11 = a.getRect().y + 50;
+			//int x12 = a.getRect().x + a.getRect().w;
+			//int y12 = a.getRect().y + a.getRect().h;
+			int x12 = x11 + 100;
+			int y12 = y11 + 100;
 			int x21 = b.getRect().x;
 			int y21 = b.getRect().y;
 			int x22 = b.getRect().x + b.getRect().w;
