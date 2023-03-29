@@ -1,7 +1,10 @@
 #include "Airplane.h"
 
 Airplane::Airplane() {
+	mMaxHeart = 100;
 	mHeart = 100;
+	mAmor = 0;
+	mAttack = 2;
 	mFireTime = mFrameTime = mMoveTime = 0;
 	mState = NORMAL;
 	mCurrentFrame = 0;
@@ -32,25 +35,20 @@ void Airplane::free() {
 
 
 void Airplane::renderHeart(SDL_Renderer *renderer) {
-
 	SDL_Rect rectBg = { mRect.x, mRect.y + mRect.h - 50, mRect.w, 5 };
 	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 0);
 	SDL_RenderFillRect(renderer, &rectBg);
-	
-	SDL_Rect rectHeart = { mRect.x, mRect.y + mRect.h - 50, mHeart * mRect.w / 100 , 5 };
+
+	SDL_Rect rectHeart = { mRect.x, mRect.y + mRect.h - 50, mHeart * mRect.w / mMaxHeart , 5 };
 	SDL_SetRenderDrawColor(renderer, 255, 0, 0, 0);
 	SDL_RenderFillRect(renderer, &rectHeart);
-
 }
 
 
 void Airplane::render(SDL_Renderer* renderer, int i) {
-
 	mTexture = mTextures[int(mState)];
-
 	SDL_Rect rect = { mCurrentFrame * mRect.w, 0, mRect.w, mRect.h };
 	BaseClass::render(renderer, &rect);
-
 	renderHeart(renderer);
 	renderBullet(renderer);
 
@@ -64,8 +62,6 @@ void Airplane::render(SDL_Renderer* renderer, int i) {
 		mCurrentFrame = mMaxFrames[int(mState)] - 1;
 	}
 }
-
-
 
 
 
@@ -84,29 +80,24 @@ void Airplane::renderBullet(SDL_Renderer* renderer) {
 }
 
 
-
-
-
 void Airplane::loadImage(SDL_Renderer* renderer, const std::vector<std::string>& listName) {
-	
 	for (int i = mTextures.size() - 1; i >= 0 ; i--) {
-		SDL_DestroyTexture(mTextures[i]);
-		mTextures[i] = nullptr;
+		if (mTextures[i] != nullptr) {
+			SDL_DestroyTexture(mTextures[i]);
+			mTextures[i] = nullptr;
+		}
 		mTextures.pop_back();
 		mMaxFrames.pop_back();
 	}
-
 
 	SDL_Surface* loadedSurface = nullptr;
 	for (int i = 0; i < int(listName.size()); i++) {
 		loadedSurface = IMG_Load(listName[i].c_str());
 		SDL_Texture* temp = SDL_CreateTextureFromSurface(renderer, loadedSurface);
-
 		if (i == 0) {
 			mRect.w = loadedSurface->w;
 			mRect.h = loadedSurface->h;
 		}
-
 		mTextures.push_back(temp);
 		mMaxFrames.push_back(loadedSurface->w / mRect.w);
 	}
@@ -125,7 +116,7 @@ void Airplane::reborn() {
 		mBulletList.erase(mBulletList.begin());
 	}
 
-	mHeart = 100;
+	mHeart = mMaxHeart;
 	mState = NORMAL;
 	mCurrentFrame = 0;
 }

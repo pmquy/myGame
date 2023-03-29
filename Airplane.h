@@ -12,10 +12,8 @@ enum State {
 	BOOSTING
 };
 
-
 class Airplane :public BaseClass {
 public:
-
 	Airplane();
 	~Airplane();
 
@@ -30,8 +28,14 @@ public:
 	int getHeart() {
 		return mHeart;
 	}
+	int getMaxHeart() {
+		return mMaxHeart;
+	}
 	void setHeart(int heart) {
 		mHeart = heart;
+	}
+	void setMaxHeart(int mh) {
+		mMaxHeart = mh;
 	}
 	int getAttack() {
 		return mAttack;
@@ -49,7 +53,6 @@ public:
 		return mBulletList;
 	}
 	
-
 	virtual void handleState(SDL_Renderer*) = 0;
 	virtual void handleMove() = 0;
 	virtual void handleBulletMove() = 0;
@@ -57,24 +60,17 @@ public:
 	virtual void reborn();
 
 	void free();
-
-
 	void loadImage(SDL_Renderer* renderer, const std::vector<std::string>& listName);
-	
 
 public:
 	void renderHeart(SDL_Renderer *renderer);
 	void renderBullet(SDL_Renderer *renderer);
-
-
 
 	std::vector<Bullet*> mBulletList;
 	std::vector<SDL_Texture*> mTextures;
 	std::vector<int> mMaxFrames;
 	
 	virtual bool checkIsDestroyed();
-
-
 
 	bool checkToMove(int);
 	bool checkToNextFrame(int);
@@ -87,9 +83,10 @@ public:
 	State mState;
 	int mCurrentFrame = 0;
 
-	int mHeart = 100;
-	int mAttack = 2;
-	int mAmor = 0;
+	int mHeart;
+	int mMaxHeart;
+	int mAttack;
+	int mAmor;
 };
 
 

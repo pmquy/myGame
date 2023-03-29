@@ -4,6 +4,8 @@ Bot::Bot() {
 	mRect.x = SCREEN_WIDTH;
 	mRect.y = rand() % 400;
 	mAttack = 1;
+	mMaxHeart = 100;
+	mHeart = 100;
 };
 
 Bot::~Bot() {
@@ -71,7 +73,6 @@ void Bot::handleState(SDL_Renderer* renderer) {
 			(*it)->mIsAppear = true;
 		}
 	}
-
 }
 
 
@@ -87,7 +88,8 @@ void Bot::fire(SDL_Renderer* renderer) {
 	
 	if (mType == SHIP1) {
 		Bullet* newBullet = new Bullet();
-		newBullet->loadImage(renderer, "Image_folder/Airplane/Bullet/bullet2.png");
+		std::string path = "Image_folder/Airplane/Bullet/bullet" + std::to_string(2 + rand()%3) + ".png";
+		newBullet->loadImage(renderer, path);
 		newBullet->setBulletType(BulletType::NGUOC);
 		newBullet->setIsMove(true);
 		newBullet->mIsAppear = false;
@@ -98,19 +100,19 @@ void Bot::fire(SDL_Renderer* renderer) {
 		Bullet* newBullet1 = new Bullet();
 		Bullet* newBullet2 = new Bullet();
 		Bullet* newBullet3 = new Bullet();
-		newBullet1->loadImage(renderer, "Image_folder/Airplane/Bullet/bullet3.png");
+		newBullet1->loadImage(renderer, "Image_folder/Airplane/Bullet/bullet1.png");
 		newBullet1->setIsMove(true);
 		newBullet1->setBulletType(BulletType::CHEOLEN);
 		newBullet1->setRect(mRect.x, mRect.y + mRect.h / 2);
 		newBullet1->mIsAppear = false;
 
-		newBullet2->loadImage(renderer, "Image_folder/Airplane/Bullet/bullet3.png");
+		newBullet2->loadImage(renderer, "Image_folder/Airplane/Bullet/bullet1.png");
 		newBullet2->setIsMove(true);
 		newBullet2->setBulletType(BulletType::NGUOC);
 		newBullet2->setRect(mRect.x, mRect.y + mRect.h / 2);
 		newBullet1->mIsAppear = false;
 
-		newBullet3->loadImage(renderer, "Image_folder/Airplane/Bullet/bullet3.png");
+		newBullet3->loadImage(renderer, "Image_folder/Airplane/Bullet/bullet1.png");
 		newBullet3->setIsMove(true);
 		newBullet3->setBulletType(BulletType::CHEOXUONG);
 		newBullet3->setRect(mRect.x, mRect.y + mRect.h / 2);

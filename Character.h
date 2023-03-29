@@ -9,7 +9,6 @@ public:
 	void handleAction(const SDL_Event &event, SDL_Renderer* renderer);
 	void handleMove();
 	void handleState(SDL_Renderer*);
-
 	bool checkIsDestroyed() {
 		return mHeart == 0 && mCurrentFrame == mMaxFrames[int(DESTROYED)] - 1 && mState == DESTROYED;
 	}

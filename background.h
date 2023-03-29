@@ -10,7 +10,8 @@ enum BackgroundType {
 	LEVEL_2,
 	DEAD,
 	SHOP,
-	VICTORY
+	VICTORY,
+	UPGRADE
 };
 
 

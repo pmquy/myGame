@@ -3,9 +3,10 @@
 Character::Character() {
 	mXVal = 0;
 	mYVal = 0;
-	mHeart = 100;
-	mAttack = 3;
-	mCoin = 0;
+	mMaxHeart = 50;
+	mHeart = 50;
+	mAttack = 5;
+	mCoin = 1000;
 }
 
 Character::~Character() {

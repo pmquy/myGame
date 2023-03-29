@@ -18,27 +18,22 @@ Text gCoin;
 
 
 void loadResource() {
-
 	background.loadImage(gRenderer, BACKGROUND_PATHS);
 	background.setRect(0, 0, 1200, 600);
 
 	hero.loadImage(gRenderer, HERO_PATHS1);
 	hero.setRect(0, 200);
-	hero.setAttack(20);
 	
 	bot1.loadImage(gRenderer, BOT1_PATHS);
 	bot1.setRect(SCREEN_WIDTH, 100);
-	bot1.setAttack(1);
 	bot1.setShipType(ShipType::SHIP1);
 
 	bot2.loadImage(gRenderer, BOT2_PATHS);
 	bot2.setRect(SCREEN_WIDTH, 300);
-	bot2.setAttack(1);
 	bot2.setShipType(ShipType::SHIP1);
 
 	bot3.loadImage(gRenderer, BOT3_PATHS);
 	bot3.setAttack(5);
-	bot3.setHeart(100);
 	bot3.setShipType(ShipType::SHIP2);
 	
 	gScore.setRect(0, 0);
@@ -46,13 +41,11 @@ void loadResource() {
 
 	collisionMusic = Mix_LoadWAV("Music_Folder/music1.wav");
 	backgroundMusic = Mix_LoadWAV("Music_Folder/music2.wav");
-
 }
 
 
 
 void handleColision() {
-
 	for (int i = 0; i < int(hero.getBulletList().size()); i++) {
 		if (checkConllision(bot1, *hero.getBulletList()[i])) {
 			bot1.getDamage(hero.getAttack());
@@ -115,32 +108,39 @@ void Close() {
 	Mix_CloseAudio();
 }
 
-
 int main(int argc, char* argv[]) {
 	Init();
 	loadResource();
 
 	while (!isQuit) {
-		
-		Mix_PlayChannel(-1, backgroundMusic, 0);
+		//Mix_PlayChannel(-1, backgroundMusic, 0);
 		background.render(gRenderer);
+		background.handleState(gState, gRenderer, gMouse, gEvent, &hero);
 
 		switch (gState) {
-
+		
+		case UPGRADE:
 		case START:
+		case DEAD:
+		case SHOP:
+		case VICTORY:
 			while (SDL_PollEvent(&gEvent)) {
 				if (gEvent.type == SDL_QUIT) {
 					isQuit = true;
 				}
+				background.handleState(gState, gRenderer, gMouse, gEvent, &hero);
 				SDL_GetMouseState(&gMouse.first, &gMouse.second);
-				background.handleState(gState, gRenderer, gMouse, gEvent);
 			}
-			background.handleState(gState, gRenderer, gMouse, gEvent);
+			
 			break;
-
 		case LEVEL_1:
 		case LEVEL_2:
-			
+			while (SDL_PollEvent(&gEvent)) {
+				if (gEvent.type == SDL_QUIT) {
+					isQuit = true;
+				}
+				hero.handleAction(gEvent, gRenderer);
+			}
 			gScore.loadNumber(gRenderer, score, "Score");
 			gScore.setRect(0, 0);
 			gScore.render(gRenderer);
@@ -148,14 +148,6 @@ int main(int argc, char* argv[]) {
 			gCoin.loadNumber(gRenderer, hero.getCoin(), "Coin");
 			gCoin.setRect(0, 100);
 			gCoin.render(gRenderer);
-
-
-			while (SDL_PollEvent(&gEvent)) {
-				if (gEvent.type == SDL_QUIT) {
-					isQuit = true;
-				}
-				hero.handleAction(gEvent, gRenderer);
-			}
 
 			handleColision();
 
@@ -171,7 +163,6 @@ int main(int argc, char* argv[]) {
 				bot1.reborn(); bot2.reborn(); hero.reborn(); bot3.reborn(); hero.reborn();
 				gState = DEAD;
 			}
-
 			if (bot1.checkIsDestroyed()) {
 				score++;
 				hero.setCoin(hero.getCoin() + 1);
@@ -184,56 +175,15 @@ int main(int argc, char* argv[]) {
 				score+=2;
 				hero.setCoin(hero.getCoin() + 2);
 			}
-
 			if (score >= 4) {
 				gState = VICTORY;
 				score = 0;
-				bot1.reborn();
-				bot2.reborn();
-				hero.reborn();
-				bot3.reborn();
+				bot1.reborn(); bot2.reborn(); hero.reborn(); bot3.reborn();
 			}
-
-			background.handleState(gState, gRenderer, gMouse, gEvent);
-			break;
-
-		case DEAD:
-			while (SDL_PollEvent(&gEvent)) {
-				SDL_GetMouseState(&gMouse.first, &gMouse.second);
-				if (gEvent.type == SDL_QUIT) {
-					isQuit = true;
-				}
-				background.handleState(gState, gRenderer, gMouse, gEvent);
-			}
-			background.handleState(gState, gRenderer, gMouse, gEvent);
-			break;
-
-		case SHOP:
-			while (SDL_PollEvent(&gEvent)) {
-				SDL_GetMouseState(&gMouse.first, &gMouse.second);
-				if (gEvent.type == SDL_QUIT) {
-					isQuit = true;
-				}
-				background.handleState(gState, gRenderer, gMouse, gEvent, &hero);
-			}
-			background.handleState(gState, gRenderer, gMouse, gEvent, &hero);
-			break;
-
-		case VICTORY:
-			while (SDL_PollEvent(&gEvent)) {
-				SDL_GetMouseState(&gMouse.first, &gMouse.second);
-				if (gEvent.type == SDL_QUIT) {
-					isQuit = true;
-				}
-				background.handleState(gState, gRenderer, gMouse, gEvent);
-			}
-			background.handleState(gState, gRenderer, gMouse, gEvent);
 			break;
 		}
-		
 		SDL_RenderPresent(gRenderer);
 	}
-
 	Close();
 	return 0;
 }

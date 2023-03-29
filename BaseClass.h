@@ -14,7 +14,6 @@ class BaseClass {
 		virtual void loadImage(SDL_Renderer* renderer, std::string path);
 		virtual void render(SDL_Renderer* renderer, const SDL_Rect *clip = nullptr);
 		void free();
-
 		friend bool checkConllision(BaseClass& a, BaseClass& b) {
 			int x11 = a.getRect().x + 50;
 			int y11 = a.getRect().y + 50;
@@ -29,7 +28,6 @@ class BaseClass {
 			if (x12 < x21 || x22 < x11 || y11 > y22 || y12 < y21) return false;
 			return true;
 		}
-
 	protected:
 		SDL_Texture* mTexture;
 		SDL_Rect mRect;
