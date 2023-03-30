@@ -19,17 +19,13 @@ Text gCoin;
 
 void loadResource() {
 	background.loadImage(gRenderer, BACKGROUND_PATHS);
-	background.setRect(0, 0, 1200, 600);
-
+	
 	hero.loadImage(gRenderer, HERO_PATHS1);
-	hero.setRect(0, 200);
 	
 	bot1.loadImage(gRenderer, BOT1_PATHS);
-	bot1.setRect(SCREEN_WIDTH, 100);
 	bot1.setShipType(ShipType::SHIP1);
 
 	bot2.loadImage(gRenderer, BOT2_PATHS);
-	bot2.setRect(SCREEN_WIDTH, 300);
 	bot2.setShipType(ShipType::SHIP1);
 
 	bot3.loadImage(gRenderer, BOT3_PATHS);
@@ -37,10 +33,11 @@ void loadResource() {
 	bot3.setShipType(ShipType::SHIP2);
 	
 	gScore.setRect(0, 0);
-	gCoin.setRect(0, 100);
+	gCoin.setRect(0, 50);
 
 	collisionMusic = Mix_LoadWAV("Music_Folder/music1.wav");
 	backgroundMusic = Mix_LoadWAV("Music_Folder/music2.wav");
+	
 }
 
 
@@ -84,6 +81,18 @@ void handleColision() {
 			//Mix_PlayChannel(-1, collisionMusic, 0);
 		}
 	}
+	if (checkConllision(hero, bot1) && bot1.getHeart() != 0) {
+		hero.getDamage(10);
+		bot1.getDamage(1000);
+	}
+	if (checkConllision(hero, bot2) && bot2.getHeart() != 0) {
+		hero.getDamage(10);
+		bot2.getDamage(1000);
+	}
+	if (checkConllision(hero, bot3) && bot3.getHeart() != 0) {
+		hero.getDamage(10);
+		bot3.getDamage(1000);
+	}
 }
 
 void Init() {
@@ -108,6 +117,7 @@ void Close() {
 	Mix_CloseAudio();
 }
 
+
 int main(int argc, char* argv[]) {
 	Init();
 	loadResource();
@@ -116,22 +126,28 @@ int main(int argc, char* argv[]) {
 		//Mix_PlayChannel(-1, backgroundMusic, 0);
 		background.render(gRenderer);
 		background.handleState(gState, gRenderer, gMouse, gEvent, &hero);
+		
+		while (SDL_PollEvent(&gEvent)) {
+			if (gEvent.type == SDL_QUIT) {
+				isQuit = true;
+			}
+			background.handleState(gState, gRenderer, gMouse, gEvent, &hero);
+			SDL_GetMouseState(&gMouse.first, &gMouse.second);
+			if (gState == LEVEL_1 || gState == LEVEL_2) {
+				hero.handleAction(gEvent, gRenderer);
+			}
+		}
 
 		switch (gState) {
 		
 		case UPGRADE:
+		case SHOP:
+			gCoin.loadNumber(gRenderer, hero.getCoin(), "Coin");
+			gCoin.render(gRenderer);
+			break;
 		case START:
 		case DEAD:
-		case SHOP:
 		case VICTORY:
-			while (SDL_PollEvent(&gEvent)) {
-				if (gEvent.type == SDL_QUIT) {
-					isQuit = true;
-				}
-				background.handleState(gState, gRenderer, gMouse, gEvent, &hero);
-				SDL_GetMouseState(&gMouse.first, &gMouse.second);
-			}
-			
 			break;
 		case LEVEL_1:
 		case LEVEL_2:
@@ -139,14 +155,11 @@ int main(int argc, char* argv[]) {
 				if (gEvent.type == SDL_QUIT) {
 					isQuit = true;
 				}
-				hero.handleAction(gEvent, gRenderer);
 			}
 			gScore.loadNumber(gRenderer, score, "Score");
-			gScore.setRect(0, 0);
 			gScore.render(gRenderer);
-			
+
 			gCoin.loadNumber(gRenderer, hero.getCoin(), "Coin");
-			gCoin.setRect(0, 100);
 			gCoin.render(gRenderer);
 
 			handleColision();
@@ -187,3 +200,4 @@ int main(int argc, char* argv[]) {
 	Close();
 	return 0;
 }
+

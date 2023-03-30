@@ -6,7 +6,9 @@ Character::Character() {
 	mMaxHeart = 50;
 	mHeart = 50;
 	mAttack = 5;
-	mCoin = 1000;
+	mCoin = 20;
+	mRect.x = 0;
+	mRect.y = 200;
 }
 
 Character::~Character() {
@@ -18,13 +20,13 @@ void Character::handleAction(const SDL_Event &event, SDL_Renderer* renderer) {
 	if (event.type == SDL_KEYDOWN) {
 		switch (event.key.keysym.sym) {
 		case SDLK_UP:
-			mYVal = -3;
+			mYVal = -2;
 			if (mState == NORMAL) {
 				mState = BOOSTING;
 			}
 			break;
 		case SDLK_DOWN:
-			mYVal = 3;
+			mYVal = 2;
 			if (mState == NORMAL) {
 				mState = BOOSTING;
 			}
@@ -33,13 +35,13 @@ void Character::handleAction(const SDL_Event &event, SDL_Renderer* renderer) {
 			if (mState == NORMAL) {
 				mState = BOOSTING;
 			}
-			mXVal = 3;
+			mXVal = 2;
 			break;
 		case SDLK_LEFT:
 			if (mState == NORMAL) {
 				mState = BOOSTING;
 			}
-			mXVal = -3;
+			mXVal = -2;
 			break;
 		case SDLK_d:
 			if (mState == NORMAL) {

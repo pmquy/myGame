@@ -5,7 +5,9 @@
 
 Background::Background() {
 	startTime = 0;
-	mRect.x = mRect.y = mRect.w = mRect.h = 0;
+	mRect.x = mRect.y = 0;
+	mRect.w = SCREEN_WIDTH;
+	mRect.h = SCREEN_HEIGHT;
 	mState = START;
 }
 
@@ -117,7 +119,10 @@ void Background::handleState(BackgroundType &s, SDL_Renderer* renderer, std::pai
 	case SHOP:
 		if (mouse.first >= 550 && mouse.first <= 650 && mouse.second >= 240 && mouse.second <= 290) {
 			if (event.type == SDL_MOUSEBUTTONDOWN) {
-				hero->loadImage(renderer, HERO_PATHS3);
+				if (hero->getCoin() >= 10) {
+					hero->setCoin(hero->getCoin() - 10);
+					hero->loadImage(renderer, HERO_PATHS3);
+				}
 			}
 			SDL_Rect rect = { 550, 240, 100, 50 };
 			SDL_SetRenderDrawColor(renderer, 0, 253, 253, 150);
@@ -128,7 +133,10 @@ void Background::handleState(BackgroundType &s, SDL_Renderer* renderer, std::pai
 		}
 		else if (mouse.first >= 230 && mouse.first <= 330 && mouse.second >= 240 && mouse.second <= 290) {
 			if (event.type == SDL_MOUSEBUTTONDOWN) {
-				hero->loadImage(renderer, HERO_PATHS1);
+				if (hero->getCoin() >= 10) {
+					hero->setCoin(hero->getCoin() - 10);
+					hero->loadImage(renderer, HERO_PATHS1);
+				}
 			}
 			SDL_Rect rect = { 230, 240, 100, 50 };
 			SDL_SetRenderDrawColor(renderer, 0, 253, 253, 150);
@@ -139,7 +147,10 @@ void Background::handleState(BackgroundType &s, SDL_Renderer* renderer, std::pai
 		}
 		else if (mouse.first >= 860 && mouse.first <= 960 && mouse.second >= 240 && mouse.second <= 290) {
 			if (event.type == SDL_MOUSEBUTTONDOWN) {
-				hero->loadImage(renderer, HERO_PATHS2);
+				if (hero->getCoin() >= 10) {
+					hero->setCoin(hero->getCoin() - 10);
+					hero->loadImage(renderer, HERO_PATHS2);
+				}
 			}
 			SDL_Rect rect = { 860, 240, 100, 50 };
 			SDL_SetRenderDrawColor(renderer, 0, 253, 253, 150);
@@ -209,40 +220,40 @@ void Background::handleState(BackgroundType &s, SDL_Renderer* renderer, std::pai
 			SDL_RenderFillRect(renderer, &rect);
 			SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_NONE);
 		}
-		else if (mouse.first >= 1030 && mouse.first <= 1080 && mouse.second >= 130 && mouse.second <= 180) {
+		else if (mouse.first >= 1030 && mouse.first <= 1090 && mouse.second >= 130 && mouse.second <= 180) {
 			if (event.type == SDL_MOUSEBUTTONDOWN) {
 				if (hero->getCoin() >= 10 && hero->getMaxHeart() < 110) {
 					hero->setCoin(hero->getCoin() - 10);
 					hero->setMaxHeart(hero->getMaxHeart() + 10);
 				}
 			}
-			SDL_Rect rect = { 1030, 130, 50, 50 };
+			SDL_Rect rect = { 1030, 130, 60, 50 };
 			SDL_SetRenderDrawColor(renderer, 0, 253, 253, 150);
 			SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
 			SDL_RenderFillRect(renderer, &rect);
 			SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_NONE);
 		}
-		else if (mouse.first >= 1030 && mouse.first <= 1080 && mouse.second >= 210 && mouse.second <= 260) {
+		else if (mouse.first >= 1030 && mouse.first <= 1090 && mouse.second >= 210 && mouse.second <= 260) {
 			if (event.type == SDL_MOUSEBUTTONDOWN) {
 				if (hero->getCoin() >= 10 && hero->getAmor() < 6) {
 					hero->setCoin(hero->getCoin() - 10);
 					hero->setAmor(hero->getAmor() + 1);
 				}
 			}
-			SDL_Rect rect = { 1030, 210, 50, 50 };
+			SDL_Rect rect = { 1030, 210, 60, 50 };
 			SDL_SetRenderDrawColor(renderer, 0, 253, 253, 150);
 			SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
 			SDL_RenderFillRect(renderer, &rect);
 			SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_NONE);
 		}
-		else if (mouse.first >= 1030 && mouse.first <= 1080 && mouse.second >= 290 && mouse.second <= 340) {
+		else if (mouse.first >= 1030 && mouse.first <= 1090 && mouse.second >= 290 && mouse.second <= 340) {
 			if (event.type == SDL_MOUSEBUTTONDOWN) {
 				if (hero->getCoin() >= 10 && hero->getAttack() < 35) {
 					hero->setCoin(hero->getCoin() - 10);
 					hero->setAttack(hero->getAttack() + 5);
 				}
 			}
-			SDL_Rect rect = { 1030, 290, 50, 50 };
+			SDL_Rect rect = { 1030, 290, 60, 50 };
 			SDL_SetRenderDrawColor(renderer, 0, 253, 253, 150);
 			SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
 			SDL_RenderFillRect(renderer, &rect);

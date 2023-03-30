@@ -1,7 +1,7 @@
 #include "Bot.h"
 
 Bot::Bot() {
-	mRect.x = SCREEN_WIDTH;
+	mRect.x = SCREEN_WIDTH + rand() % 400;
 	mRect.y = rand() % 400;
 	mAttack = 1;
 	mMaxHeart = 100;

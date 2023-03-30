@@ -10,7 +10,6 @@ Text::~Text() {
 
 void Text::loadText(SDL_Renderer* renderer, std::string content) {
 	free();
-
 	TTF_Font *font = TTF_OpenFont("Font_folder/Font2.ttf", 24);
 	SDL_Surface* textSurface = TTF_RenderText_Solid(font, content.c_str(), gTextColor);
 	mRect.w = textSurface->w;

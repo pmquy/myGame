@@ -10,7 +10,6 @@ class Text : public BaseClass {
 		void loadNumber(SDL_Renderer* renderer, int, std::string);
 	private:
 		
-
 };
 
 #endif

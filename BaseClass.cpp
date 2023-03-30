@@ -39,7 +39,7 @@ void BaseClass::free() {
 	if (mTexture != nullptr) {
 		SDL_DestroyTexture(mTexture);
 		mTexture = nullptr;
-		mRect.x = mRect.y = mRect.w = mRect.h = 0;
+		mRect.w = mRect.h = 0;
 	}
 }
 
