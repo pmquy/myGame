@@ -26,7 +26,7 @@ void Bot::handleMove() {
 
 void Bot::handleBulletMove() {
 	for (int i = 0; i < mBulletList.size(); i++) {
-		if (mBulletList[i]->mIsAppear != false) {
+		if (mBulletList[i]->getIsMove()) {
 			mBulletList[i]->handleMove();
 		}
 	}
@@ -43,13 +43,6 @@ void Bot::handleState(SDL_Renderer* renderer) {
 	if (mHeart == 0 && mState != DESTROYED) {
 		mState = DESTROYED;
 		mCurrentFrame = mMaxFrames[int(mState)] - 1;
-
-		while (!mBulletList.empty()) {
-			mBulletList[0]->free();
-			delete mBulletList[0];
-			mBulletList[0] = nullptr;
-			mBulletList.erase(mBulletList.begin());
-		}
 	}
 
 	if (mRect.x <= 0 || checkIsDestroyed()) {
@@ -70,7 +63,7 @@ void Bot::handleState(SDL_Renderer* renderer) {
 		mState = NORMAL;
 		mCurrentFrame = mMaxFrames[int(mState)] - 1;
 		for (auto it = mBulletList.end() - 1; it != mBulletList.begin(); it--) {
-			(*it)->mIsAppear = true;
+			(*it)->setIsMove(true);
 		}
 	}
 }
@@ -91,8 +84,6 @@ void Bot::fire(SDL_Renderer* renderer) {
 		std::string path = "Image_folder/Airplane/Bullet/bullet" + std::to_string(2 + rand()%3) + ".png";
 		newBullet->loadImage(renderer, path);
 		newBullet->setBulletType(BulletType::NGUOC);
-		newBullet->setIsMove(true);
-		newBullet->mIsAppear = false;
 		newBullet->setRect(mRect.x, mRect.y + mRect.h/2);
 		mBulletList.push_back(newBullet);
 	}
@@ -101,22 +92,16 @@ void Bot::fire(SDL_Renderer* renderer) {
 		Bullet* newBullet2 = new Bullet();
 		Bullet* newBullet3 = new Bullet();
 		newBullet1->loadImage(renderer, "Image_folder/Airplane/Bullet/bullet1.png");
-		newBullet1->setIsMove(true);
 		newBullet1->setBulletType(BulletType::CHEOLEN);
 		newBullet1->setRect(mRect.x, mRect.y + mRect.h / 2);
-		newBullet1->mIsAppear = false;
 
 		newBullet2->loadImage(renderer, "Image_folder/Airplane/Bullet/bullet1.png");
-		newBullet2->setIsMove(true);
 		newBullet2->setBulletType(BulletType::NGUOC);
 		newBullet2->setRect(mRect.x, mRect.y + mRect.h / 2);
-		newBullet1->mIsAppear = false;
 
 		newBullet3->loadImage(renderer, "Image_folder/Airplane/Bullet/bullet1.png");
-		newBullet3->setIsMove(true);
 		newBullet3->setBulletType(BulletType::CHEOXUONG);
 		newBullet3->setRect(mRect.x, mRect.y + mRect.h / 2);
-		newBullet3->mIsAppear = false;
 
 		mBulletList.push_back(newBullet1);
 		mBulletList.push_back(newBullet2);

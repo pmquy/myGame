@@ -50,3 +50,12 @@ SDL_Rect BaseClass::getRect() {
 SDL_Texture* BaseClass::getTexture() {
 	return mTexture;
 }
+
+bool BaseClass::checkToMove(int t) {
+	UINT64 now = SDL_GetTicks64();
+	if (int(now - mMoveTime) >= t) {
+		mMoveTime = now;
+		return true;
+	}
+	return false;
+}

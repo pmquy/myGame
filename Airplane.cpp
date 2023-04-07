@@ -8,6 +8,7 @@ Airplane::Airplane() {
 	mFireTime = mFrameTime = mMoveTime = 0;
 	mState = NORMAL;
 	mCurrentFrame = 0;
+	mIsAppear = true;
 }
 
 Airplane::~Airplane() {
@@ -67,13 +68,13 @@ void Airplane::render(SDL_Renderer* renderer, int i) {
 
 void Airplane::renderBullet(SDL_Renderer* renderer) {
 	for (int i = 0; i < int(mBulletList.size()); i++) {
-		if (mBulletList[i]->getIsMove() == false) {
+		if (mBulletList[i]->getIsAppear() == false) {
 			mBulletList[i]->free();
 			delete mBulletList[i];
 			mBulletList[i] = nullptr;
 			mBulletList.erase(mBulletList.begin() + i);
 		}
-		else if (mState != DESTROYED && mBulletList[i]->mIsAppear == true) {
+		else if (mState != DESTROYED && mBulletList[i]->getIsMove() == true) {
 			mBulletList[i]->render(renderer);
 		}
 	}
@@ -129,7 +130,6 @@ bool Airplane::checkIsDestroyed() {
 
 
 
-
 bool Airplane::checkToFire(int t) {
 	if (SDL_GetTicks64() - mFireTime >= t) {
 		mFireTime = SDL_GetTicks64();
@@ -138,14 +138,6 @@ bool Airplane::checkToFire(int t) {
 	return false;
 }
 
-bool Airplane::checkToMove(int t) {
-	UINT64 now = SDL_GetTicks64();
-	if (int(now - mMoveTime) >= t) {
-		mMoveTime = now;
-		return true;
-	}
-	return false;
-}
 
 bool Airplane::checkToNextFrame(int t) {
 	UINT64 now = SDL_GetTicks64();

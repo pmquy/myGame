@@ -1,7 +1,9 @@
 #include "Bullet.h"
 
 Bullet::Bullet() {
-	mIsMove = true;
+	mIsMove = false;
+	mIsAppear = true;
+	mBulletType = XUOI;
 };
 
 
@@ -36,10 +38,10 @@ void Bullet::handleMove() {
 			mRect.x += 5;
 			mRect.y += 3 - rand() % 7;
 		}
-
 	}
+
 	if (mRect.x <= 0 || mRect.x >= 1200 || mRect.y <= 0 || mRect.y >= 600) {
-		mIsMove = false;
+		mIsAppear = false;
 	}
 }
 void Bullet::setIsMove(bool state) {

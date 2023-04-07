@@ -1,7 +1,7 @@
 #ifndef  BULLET_H_
 #define BULLET_H_
 #include "BaseClass.h"
-
+#include <math.h>
 enum BulletType {
 	XUOI,
 	NGUOC,
@@ -21,9 +21,16 @@ public:
 	BulletType getBulletType();
 	void setBulletType(const BulletType&);
 	
-	bool mIsAppear = true;
+	bool getIsAppear() {
+		return mIsAppear;
+	}
+	void setIsAppear(bool t) {
+		mIsAppear = t;
+	}
+
 private:
-	bool mIsMove = true;
+	bool mIsAppear;
+	bool mIsMove;
 	BulletType mBulletType;
 };
 

@@ -8,10 +8,13 @@ enum BackgroundType {
 	START,
 	LEVEL_1,
 	LEVEL_2,
+	LEVEL_3,
+	LEVEL_4,
+	LEVEL_5,
 	DEAD,
 	SHOP,
 	VICTORY,
-	UPGRADE
+	UPGRADE,
 };
 
 
@@ -22,7 +25,7 @@ public:
 	~Background();
 	void handleMove();
 	void render(SDL_Renderer* renderer, const SDL_Rect* clip = nullptr);
-	void handleState(BackgroundType &, SDL_Renderer*, std::pair<int, int>&, SDL_Event &, Character* = nullptr);
+	void handleState(SDL_Renderer*, std::pair<int, int>&, SDL_Event &, Character*, BackgroundType&);
 	void loadImage(SDL_Renderer* renderer, const std::vector<std::string> &listName);
 
 	BackgroundType getState() {
@@ -34,7 +37,6 @@ public:
 
 private:
 	BackgroundType mState;
-	UINT32 startTime;
 	std::vector<SDL_Texture*> mTextures;
 };
 
