@@ -22,7 +22,7 @@ static SDL_Event gEvent;
 static SDL_Color gTextColor = { 255, 100, 100 };
 static TTF_Font* gFont = nullptr;
 
-static Mix_Music* backgroundMusic = nullptr;
+static Mix_Music* gameMusic = nullptr;
 static Mix_Chunk* bonk = nullptr;
 
 
@@ -36,7 +36,7 @@ static std::vector<std::string> BOT1_PATHS = { "Image_Folder/Airplane/Bot/Bomber
 static std::vector<std::string> BOT2_PATHS = { "Image_Folder/Airplane/Bot/Fighter/Idle.png", "Image_Folder/Airplane/Bot/Fighter/Destroyed.png", "Image_Folder/Airplane/Bot/Fighter/Attack_1.png" };
 static std::vector<std::string> BOT3_PATHS = { "Image_Folder/Airplane/Bot/Corvette/Idle.png", "Image_Folder/Airplane/Bot/Corvette/Destroyed.png", "Image_Folder/Airplane/Bot/Corvette/Attack_1.png" };
 
-static std::vector<std::string> BACKGROUND_PATHS = { "Image_Folder/Background/Start.png", "Image_Folder/Background/Level_1.png", "Image_Folder/Background/Level_2.png", "Image_Folder/Background/Level_3.png", "Image_Folder/Background/Level_4.png", "Image_Folder/Background/Level_5.png", "Image_Folder/Background/Lose.png", "Image_Folder/Background/Shop.png", "Image_Folder/Background/Victory.png", "Image_Folder/Background/Upgrade.png" };
+static std::vector<std::string> GAME_PATHS = { "Image_Folder/Background/Start.png", "Image_Folder/Background/Level_1.png", "Image_Folder/Background/Level_2.png", "Image_Folder/Background/Level_3.png", "Image_Folder/Background/Level_4.png", "Image_Folder/Background/Level_5.png", "Image_Folder/Background/Lose.png", "Image_Folder/Background/Shop.png", "Image_Folder/Background/Victory.png", "Image_Folder/Background/Upgrade.png" };
 
 
 

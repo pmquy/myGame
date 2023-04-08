@@ -20,7 +20,7 @@ public:
 	bool checkIsDestroyed() {
 		return mHeart == 0 && mCurrentFrame == 0 && mState == DESTROYED;
 	}
-	void reborn();
+	void reborn(SDL_Renderer*);
 
 	void setShipType(const ShipType& t) {
 		mType = t;

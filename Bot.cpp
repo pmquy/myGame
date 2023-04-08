@@ -1,9 +1,9 @@
 #include "Bot.h"
 
 Bot::Bot() {
-	mRect.x = SCREEN_WIDTH + rand() % 400;
-	mRect.y = rand() % 400;
-	mAttack = 1;
+	mRect.x = SCREEN_WIDTH + rand() % 1000;
+	mRect.y = rand() % 500;
+	mAttack = 2;
 	mMaxHeart = 100;
 	mHeart = 100;
 };
@@ -33,8 +33,27 @@ void Bot::handleBulletMove() {
 }
 
 
-void Bot::reborn() {
+void Bot::reborn(SDL_Renderer* renderer) {
 	Airplane::reborn();
+	int t = rand() % 2;
+	if (t == 0) {
+		this->loadImage(renderer, BOT1_PATHS);
+		this->setShipType(ShipType::SHIP1);
+	}
+	else if (t == 1) {
+		this->loadImage(gRenderer, BOT2_PATHS);
+		this->setShipType(ShipType::SHIP2);
+	}
+	t = rand() % 3;
+	if (t == 0) {
+		loadImage(renderer, BOT1_PATHS);
+	}
+	else if (t == 1) {
+		loadImage(renderer, BOT2_PATHS);
+	}
+	else {
+		loadImage(renderer, BOT3_PATHS);
+	}
 	setRect(SCREEN_WIDTH + rand() % 400, rand() % 400);
 }
 
@@ -46,24 +65,14 @@ void Bot::handleState(SDL_Renderer* renderer) {
 	}
 
 	if (mRect.x <= 0 || checkIsDestroyed()) {
-		reborn();
-		int t = rand() % 3;
-		if (t == 0) {
-			loadImage(renderer, BOT1_PATHS);
-		}
-		else if (t == 1) {
-			loadImage(renderer, BOT2_PATHS);
-		}
-		else {
-			loadImage(renderer, BOT3_PATHS);
-		}
+		reborn(renderer);
 	}
 
 	if (mState == FIRING && mCurrentFrame == 0) {
 		mState = NORMAL;
 		mCurrentFrame = mMaxFrames[int(mState)] - 1;
-		for (auto it = mBulletList.end() - 1; it != mBulletList.begin(); it--) {
-			(*it)->setIsMove(true);
+		for (int i = 0; i < int(mBulletList.size()); i++) {
+			mBulletList[i]->setIsMove(true);
 		}
 	}
 }

@@ -3,6 +3,7 @@
 
 #include "BaseClass.h"
 #include "Character.h"
+#include "Bot.h"
 
 enum BackgroundType {
 	START,
@@ -25,8 +26,9 @@ public:
 	~Background();
 	void handleMove();
 	void render(SDL_Renderer* renderer, const SDL_Rect* clip = nullptr);
-	void handleState(SDL_Renderer*, std::pair<int, int>&, SDL_Event &, Character*, BackgroundType&);
+	void handleState(SDL_Renderer*, std::pair<int, int>&, SDL_Event&, Character*, BackgroundType&, std::vector<Bot*>&);
 	void loadImage(SDL_Renderer* renderer, const std::vector<std::string> &listName);
+	void handleLogic(SDL_Renderer*, Character*, std::vector<Bot*>&);
 
 	BackgroundType getState() {
 		return mState;

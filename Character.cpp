@@ -88,37 +88,11 @@ void Character::handleAction(const SDL_Event &event, SDL_Renderer* renderer) {
 	}
 
 	else if (event.type == SDL_KEYUP) {
-		switch (event.key.keysym.sym) {
-		case SDLK_UP:
-			mYVal = 0;
-			if (mState == BOOSTING) {
-				mCurrentFrame = 0;
-				mState = NORMAL;
-			}
-			break;
-		case SDLK_DOWN:
-			if (mState == BOOSTING) {
-				mCurrentFrame = 0;
-				mState = NORMAL;
-			}
-			mYVal = 0;
-			break;
-		case SDLK_RIGHT:
-			if (mState == BOOSTING) {
-				mCurrentFrame = 0;
-				mState = NORMAL;
-			}
-			mXVal = 0;
-			break;
-		case SDLK_LEFT:
-			if (mState == BOOSTING) {
-				mCurrentFrame = 0;
-				mState = NORMAL;
-			}
-			mXVal = 0;
-			break;
+		if (mState == BOOSTING) {
+			mCurrentFrame = 0;
+			mState = NORMAL;
+			mXVal = mYVal = 0;
 		}
-
 	}
 	else if (event.type == SDL_MOUSEBUTTONDOWN) {
 		
@@ -142,7 +116,6 @@ void Character::handleMove() {
 	if (mRect.y <= 0) mRect.y = 0;
 	if (mRect.y >= 600 - 192) mRect.y = 600 - 192;
 
-	handleSkill();
 
 	if (checkToMove(10)) {
 		handleBulletMove();

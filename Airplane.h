@@ -92,19 +92,7 @@ public:
 	void free();
 	void loadImage(SDL_Renderer* renderer, const std::vector<std::string>& listName);
 
-	void handleSkill() {
-		for (auto& it : mSkillList) {
-			if (it->mIsAvailable) {
-				if (SDL_GetTicks64() - it->mTime > 1000) {
-					it->mTime = SDL_GetTicks64();
-					it->mCurrentTime -= 1;
-					if (it->mCurrentTime <= 0) {
-						it->mCurrentTime = 0;
-					}
-				}
-			}
-		}
-	}
+	void handleSkill();
 
 protected:
 	void renderHeart(SDL_Renderer *renderer);

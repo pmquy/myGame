@@ -1,5 +1,4 @@
 #include "Background.h"
-#include "Character.h"
 
 
 
@@ -42,7 +41,7 @@ void Background::loadImage(SDL_Renderer* renderer, const std::vector<std::string
 	}
 }
 
-void Background::handleState(SDL_Renderer* renderer, std::pair<int, int>& mouse, SDL_Event &event, Character* hero, BackgroundType &oldState) {
+void Background::handleState(SDL_Renderer* renderer, std::pair<int, int>& mouse, SDL_Event &event, Character* hero, BackgroundType &oldState, std::vector<Bot*>& bots) {
 
 
 	if (!(mState != START && mState != SHOP && mState != DEAD && mState != UPGRADE && mState != VICTORY)) {
@@ -50,6 +49,7 @@ void Background::handleState(SDL_Renderer* renderer, std::pair<int, int>& mouse,
 	}
 	
 	switch (mState) {
+
 	case START:
 		if (mouse.first >= 550 && mouse.first <= 650 && mouse.second >= 140 && mouse.second <= 190) {
 			if (event.type == SDL_MOUSEBUTTONDOWN) {
@@ -106,8 +106,19 @@ void Background::handleState(SDL_Renderer* renderer, std::pair<int, int>& mouse,
 			SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_NONE);
 		}
 		else if (mouse.first >= 550 && mouse.first <= 650 && mouse.second >= 300 && mouse.second <= 350) {
-			if (event.type == SDL_MOUSEBUTTONDOWN)
+			
+			if (event.type == SDL_MOUSEBUTTONDOWN) {
 				mState = START;
+				for (int i = 0; i < int(bots.size()); i++) {
+					if (i < 2) {
+						bots[i]->setIsAppear(true);
+					}
+					else {
+						bots[i]->setIsAppear(false);
+					}
+				}
+			}
+				
 			SDL_Rect rect = { 550, 300, 100, 50 };
 
 			SDL_SetRenderDrawColor(renderer, 0, 253, 253, 150);
@@ -173,18 +184,23 @@ void Background::handleState(SDL_Renderer* renderer, std::pair<int, int>& mouse,
 			if (event.type == SDL_MOUSEBUTTONDOWN) {
 				if (oldState == LEVEL_1) {
 					mState = LEVEL_2;
+					bots[2]->setIsAppear(true);
 				}
 				else if (oldState == LEVEL_2) {
 					mState = LEVEL_3;
+					bots[2]->setIsAppear(true);
 				}
 				else if (oldState == LEVEL_3) {
 					mState = LEVEL_4;
+					bots[3]->setIsAppear(true);
 				}
 				else if (oldState == LEVEL_4) {
 					mState = LEVEL_5;
+					bots[4]->setIsAppear(true);
 				}
 				else if (oldState == LEVEL_5) {
 					mState = LEVEL_5;
+					bots[5]->setIsAppear(true);
 				}
 			}
 				
@@ -303,3 +319,21 @@ void Background::handleState(SDL_Renderer* renderer, std::pair<int, int>& mouse,
 	}
 }
 
+
+void Background::handleLogic(SDL_Renderer* renderer, Character* hero, std::vector<Bot*>& bots) {
+	if (hero->checkIsDestroyed()) {
+		this->setState(BackgroundType::DEAD);
+		hero->reborn();
+		for (int j = 0; j < int(bots.size()); j++) {
+			bots[j]->reborn(renderer);
+		}
+	}
+
+	if (hero->getScore() >= 10) {
+		this->setState(BackgroundType::VICTORY);
+		hero->reborn();
+		for (int i = 0; i < int(bots.size()); i++) {
+			bots[i]->reborn(renderer);
+		}
+	}
+}

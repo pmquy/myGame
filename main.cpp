@@ -6,7 +6,7 @@
 bool isQuit = false;
 std::pair<int, int> gMouse;
 int score = 0;
-Background background;
+Background game;
 Character hero;
 std::vector<Bot*> bots(6, nullptr);
 Text gScore;
@@ -15,7 +15,7 @@ BackgroundType oldState = START;
 
 
 void loadResource() {
-	background.loadImage(gRenderer, BACKGROUND_PATHS);
+	game.loadImage(gRenderer, GAME_PATHS);
 	hero.loadImage(gRenderer, HERO_PATHS1);
 
 
@@ -30,7 +30,7 @@ void loadResource() {
 			newBot->loadImage(gRenderer, BOT2_PATHS);
 			newBot->setShipType(ShipType::SHIP2);
 		}
-		if (i <= 2) {
+		if (i <= 1) {
 			newBot->setIsAppear(true);
 		}
 		else {
@@ -42,7 +42,7 @@ void loadResource() {
 	gScore.setRect(0, 0);
 	gCoin.setRect(0, 50);
 	gFont = TTF_OpenFont("Font_Folder/font2.ttf", 30);
-	backgroundMusic = Mix_LoadMUS("Music_Folder/music.mp3");
+	gameMusic = Mix_LoadMUS("Music_Folder/music.mp3");
 	bonk = Mix_LoadWAV("Music_Folder/bonk.wav");
 	Mix_VolumeMusic(128);
 }
@@ -70,7 +70,6 @@ void handleColision() {
 				bots[j]->getDamage(1000);
 				hero.getDamage(30);
 			}
-
 		}
 	}
 
@@ -87,7 +86,7 @@ void Init() {
 }
 
 void Close() {
-	Mix_FreeMusic(backgroundMusic);
+	Mix_FreeMusic(gameMusic);
 	SDL_DestroyWindow(gWindow);
 	gWindow = nullptr;
 	SDL_DestroyRenderer(gRenderer);
@@ -100,25 +99,26 @@ void Close() {
 
 void gameLoop() {
 	
-	Mix_PlayMusic(backgroundMusic, -1);
+	Mix_PlayMusic(gameMusic, -1);
 
+	
 	while (!isQuit) {
-		
-		background.render(gRenderer);
-		background.handleState(gRenderer, gMouse, gEvent, &hero, oldState);
+
+		game.render(gRenderer);
+		game.handleState(gRenderer, gMouse, gEvent, &hero, oldState, bots);
 
 		while (SDL_PollEvent(&gEvent)) {
 			if (gEvent.type == SDL_QUIT) {
 				isQuit = true;
 			}
 			SDL_GetMouseState(&gMouse.first, &gMouse.second);
-			background.handleState(gRenderer, gMouse, gEvent, &hero, oldState);
-			if (background.getState() != START && background.getState() != SHOP && background.getState() != DEAD && background.getState() != UPGRADE && background.getState() != VICTORY) {
+			game.handleState(gRenderer, gMouse, gEvent, &hero, oldState, bots);
+			if (game.getState() != START && game.getState() != SHOP && game.getState() != DEAD && game.getState() != UPGRADE && game.getState() != VICTORY) {
 				hero.handleAction(gEvent, gRenderer);
 			}
 		}	
 
-		switch (background.getState()) {
+		switch (game.getState()) {
 		
 		case UPGRADE:
 		case SHOP:
@@ -135,46 +135,33 @@ void gameLoop() {
 		case LEVEL_4:
 		case LEVEL_5:
 
-			background.handleMove(); 
-			oldState = background.getState();
+			
+			game.handleMove(); 
+			oldState = game.getState();
+			game.handleLogic(gRenderer, &hero, bots);
+
 			gScore.loadText(gRenderer, gFont, "Score : " + std::to_string(hero.getScore())); gScore.render(gRenderer);
 			gCoin.loadText(gRenderer, gFont, "Coin : " + std::to_string(hero.getCoin())); gCoin.render(gRenderer);
+			
 			hero.handleMove(); 
 			hero.handleState(gRenderer);
-			hero.renderText(gRenderer, gFont); hero.render(gRenderer, 1);
+			hero.handleSkill();
+			hero.renderText(gRenderer, gFont); 
+			hero.render(gRenderer, 1);
 			
 			
 			for (int i = 0; i < int(bots.size()); i++) {
 				if (bots[i]->getIsAppear()) {
 					bots[i]->handleAction(gRenderer); bots[i]->handleMove(); bots[i]->handleState(gRenderer); bots[i]->render(gRenderer, -1);
 				}
-				
 				if (bots[i]->checkIsDestroyed()) {
-					bots[i]->reborn();
 					Mix_PlayChannel(-1, bonk, 0);
 					hero.setScore(hero.getScore() + 2);
 					hero.setCoin(hero.getCoin() + 3);
 				}
 			}
 
-			if (hero.checkIsDestroyed()) {
-				background.setState(DEAD);
-				hero.reborn();
-				for (int j = 0; j < int(bots.size()); j++) {
-					bots[j]->reborn();
-				}
-			}
-
 			handleColision();
-
-			if (hero.getScore() >= 5) {
-				background.setState(BackgroundType::VICTORY);
-				hero.reborn();
-				for (int i = 0; i < int(bots.size()); i++) {
-					bots[i]->reborn();
-				}
-			}
-
 			break;
 		}
 
