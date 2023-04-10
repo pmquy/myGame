@@ -2,7 +2,7 @@
 
 Bot::Bot() {
 	mRect.x = SCREEN_WIDTH + rand() % 1000;
-	mRect.y = rand() % 500;
+	mRect.y = rand() % 400;
 	mAttack = 2;
 	mMaxHeart = 100;
 	mHeart = 100;
@@ -54,7 +54,7 @@ void Bot::reborn(SDL_Renderer* renderer) {
 	else {
 		loadImage(renderer, BOT3_PATHS);
 	}
-	setRect(SCREEN_WIDTH + rand() % 400, rand() % 400);
+	setRect(SCREEN_WIDTH + rand() % 1000, rand() % 400);
 }
 
 void Bot::handleState(SDL_Renderer* renderer) {
@@ -90,27 +90,26 @@ void Bot::fire(SDL_Renderer* renderer) {
 	
 	if (mType == SHIP1) {
 		Bullet* newBullet = new Bullet();
-		std::string path = "Image_folder/Airplane/Bullet/bullet" + std::to_string(2 + rand()%3) + ".png";
-		newBullet->loadImage(renderer, path);
-		newBullet->setBulletType(BulletType::NGUOC);
-		newBullet->setRect(mRect.x, mRect.y + mRect.h/2);
+		newBullet->loadImage(renderer, static_cast<BulletType>(rand()%6));
+		newBullet->setDirection(-5, 0);
+		newBullet->setRect(mRect.x + 10, mRect.y + mRect.h/2);
 		mBulletList.push_back(newBullet);
 	}
 	else if (mType == SHIP2) {
 		Bullet* newBullet1 = new Bullet();
 		Bullet* newBullet2 = new Bullet();
 		Bullet* newBullet3 = new Bullet();
-		newBullet1->loadImage(renderer, "Image_folder/Airplane/Bullet/bullet1.png");
-		newBullet1->setBulletType(BulletType::CHEOLEN);
-		newBullet1->setRect(mRect.x, mRect.y + mRect.h / 2);
+		newBullet1->loadImage(renderer, BulletType::RED_BALL);
+		newBullet1->setDirection(-5, 1);
+		newBullet1->setRect(mRect.x + 10, mRect.y + mRect.h / 2);
 
-		newBullet2->loadImage(renderer, "Image_folder/Airplane/Bullet/bullet1.png");
-		newBullet2->setBulletType(BulletType::NGUOC);
-		newBullet2->setRect(mRect.x, mRect.y + mRect.h / 2);
+		newBullet2->loadImage(renderer, BulletType::RED_BALL);
+		newBullet2->setDirection(-5, 0);
+		newBullet2->setRect(mRect.x + 10, mRect.y + mRect.h / 2);
 
-		newBullet3->loadImage(renderer, "Image_folder/Airplane/Bullet/bullet1.png");
-		newBullet3->setBulletType(BulletType::CHEOXUONG);
-		newBullet3->setRect(mRect.x, mRect.y + mRect.h / 2);
+		newBullet3->loadImage(renderer, BulletType::RED_BALL);
+		newBullet3->setDirection(-5, -1);
+		newBullet3->setRect(mRect.x + 10, mRect.y + mRect.h / 2);
 
 		mBulletList.push_back(newBullet1);
 		mBulletList.push_back(newBullet2);

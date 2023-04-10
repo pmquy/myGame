@@ -3,7 +3,7 @@
 Bullet::Bullet() {
 	mIsMove = false;
 	mIsAppear = true;
-	mBulletType = XUOI;
+	mXVal = mYVal = 0;
 };
 
 
@@ -13,33 +13,14 @@ Bullet::~Bullet() {
 
 void Bullet::free() {
 	BaseClass::free();
-	mIsMove = false;
+	mIsAppear = mIsMove = false;
 }
-
 
 void Bullet::handleMove() {
 	if (mIsMove == true && mIsAppear == true) {
-
-		if (mBulletType == XUOI) {
-			mRect.x += 5;
-		}
-		else if (mBulletType == NGUOC) {
-			mRect.x -= 5;
-		}
-		else if (mBulletType == CHEOLEN) {
-			mRect.x -= 5;
-			mRect.y -= 1;
-		}
-		else if (mBulletType == CHEOXUONG) {
-			mRect.x -= 5;
-			mRect.y += 1;
-		}
-		else if (mBulletType == XOAY) {
-			mRect.x += 5;
-			mRect.y += 3 - rand() % 7;
-		}
+		mRect.x += mXVal;
+		mRect.y += mYVal;
 	}
-
 	if (mRect.x <= 0 || mRect.x >= 1200 || mRect.y <= 0 || mRect.y >= 600) {
 		mIsAppear = false;
 	}
@@ -52,10 +33,12 @@ bool Bullet::getIsMove() {
 	return mIsMove;
 }
 
-BulletType Bullet::getBulletType() {
-	return mBulletType;
+
+void Bullet::setDirection(int dx, int dy) {
+	mXVal = dx;
+	mYVal = dy;
 }
 
-void Bullet::setBulletType(const BulletType& t) {
-	mBulletType = t;
+void Bullet::loadImage(SDL_Renderer* renderer, BulletType t) {
+	BaseClass::loadImage(renderer, mPath[int(t)]);
 }

@@ -134,15 +134,12 @@ void gameLoop() {
 		case LEVEL_3:
 		case LEVEL_4:
 		case LEVEL_5:
-
-			
 			game.handleMove(); 
 			oldState = game.getState();
 			game.handleLogic(gRenderer, &hero, bots);
 
 			gScore.loadText(gRenderer, gFont, "Score : " + std::to_string(hero.getScore())); gScore.render(gRenderer);
 			gCoin.loadText(gRenderer, gFont, "Coin : " + std::to_string(hero.getCoin())); gCoin.render(gRenderer);
-			
 			hero.handleMove(); 
 			hero.handleState(gRenderer);
 			hero.handleSkill();

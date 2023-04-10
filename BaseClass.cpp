@@ -4,6 +4,7 @@
 BaseClass::BaseClass() {
 	mTexture = nullptr;
 	mRect = { 0, 0, 0, 0 };
+	mDx = mDy = mWidth = mHeight = 0;
 }
 
 BaseClass::~BaseClass() {
@@ -22,8 +23,8 @@ void BaseClass::loadImage(SDL_Renderer* renderer, std::string path) {
 	free();
 	SDL_Surface* loadedSurface = IMG_Load(path.c_str());
 	mTexture = SDL_CreateTextureFromSurface(renderer, loadedSurface);
-	mRect.w = loadedSurface->w;
-	mRect.h = loadedSurface->h;
+	mWidth = mRect.w = loadedSurface->w;
+	mHeight = mRect.h = loadedSurface->h;
 	SDL_FreeSurface(loadedSurface);
 	loadedSurface = nullptr;
 }

@@ -9,6 +9,10 @@ Airplane::Airplane() {
 	mState = NORMAL;
 	mCurrentFrame = 0;
 	mIsAppear = true;
+	mDx = 50;
+	mDy = 70;
+	mWidth = 100;
+	mHeight = 50;
 }
 
 Airplane::~Airplane() {

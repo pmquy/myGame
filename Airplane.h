@@ -12,7 +12,6 @@ enum State {
 };
 
 
-
 struct Skill {
 	int mMaxTime;
 	int mCurrentTime;

@@ -2,12 +2,16 @@
 #define BULLET_H_
 #include "BaseClass.h"
 #include <math.h>
+
+static std::vector<std::string> mPath = { "Image_folder/Airplane/Bullet/red_ball.png", "Image_folder/Airplane/Bullet/green_ball.png", "Image_folder/Airplane/Bullet/blue_ball.png", "Image_folder/Airplane/Bullet/blue_laser.png", "Image_folder/Airplane/Bullet/red_laser.png" , "Image_folder/Airplane/Bullet/orange_laser.png" };
+
 enum BulletType {
-	XUOI,
-	NGUOC,
-	CHEOLEN,
-	CHEOXUONG,
-	XOAY
+	RED_BALL,
+	GREEN_BALL,
+	BLUE_BALL,
+	BLUE_LASER,
+	RED_LASER,
+	ORANGE_LASER
 };
 
 class Bullet : public BaseClass {
@@ -18,20 +22,20 @@ public:
 	void handleMove();
 	void setIsMove(bool state);
 	bool getIsMove();
-	BulletType getBulletType();
-	void setBulletType(const BulletType&);
-	
 	bool getIsAppear() {
 		return mIsAppear;
 	}
 	void setIsAppear(bool t) {
 		mIsAppear = t;
 	}
+	void setDirection(int, int);
+	void loadImage(SDL_Renderer*, BulletType);
 
 private:
 	bool mIsAppear;
 	bool mIsMove;
-	BulletType mBulletType;
+	int mXVal;
+	int mYVal;
 };
 
 

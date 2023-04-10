@@ -16,16 +16,16 @@ class BaseClass {
 		void free();
 
 		friend bool checkConllision(BaseClass *a, BaseClass *b) {
-			int x11 = a->getRect().x + 50;
-			int y11 = a->getRect().y + 50;
-			//int x12 = a.getRect().x + a.getRect().w;
-			//int y12 = a.getRect().y + a.getRect().h;
-			int x12 = x11 + 100;
-			int y12 = y11 + 100;
-			int x21 = b->getRect().x;
-			int y21 = b->getRect().y;
-			int x22 = b->getRect().x + b->getRect().w;
-			int y22 = b->getRect().y + b->getRect().h;
+			int x11 = a->getRect().x + a->mDx;
+			int y11 = a->getRect().y + a->mDy;
+			int x12 = x11 + a->mWidth;
+			int y12 = y11 + a->mHeight;
+
+			int x21 = b->getRect().x + b->mDx;
+			int y21 = b->getRect().y + b->mDy;
+			int x22 = x21 + b->mWidth;
+			int y22 = y21 + b->mHeight;
+
 			if (x12 < x21 || x22 < x11 || y11 > y22 || y12 < y21) return false;
 			return true;
 		}
@@ -34,6 +34,10 @@ class BaseClass {
 		SDL_Rect mRect;
 		UINT64 mMoveTime = 0;
 		bool checkToMove(int);
+		int mDx;
+		int mDy;
+		int mHeight;
+		int mWidth;
 };
 
 
