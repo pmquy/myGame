@@ -6,6 +6,9 @@ Bot::Bot() {
 	mAttack = 2;
 	mMaxHeart = 100;
 	mHeart = 100;
+	mType = SHIP1;
+	mXVal = -2;
+	mYVal = 0;
 };
 
 Bot::~Bot() {
@@ -15,7 +18,7 @@ Bot::~Bot() {
 
 void Bot::handleMove() {
 	if (checkToMove(20)) {
-		mRect.x -= 2;
+		BaseClass::handleMove();
 		if (mType == SHIP2 && mRect.x <= 700) {
 			mRect.x = 700;
 		}
@@ -35,25 +38,8 @@ void Bot::handleBulletMove() {
 
 void Bot::reborn(SDL_Renderer* renderer) {
 	Airplane::reborn();
-	int t = rand() % 2;
-	if (t == 0) {
-		this->loadImage(renderer, BOT1_PATHS);
-		this->setShipType(ShipType::SHIP1);
-	}
-	else if (t == 1) {
-		this->loadImage(gRenderer, BOT2_PATHS);
-		this->setShipType(ShipType::SHIP2);
-	}
-	t = rand() % 3;
-	if (t == 0) {
-		loadImage(renderer, BOT1_PATHS);
-	}
-	else if (t == 1) {
-		loadImage(renderer, BOT2_PATHS);
-	}
-	else {
-		loadImage(renderer, BOT3_PATHS);
-	}
+	this->loadImage(renderer, BOTS_PATHS[rand() % 3]);
+	this->setBotType(static_cast<BotType>(rand() % 2));
 	setRect(SCREEN_WIDTH + rand() % 1000, rand() % 400);
 }
 
@@ -63,11 +49,9 @@ void Bot::handleState(SDL_Renderer* renderer) {
 		mState = DESTROYED;
 		mCurrentFrame = mMaxFrames[int(mState)] - 1;
 	}
-
 	if (mRect.x <= 0 || checkIsDestroyed()) {
 		reborn(renderer);
 	}
-
 	if (mState == FIRING && mCurrentFrame == 0) {
 		mState = NORMAL;
 		mCurrentFrame = mMaxFrames[int(mState)] - 1;
@@ -77,14 +61,11 @@ void Bot::handleState(SDL_Renderer* renderer) {
 	}
 }
 
-
-
 void Bot::handleAction(SDL_Renderer *renderer) {
 	if (checkToFire(3000)) {
 		fire(renderer);
 	}
 }
-
 
 void Bot::fire(SDL_Renderer* renderer) {
 	
@@ -96,24 +77,13 @@ void Bot::fire(SDL_Renderer* renderer) {
 		mBulletList.push_back(newBullet);
 	}
 	else if (mType == SHIP2) {
-		Bullet* newBullet1 = new Bullet();
-		Bullet* newBullet2 = new Bullet();
-		Bullet* newBullet3 = new Bullet();
-		newBullet1->loadImage(renderer, BulletType::RED_BALL);
-		newBullet1->setDirection(-5, 1);
-		newBullet1->setRect(mRect.x + 10, mRect.y + mRect.h / 2);
-
-		newBullet2->loadImage(renderer, BulletType::RED_BALL);
-		newBullet2->setDirection(-5, 0);
-		newBullet2->setRect(mRect.x + 10, mRect.y + mRect.h / 2);
-
-		newBullet3->loadImage(renderer, BulletType::RED_BALL);
-		newBullet3->setDirection(-5, -1);
-		newBullet3->setRect(mRect.x + 10, mRect.y + mRect.h / 2);
-
-		mBulletList.push_back(newBullet1);
-		mBulletList.push_back(newBullet2);
-		mBulletList.push_back(newBullet3);	
+		for (int i = 0; i < 3; i++) {
+			Bullet* newBullet = new Bullet();
+			newBullet->loadImage(renderer, BulletType::RED_BALL);
+			newBullet->setRect(mRect.x + 10, mRect.y + mRect.h / 2);
+			newBullet->setDirection(-5, 1 - i);
+			mBulletList.push_back(newBullet);
+		}
 	}
 	mState = FIRING;
 	mCurrentFrame = mMaxFrames[int(FIRING)] - 1;

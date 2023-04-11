@@ -1,9 +1,11 @@
 #ifndef  BULLET_H_
 #define BULLET_H_
 #include "BaseClass.h"
-#include <math.h>
 
-static std::vector<std::string> mPath = { "Image_folder/Airplane/Bullet/red_ball.png", "Image_folder/Airplane/Bullet/green_ball.png", "Image_folder/Airplane/Bullet/blue_ball.png", "Image_folder/Airplane/Bullet/blue_laser.png", "Image_folder/Airplane/Bullet/red_laser.png" , "Image_folder/Airplane/Bullet/orange_laser.png" };
+static std::vector<std::string> BULLET_PATHS = { "Image_folder/Airplane/Bullet/red_ball.png", "Image_folder/Airplane/Bullet/green_ball.png", "Image_folder/Airplane/Bullet/blue_ball.png", "Image_folder/Airplane/Bullet/blue_laser.png", "Image_folder/Airplane/Bullet/red_laser.png" , "Image_folder/Airplane/Bullet/orange_laser.png" };
+static std::vector<std::string> BULLET_NAMES = { "RED BALL", "GREEN BALL" , "BLUE BALL", "BLUE LASER", "RED LASER", "ORANGE LASER" };
+static std::vector<int> BULLET_ATTACKS = { 0, 0, 0, 0, 0, 0 };
+
 
 enum BulletType {
 	RED_BALL,
@@ -13,6 +15,8 @@ enum BulletType {
 	RED_LASER,
 	ORANGE_LASER
 };
+
+
 
 class Bullet : public BaseClass {
 public:
@@ -36,6 +40,7 @@ private:
 	bool mIsMove;
 	int mXVal;
 	int mYVal;
+	int mAttack = 0;
 };
 
 

@@ -11,11 +11,26 @@ enum State {
 	BOOSTING
 };
 
+static std::vector<std::string> HERO1_PATHS = { "Image_Folder/Airplane/Hero/Fighter/Idle.png", "Image_Folder/Airplane/Hero/Fighter/Destroyed.png", "Image_Folder/Airplane/Hero/Fighter/Attack_1.png","Image_Folder/Airplane/Hero/Fighter/Boost.png" };
+static std::vector<std::string> HERO2_PATHS = { "Image_Folder/Airplane/Hero/Bomber/Idle.png", "Image_Folder/Airplane/Hero/Bomber/Destroyed.png", "Image_Folder/Airplane/Hero/Bomber/Attack_1.png","Image_Folder/Airplane/Hero/Bomber/Boost.png" };
+static std::vector<std::string> HERO3_PATHS = { "Image_Folder/Airplane/Hero/Corvette/Idle.png", "Image_Folder/Airplane/Hero/Corvette/Destroyed.png", "Image_Folder/Airplane/Hero/Corvette/Attack_1.png","Image_Folder/Airplane/Hero/Corvette/Boost.png" };
+static std::vector<std::vector<std::string>> HEROES_PATHS = { HERO1_PATHS, HERO2_PATHS, HERO3_PATHS };
+
+static std::vector<int> PLANE_ATTACKS = { 3, 4, 5 };
+static std::vector<int> PLANE_HEARTS = { 100, 100, 100 };
+static std::vector<int> PLANE_AMOR = { 0, 0, 0 };
+
+static std::vector<std::string> BOT1_PATHS = { "Image_Folder/Airplane/Bot/Bomber/Idle.png", "Image_Folder/Airplane/Bot/Bomber/Destroyed.png", "Image_Folder/Airplane/Bot/Bomber/Attack_1.png" };
+static std::vector<std::string> BOT2_PATHS = { "Image_Folder/Airplane/Bot/Fighter/Idle.png", "Image_Folder/Airplane/Bot/Fighter/Destroyed.png", "Image_Folder/Airplane/Bot/Fighter/Attack_1.png" };
+static std::vector<std::string> BOT3_PATHS = { "Image_Folder/Airplane/Bot/Corvette/Idle.png", "Image_Folder/Airplane/Bot/Corvette/Destroyed.png", "Image_Folder/Airplane/Bot/Corvette/Attack_1.png" };
+static std::vector<std::vector<std::string>> BOTS_PATHS = { BOT1_PATHS, BOT2_PATHS, BOT3_PATHS };
+
+
 
 struct Skill {
 	int mMaxTime;
 	int mCurrentTime;
-	UINT64 mTime;
+	Uint64 mTime;
 	std::string mName;
 	bool mIsAvailable;
 
@@ -26,7 +41,6 @@ struct Skill {
 		mIsAvailable = false;
 		mTime = 0;
 	}
-
 };
 
 
@@ -84,7 +98,6 @@ public:
 	}
 
 	virtual void handleState(SDL_Renderer*) = 0;
-	virtual void handleMove() = 0;
 	virtual void handleBulletMove() = 0;
 	virtual void render(SDL_Renderer* renderer, int i);
 	virtual void reborn();
@@ -106,8 +119,8 @@ protected:
 	bool checkToNextFrame(int);
 	bool checkToFire(int t);
 
-	UINT64 mFrameTime = 0;
-	UINT64 mFireTime = 0;
+	Uint64 mFrameTime = 0;
+	Uint64 mFireTime = 0;
 
 	State mState;
 	int mCurrentFrame = 0;

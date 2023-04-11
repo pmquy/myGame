@@ -20,7 +20,6 @@ Airplane::~Airplane() {
 	free();
 }
 
-
 void Airplane::free() {
 	for (auto& it : mTextures) {
 		if (it != nullptr) {
@@ -37,8 +36,6 @@ void Airplane::free() {
 	}
 }
 
-
-
 void Airplane::renderHeart(SDL_Renderer *renderer) {
 	SDL_Rect rectBg = { mRect.x, mRect.y + mRect.h - 50, mRect.w, 5 };
 	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 0);
@@ -48,7 +45,6 @@ void Airplane::renderHeart(SDL_Renderer *renderer) {
 	SDL_SetRenderDrawColor(renderer, 255, 0, 0, 0);
 	SDL_RenderFillRect(renderer, &rectHeart);
 }
-
 
 void Airplane::render(SDL_Renderer* renderer, int i) {
 	mTexture = mTextures[int(mState)];
@@ -67,8 +63,6 @@ void Airplane::render(SDL_Renderer* renderer, int i) {
 		mCurrentFrame = mMaxFrames[int(mState)] - 1;
 	}
 }
-
-
 
 void Airplane::renderBullet(SDL_Renderer* renderer) {
 	for (int i = 0; i < int(mBulletList.size()); i++) {
@@ -110,29 +104,22 @@ void Airplane::loadImage(SDL_Renderer* renderer, const std::vector<std::string>&
 	loadedSurface = nullptr;
 }
 
-
-
 void Airplane::reborn() {
 
 	while(!mBulletList.empty()) {
-		mBulletList[0]->free();
-		delete mBulletList[0];
-		mBulletList[0] = nullptr;
-		mBulletList.erase(mBulletList.begin());
+		mBulletList.back()->free();
+		delete mBulletList.back();
+		mBulletList.pop_back();
 	}
-
+	
 	mHeart = mMaxHeart;
 	mState = NORMAL;
 	mCurrentFrame = 0;
 }
 
-
-
 bool Airplane::checkIsDestroyed() {
 	return mState == DESTROYED && mCurrentFrame == mMaxFrames[int(mState)] - 1;
 }
-
-
 
 bool Airplane::checkToFire(int t) {
 	if (SDL_GetTicks64() - mFireTime >= t) {
@@ -144,7 +131,7 @@ bool Airplane::checkToFire(int t) {
 
 
 bool Airplane::checkToNextFrame(int t) {
-	UINT64 now = SDL_GetTicks64();
+	Uint64 now = SDL_GetTicks64();
 	if (int(now - mFrameTime) >= t) {
 		mFrameTime = now;
 		return true;

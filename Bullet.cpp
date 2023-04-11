@@ -6,7 +6,6 @@ Bullet::Bullet() {
 	mXVal = mYVal = 0;
 };
 
-
 Bullet::~Bullet() {
 	free();
 }
@@ -33,12 +32,13 @@ bool Bullet::getIsMove() {
 	return mIsMove;
 }
 
-
 void Bullet::setDirection(int dx, int dy) {
 	mXVal = dx;
 	mYVal = dy;
 }
 
 void Bullet::loadImage(SDL_Renderer* renderer, BulletType t) {
-	BaseClass::loadImage(renderer, mPath[int(t)]);
+	BaseClass::loadImage(renderer, BULLET_PATHS[int(t)]);
 }
+
+	

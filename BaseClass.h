@@ -1,7 +1,34 @@
-#ifndef TEXTURECLASS_H_
-#define TEXTURECLASS_H_
+#ifndef BASECLASS_H_
+#define BASECLASS_H_
 
-#include "CommonFunction.h"
+#include <SDL.h>
+#include <SDL_image.h>
+#include <SDL_ttf.h>
+#include <SDL_mixer.h>
+#include <string>
+#include <iostream>
+#include <vector>
+
+const int SCREEN_WIDTH = 1200;
+const int SCREEN_HEIGHT = 600;
+const int SCREEN_BMP = 32;
+
+
+static SDL_Texture* loadTexture(SDL_Renderer* renderer, std::string path) {
+	SDL_Texture* loadedTexture = nullptr;
+	SDL_Surface* loadedSurface = nullptr;
+	loadedSurface = IMG_Load(path.c_str());
+	if (loadedSurface == nullptr) {
+		std::cout << "loaded surface failed";
+	}
+	else {
+		loadedTexture = SDL_CreateTextureFromSurface(renderer, loadedSurface);
+		if (loadedTexture == nullptr) {
+			std::cout << "loaded texture failed";
+		}
+	}
+	return loadedTexture;
+}
 
 
 class BaseClass {
@@ -13,6 +40,7 @@ class BaseClass {
 		SDL_Texture* getTexture();
 		virtual void loadImage(SDL_Renderer* renderer, std::string path);
 		virtual void render(SDL_Renderer* renderer, const SDL_Rect *clip = nullptr);
+		virtual void handleMove();
 		void free();
 
 		friend bool checkConllision(BaseClass *a, BaseClass *b) {
@@ -29,15 +57,18 @@ class BaseClass {
 			if (x12 < x21 || x22 < x11 || y11 > y22 || y12 < y21) return false;
 			return true;
 		}
+
 	protected:
 		SDL_Texture* mTexture;
 		SDL_Rect mRect;
-		UINT64 mMoveTime = 0;
+		Uint64 mMoveTime = 0;
 		bool checkToMove(int);
 		int mDx;
 		int mDy;
 		int mHeight;
 		int mWidth;
+		int mXVal;
+		int mYVal;
 };
 
 

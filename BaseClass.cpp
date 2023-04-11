@@ -1,6 +1,5 @@
 #include "BaseClass.h"
 
-
 BaseClass::BaseClass() {
 	mTexture = nullptr;
 	mRect = { 0, 0, 0, 0 };
@@ -18,7 +17,6 @@ void BaseClass::setRect(const int& x, const int& y, const int& w, const int& h) 
 	if (h != 0) mRect.h = h;
 }
 
-
 void BaseClass::loadImage(SDL_Renderer* renderer, std::string path) {
 	free();
 	SDL_Surface* loadedSurface = IMG_Load(path.c_str());
@@ -29,12 +27,10 @@ void BaseClass::loadImage(SDL_Renderer* renderer, std::string path) {
 	loadedSurface = nullptr;
 }
 
-
 void BaseClass::render(SDL_Renderer* renderer, const SDL_Rect* clip) {
 	SDL_Rect renderQuad = { mRect.x, mRect.y, mRect.w, mRect.h };
 	SDL_RenderCopy(renderer, mTexture, clip, &renderQuad);
 }
-
 
 void BaseClass::free() {
 	if (mTexture != nullptr) {
@@ -53,10 +49,15 @@ SDL_Texture* BaseClass::getTexture() {
 }
 
 bool BaseClass::checkToMove(int t) {
-	UINT64 now = SDL_GetTicks64();
+	Uint64 now = SDL_GetTicks64();
 	if (int(now - mMoveTime) >= t) {
 		mMoveTime = now;
 		return true;
 	}
 	return false;
+}
+
+void BaseClass::handleMove() {
+	mRect.x += mXVal;
+	mRect.y += mYVal;
 }

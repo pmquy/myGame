@@ -19,22 +19,21 @@ Character::Character() {
 
 	Text* newText = new Text();
 	newText->setRect(1000, 0);
-	mTextSkillList.push_back(newText);
+	mTextList.push_back(newText);
 
 	Text* newText1 = new Text();
 	newText1->setRect(0, 500);
-	mTextSkillList.push_back(newText1);
+	mTextList.push_back(newText1);
 }
 
 Character::~Character() {
 	free();
-	for (auto &it : mTextSkillList) {
+	for (auto &it : mTextList) {
 		it->free();
 		delete it;
 		it = nullptr;
 	}
 }
-
 
 void Character::handleAction(const SDL_Event &event, SDL_Renderer* renderer) {
 	
@@ -92,25 +91,13 @@ void Character::handleAction(const SDL_Event &event, SDL_Renderer* renderer) {
 		case SDLK_s:
 			if (mState == NORMAL) {
 				if (mBulletQuatity[int(mCurrentBullet)] >= 3) {
-					Bullet* newBullet1 = new Bullet();
-					Bullet* newBullet2 = new Bullet();
-					Bullet* newBullet3 = new Bullet();
-				
-					newBullet1->loadImage(renderer, mCurrentBullet);
-					newBullet1->setDirection(5, 1);
-					newBullet1->setRect(mRect.x + mRect.w, mRect.y + mRect.h / 2);
-
-					newBullet2->loadImage(renderer, mCurrentBullet);
-					newBullet2->setDirection(5, 0);
-					newBullet2->setRect(mRect.x + mRect.w, mRect.y + mRect.h / 2);
-
-					newBullet3->loadImage(renderer, mCurrentBullet);
-					newBullet3->setDirection(5, -1);
-					newBullet3->setRect(mRect.x + mRect.w, mRect.y + mRect.h / 2);
-
-					mBulletList.push_back(newBullet1);
-					mBulletList.push_back(newBullet2);
-					mBulletList.push_back(newBullet3);
+					for (int i = 0; i < 3; i++) {
+						Bullet* newBullet = new Bullet();
+						newBullet->loadImage(renderer, mCurrentBullet);
+						newBullet->setRect(mRect.x + mRect.w, mRect.y + mRect.h / 2);
+						newBullet->setDirection(5, 1 - i);
+						mBulletList.push_back(newBullet);
+					}
 					mCurrentFrame = 0;
 					mState = FIRING;
 					mBulletQuatity[mCurrentBullet] -= 3;
@@ -169,8 +156,7 @@ void Character::handleMove() {
 
 	if (checkToMove(10)) {
 		if (mState == NORMAL || mState == BOOSTING) {
-			mRect.x += mXVal;
-			mRect.y += mYVal;
+			BaseClass::handleMove();
 		}
 		handleBulletMove();
 	}

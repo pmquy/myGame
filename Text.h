@@ -2,6 +2,10 @@
 #define TEXT_
 #include "BaseClass.h"
 
+static SDL_Color gTextColor = { 255, 100, 100 };
+static TTF_Font* gFont = nullptr;
+
+
 class Text : public BaseClass {
 	public:
 		Text();

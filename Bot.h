@@ -4,7 +4,7 @@
 #include "Airplane.h"
 #include "Bullet.h"
 
-enum ShipType {
+enum BotType {
 	SHIP1,
 	SHIP2,
 	SHIP3
@@ -17,17 +17,18 @@ public:
 	void handleMove();
 	void handleState(SDL_Renderer*);
 	void handleAction(SDL_Renderer *);
+	
 	bool checkIsDestroyed() {
 		return mHeart == 0 && mCurrentFrame == 0 && mState == DESTROYED;
 	}
 	void reborn(SDL_Renderer*);
 
-	void setShipType(const ShipType& t) {
+	void setBotType(const BotType& t) {
 		mType = t;
 	}
 
 private:
-	ShipType mType;
+	BotType mType;
 	void handleBulletMove();
 	void fire(SDL_Renderer*);
 };
