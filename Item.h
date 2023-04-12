@@ -15,13 +15,13 @@ static std::vector<std::string> ITEM_PATHS = { "Image_Folder/Item/HP_Bonus.png" 
 
 class Item : public BaseClass {
 public:
-	void handleMove() {
-		mRect.x -= 3;
+	void loadImage(SDL_Renderer*, ItemType);
+	ItemType getItemType() {
+		return mItemType;
 	}
-	
+	Item();
+	void handleMove();
 private:
-	int mXVal;
-	int mYVal;
 	ItemType mItemType;
 };
 

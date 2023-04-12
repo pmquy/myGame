@@ -6,7 +6,6 @@ static std::vector<std::string> BULLET_PATHS = { "Image_folder/Airplane/Bullet/r
 static std::vector<std::string> BULLET_NAMES = { "RED BALL", "GREEN BALL" , "BLUE BALL", "BLUE LASER", "RED LASER", "ORANGE LASER" };
 static std::vector<int> BULLET_ATTACKS = { 0, 0, 0, 0, 0, 0 };
 
-
 enum BulletType {
 	RED_BALL,
 	GREEN_BALL,
@@ -15,7 +14,6 @@ enum BulletType {
 	RED_LASER,
 	ORANGE_LASER
 };
-
 
 
 class Bullet : public BaseClass {
@@ -29,9 +27,11 @@ public:
 	bool getIsAppear() {
 		return mIsAppear;
 	}
+
 	void setIsAppear(bool t) {
 		mIsAppear = t;
 	}
+
 	void setDirection(int, int);
 	void loadImage(SDL_Renderer*, BulletType);
 
@@ -41,6 +41,7 @@ private:
 	int mXVal;
 	int mYVal;
 	int mAttack = 0;
+	BulletType mBulletType;
 };
 
 

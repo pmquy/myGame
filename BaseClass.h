@@ -13,7 +13,6 @@ const int SCREEN_WIDTH = 1200;
 const int SCREEN_HEIGHT = 600;
 const int SCREEN_BMP = 32;
 
-
 static SDL_Texture* loadTexture(SDL_Renderer* renderer, std::string path) {
 	SDL_Texture* loadedTexture = nullptr;
 	SDL_Surface* loadedSurface = nullptr;
@@ -29,6 +28,7 @@ static SDL_Texture* loadTexture(SDL_Renderer* renderer, std::string path) {
 	}
 	return loadedTexture;
 }
+
 
 
 class BaseClass {

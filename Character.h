@@ -16,12 +16,12 @@ public:
 		for (int i = 0; i < int(mSkillList.size()); i++) {
 			if (mSkillList[i]->mIsAvailable == true) {
 				Text* temp = mTextList[i];
-				temp->loadText(renderer, gFont, mSkillList[i]->mName + " : " + std::to_string(mSkillList[i]->mCurrentTime));
+				temp->loadText(renderer, font, mSkillList[i]->mName + " : " + std::to_string(mSkillList[i]->mCurrentTime));
 				temp->render(renderer);
 			}
 		}
 
-		mTextList.back()->loadText(renderer, gFont, BULLET_NAMES[int(mCurrentBullet)] + " : " + std::to_string(mBulletQuatity[int(mCurrentBullet)]));
+		mTextList.back()->loadText(renderer, font, BULLET_NAMES[int(mCurrentBullet)] + " : " + std::to_string(mBulletQuatity[int(mCurrentBullet)]));
 		mTextList.back()->render(renderer);
 	}
 

@@ -66,6 +66,12 @@ public:
 	}
 	void setHeart(int heart) {
 		mHeart = heart;
+		if (mHeart >= mMaxHeart) {
+			mHeart = mMaxHeart;
+		}
+		if (mHeart <= 0) {
+			mHeart = 0;
+		}
 	}
 	void setMaxHeart(int mh) {
 		mMaxHeart = mh;
@@ -110,10 +116,10 @@ protected:
 	void renderHeart(SDL_Renderer *renderer);
 	void renderBullet(SDL_Renderer *renderer);
 
-	std::vector<Skill*> mSkillList;
-	std::vector<Bullet*> mBulletList;
-	std::vector<SDL_Texture*> mTextures;
-	std::vector<int> mMaxFrames;
+	std::vector<Skill*> mSkillList = {};
+	std::vector<Bullet*> mBulletList = {};
+	std::vector<SDL_Texture*> mTextures = {};
+	std::vector<int> mMaxFrames = {};
 	
 	virtual bool checkIsDestroyed();
 	bool checkToNextFrame(int);

@@ -40,28 +40,28 @@ void Character::handleAction(const SDL_Event &event, SDL_Renderer* renderer) {
 	if (event.type == SDL_KEYDOWN) {
 		switch (event.key.keysym.sym) {
 		case SDLK_UP:
-			mYVal = -5;
-			if (mState == NORMAL) {
+			if (mState == NORMAL || mState == BOOSTING) {
+				mYVal = -5;
 				mState = BOOSTING;
 			}
 			break;
 		case SDLK_DOWN:
-			mYVal = 5;
-			if (mState == NORMAL) {
+			if (mState == NORMAL || mState == BOOSTING) {
+				mYVal = 5;
 				mState = BOOSTING;
 			}
 			break;
 		case SDLK_RIGHT:
-			if (mState == NORMAL) {
+			if (mState == NORMAL || mState == BOOSTING) {
 				mState = BOOSTING;
+				mXVal = 5;
 			}
-			mXVal = 5;
 			break;
 		case SDLK_LEFT:
-			if (mState == NORMAL) {
+			if (mState == NORMAL || mState == BOOSTING) {
 				mState = BOOSTING;
+				mXVal = -5;
 			}
-			mXVal = -5;
 			break;
 		case SDLK_a:
 			if (mCurrentBullet == BulletType::GREEN_BALL) {
@@ -119,22 +119,26 @@ void Character::handleAction(const SDL_Event &event, SDL_Renderer* renderer) {
 	}
 
 	else if (event.type == SDL_KEYUP) {
-		switch (event.key.keysym.sym) {
 		
+		switch (event.key.keysym.sym) {
+
 		case SDLK_UP:
 		case SDLK_DOWN:
-			mCurrentFrame = 0;
 			mYVal = 0;
-			mState = NORMAL;
+			if (mState != FIRING) {
+				mCurrentFrame = 0;
+				mState = NORMAL;
+			}
 			break;
 		case SDLK_LEFT:
 		case SDLK_RIGHT:
-			mCurrentFrame = 0;
-			mState = NORMAL;
 			mXVal = 0;
+			if (mState != FIRING) {
+				mCurrentFrame = 0;
+				mState = NORMAL;
+			}
 			break;
 		}
-		
 		
 	}
 	else if (event.type == SDL_MOUSEBUTTONDOWN) {
@@ -160,7 +164,6 @@ void Character::handleMove() {
 		}
 		handleBulletMove();
 	}
-	
 }
 
 void Character::handleBulletMove() {
@@ -180,7 +183,7 @@ void Character::handleState(SDL_Renderer* renderer) {
 		reborn();
 	}
 
-	if (mState == FIRING && mCurrentFrame == mMaxFrames[int(FIRING)] - 1) {
+	if (mState == FIRING && mCurrentFrame == mMaxFrames[int(mState)] - 1) {
 		mState = NORMAL;
 		mCurrentFrame = 0;
 		for (int i = 0; i < int(mBulletList.size()); i++) {

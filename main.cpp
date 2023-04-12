@@ -1,27 +1,12 @@
-#include "Game.h"
+#include "Header.h"
 
-Game game;
-GameType oldState;
+SDL_Window* gWindow = nullptr;
+SDL_Renderer* gRenderer = nullptr;
+SDL_Event gEvent;
+std::pair<int, int> gMouse(0, 0);
 
-void loadResource() {
-	game.loadImage(gRenderer, GAME_PATHS);
-	hero.loadImage(gRenderer, HERO1_PATHS);
 
-	for (int i = 0; i < int(bots.size()); i++) {
-		Bot* newBot = new Bot();
-		newBot->loadImage(gRenderer, BOTS_PATHS[rand()%3]);
-		newBot->setBotType(static_cast<BotType>(rand() % 2));
-
-		if (i <= 1) {
-			newBot->setIsAppear(true);
-		}
-		else {
-			newBot->setIsAppear(false);
-		}
-		bots[i] = newBot;
-	}
-}
-
+Game1 game;
 
 void Init() {
 	srand(time(0));
@@ -31,7 +16,6 @@ void Init() {
 	IMG_Init(IMG_INIT_JPG | IMG_INIT_PNG);
 	gWindow = SDL_CreateWindow("game", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
 	gRenderer = SDL_CreateRenderer(gWindow, -1, SDL_RENDERER_ACCELERATED);
-	gFont = TTF_OpenFont("Font_Folder/font2.ttf", 30);
 }
 
 void Close() {
@@ -46,29 +30,27 @@ void Close() {
 }
 
 void gameLoop() {
-	
-	game.playMusic();
-	
+
+	Mix_PlayMusic(game.mGameMusic, -1);
 	while (true) {
 
 		game.render(gRenderer);
-		game.renderText(gRenderer, gFont);
-		game.handleState(gRenderer, gMouse, gEvent, &hero, oldState, bots);
+		game.renderText(gRenderer);
+		game.handleState(gRenderer, gMouse, gEvent);
 
 		while (SDL_PollEvent(&gEvent)) {
 			if (gEvent.type == SDL_QUIT) {
 				return;
 			}
 			SDL_GetMouseState(&gMouse.first, &gMouse.second);
-			game.handleState(gRenderer, gMouse, gEvent, &hero, oldState, bots);
+			game.handleState(gRenderer, gMouse, gEvent);
 
 			if (game.getState() != START && game.getState() != SHOP && game.getState() != DEAD && game.getState() != UPGRADE && game.getState() != VICTORY) {
-				hero.handleAction(gEvent, gRenderer);
+				game.hero->handleAction(gEvent, gRenderer);
 			}
 		}
-
 		switch (game.getState()) {
-		
+
 		case UPGRADE:
 		case SHOP:
 		case START:
@@ -80,17 +62,10 @@ void gameLoop() {
 		case LEVEL_3:
 		case LEVEL_4:
 		case LEVEL_5:
-
-			game.handleMove(); 
-			oldState = game.getState();
-			game.handleLogic(gRenderer, &hero, bots);
-			
-			hero.handleMove(); hero.handleState(gRenderer); hero.handleSkill(); hero.renderText(gRenderer, gFont); hero.render(gRenderer, 1);
-			for (int i = 0; i < int(bots.size()); i++) {
-				if (bots[i]->getIsAppear()) {
-					bots[i]->handleAction(gRenderer); bots[i]->handleMove(); bots[i]->handleState(gRenderer); bots[i]->render(gRenderer, -1);
-				}
-			}
+			game.oldState = game.getState();
+			game.handleMove();
+			game.handleLogic(gRenderer);
+			game.handleObject(gRenderer);
 			break;
 		}
 		SDL_RenderPresent(gRenderer);
@@ -99,7 +74,7 @@ void gameLoop() {
 
 int main(int argc, char* argv[]) {
 	Init();
-	loadResource();
+	game.loadResource(gRenderer);
 	gameLoop();
 	Close();
 	return 0;

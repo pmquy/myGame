@@ -38,6 +38,7 @@ void Bullet::setDirection(int dx, int dy) {
 }
 
 void Bullet::loadImage(SDL_Renderer* renderer, BulletType t) {
+	mBulletType = t;
 	BaseClass::loadImage(renderer, BULLET_PATHS[int(t)]);
 }
 
