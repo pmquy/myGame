@@ -9,7 +9,7 @@ Game1::Game1() {
 }
 
 void Game1::handleMove() {
-	if (mState != START && mState != SHOP && mState != DEAD && mState != UPGRADE && mState != VICTORY && checkToMove(20)) {
+	if ((mState == LEVEL_1 || mState == LEVEL_2 || mState == LEVEL_3 || mState == LEVEL_4 || mState == LEVEL_5) && checkToMove(20)) {
 		BaseClass::handleMove();
 		if (mRect.x <= -1200) mRect.x = 0;
 	}
@@ -17,7 +17,7 @@ void Game1::handleMove() {
 
 void Game1::render(SDL_Renderer* renderer, const SDL_Rect* clip) {
 	mTexture = mTextures[int(mState)];
-	if (mState != START && mState != SHOP && mState != DEAD && mState != UPGRADE && mState != VICTORY) {
+	if (mState == LEVEL_1 || mState == LEVEL_2 || mState == LEVEL_3 || mState == LEVEL_4 || mState == LEVEL_5) {
 		BaseClass::render(renderer);
 		mRect.x += 1200;
 		BaseClass::render(renderer);
@@ -38,38 +38,40 @@ void Game1::loadImage(SDL_Renderer* renderer, const std::vector<std::string>& li
 
 void Game1::handleState(SDL_Renderer* renderer, std::pair<int, int> mouse, SDL_Event event) {
 
-	if (!(mState != START && mState != SHOP && mState != DEAD && mState != UPGRADE && mState != VICTORY)) {
+	if (!(mState == LEVEL_1 || mState == LEVEL_2 || mState == LEVEL_3 || mState == LEVEL_4 || mState == LEVEL_5)) {
 		setRect(0, 0);
 	}
 
 	switch (mState) {
+	case START1:
+		if (event.type == SDL_MOUSEBUTTONDOWN) {
+			mState = LEVEL_1;
+			hero->reborn();
+		}
+		if (!(mouse.first >= 550 && mouse.first <= 650 && mouse.second >= 152 && mouse.second <= 227)) {
+			mState = START;
+		}
 
+		break;
+	case START2:
+		if (event.type == SDL_MOUSEBUTTONDOWN)
+			mState = SHOP;
+
+		if (!(mouse.first >= 540 && mouse.first <= 660 && mouse.second >= 252 && mouse.second <= 327)) {
+			mState = START;
+		}
+		break;
+	
 	case START:
-		if (mouse.first >= 550 && mouse.first <= 650 && mouse.second >= 140 && mouse.second <= 190) {
-			if (event.type == SDL_MOUSEBUTTONDOWN) {
-				mState = LEVEL_1;
-				hero->reborn();
-			}
-			SDL_Rect rect = { 550, 140, 100, 50 };
-
-			SDL_SetRenderDrawColor(renderer, 0, 253, 253, 150);
-			SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
-			SDL_RenderFillRect(renderer, &rect);
-			SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_NONE);
-
+		if (mouse.first >= 550 && mouse.first <= 650 && mouse.second >= 152 && mouse.second <= 227) {
+			mState = START1;
 		}
-		if (mouse.first >= 550 && mouse.first <= 650 && mouse.second >= 220 && mouse.second <= 270) {
-			if (event.type == SDL_MOUSEBUTTONDOWN)
-				mState = SHOP;
-			SDL_Rect rect = { 550, 220, 100, 50 };
 
-			SDL_SetRenderDrawColor(renderer, 0, 253, 253, 150);
-			SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
-			SDL_RenderFillRect(renderer, &rect);
-			SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_NONE);
-
+		if (mouse.first >= 540 && mouse.first <= 660 && mouse.second >= 252 && mouse.second <= 327) {
+			mState = START2;
 		}
-		if (mouse.first >= 500 && mouse.first <= 700 && mouse.second >= 300 && mouse.second <= 350) {
+
+		if (mouse.first >= 500 && mouse.first <= 700 && mouse.second >= 363 && mouse.second <= 438) {
 			if (event.type == SDL_MOUSEBUTTONDOWN)
 				mState = UPGRADE;
 			SDL_Rect rect = { 500, 300, 200, 50 };
@@ -322,24 +324,32 @@ void Game1::handleState(SDL_Renderer* renderer, std::pair<int, int> mouse, SDL_E
 	}
 }
 
+void Game1::restart(SDL_Renderer* renderer) {
+	hero->reborn();
+	
+	for (int j = 0; j < int(bots.size()); j++) {
+		bots[j]->reborn(renderer);
+	}
+
+	while(!items.empty()) {
+		if (items[items.size() - 1] != nullptr) {
+			items[items.size() - 1]->free();
+			delete items[items.size() - 1];
+			items.pop_back();
+		}
+	}
+}
 
 void Game1::handleLogic(SDL_Renderer* renderer) {
 	if (hero->checkIsDestroyed()) {
 		mState = DEAD;
-		hero->reborn();
-		for (int j = 0; j < int(bots.size()); j++) {
-			bots[j]->reborn(renderer);
-		}
+		this->restart(renderer);
 	}
 
 	if (hero->getScore() >= 10) {
 		mState = VICTORY;
-		hero->reborn();
-		for (int i = 0; i < int(bots.size()); i++) {
-			bots[i]->reborn(renderer);
-		}
+		this->restart(renderer);
 	}
-
 	this->handleCollision(renderer);
 }
 
@@ -372,31 +382,75 @@ void Game1::handleCollision(SDL_Renderer* renderer) {
 			hero->setCoin(hero->getCoin() + 3);
 			
 			Item* newItem = new Item();
-			newItem->loadImage(renderer, ItemType::BUFF_HP);
-			newItem->setRect(bots[j]->getRect().x, bots[j]->getRect().y, 50, 50);
+			newItem->loadImage(renderer, static_cast<ItemType>(rand() % 3));
+			newItem->setRect(bots[j]->getRect().x + 10, bots[j]->getRect().y + bots[j]->getRect().h / 2);
 			items.push_back(newItem);
 		}
 	}
 
 	for (int i = 0; i < int(items.size()); i++) {
 		if (checkConllision(hero, items[i])) {
-			if (items[i]->getItemType() == ItemType::BUFF_HP) {
+			
+			switch (items[i]->getItemType()) {
+
+			case BUFF_HP:
 				hero->setHeart(hero->getHeart() + 10);
+				break;
+			case ADD_BLUE_BALL:
+				if (hero->getCurrentBullet() == BLUE_BALL) {
+					hero->mMaxBullet += 1;
+					if (hero->mMaxBullet >= 5) {
+						hero->mMaxBullet = 5;
+					}
+				}
+				else {
+					hero->setCurrentBullet(BLUE_BALL);
+					hero->mMaxBullet = 1;
+				}
+				break;
+			case ADD_GREEN_BALL:
+				if (hero->getCurrentBullet() == GREEN_BALL) {
+					hero->mMaxBullet += 1;
+					if (hero->mMaxBullet >= 5) {
+						hero->mMaxBullet = 5;
+					}
+				}
+				else {
+					hero->setCurrentBullet(GREEN_BALL);
+					hero->mMaxBullet = 1;
+				}
+				break;
+			case ADD_RED_BALL:
+				if (hero->getCurrentBullet() == RED_BALL) {
+					hero->mMaxBullet += 1;
+					if (hero->mMaxBullet >= 5) {
+						hero->mMaxBullet = 5;
+					}
+				}
+				else {
+					hero->setCurrentBullet(RED_BALL);
+					hero->mMaxBullet = 1;
+				}
+				break;
+
 			}
-			delete items[i];
-			items.erase(items.begin() + i);
+
+			if (items[i] != nullptr) {
+				delete items[i];
+				items.erase(items.begin() + i);
+			}
 		}
 	}
 }
 
 
 void Game1::renderText(SDL_Renderer* renderer) {
-	if (mState != START && mState != SHOP && mState != DEAD && mState != UPGRADE && mState != VICTORY) {
-		texts[0]->loadText(renderer, font, "Score : " + std::to_string(hero->getScore())) ; texts[0]->render(renderer);
-		texts[1]->loadText(renderer, font, "Coin : " + std::to_string(hero->getCoin())); texts[1]->render(renderer);
+	if (mState == LEVEL_1 || mState == LEVEL_2 || mState == LEVEL_3 || mState == LEVEL_4 || mState == LEVEL_5) {
+		texts[0]->loadText(renderer, font, "Score : " + std::to_string(hero->getScore()), color) ; texts[0]->render(renderer);
+		texts[1]->loadText(renderer, font, "Coin : " + std::to_string(hero->getCoin()), color); texts[1]->render(renderer);
 	}
 	else if (mState == SHOP || mState == UPGRADE) {
-		texts[1]->loadText(renderer, font, "Coin : " + std::to_string(hero->getCoin())); texts[1]->render(renderer);
+		texts[1]->loadText(renderer, font, "Coin : " + std::to_string(hero->getCoin()), color); texts[1]->render(renderer);
 	}
 }
 

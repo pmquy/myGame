@@ -74,34 +74,20 @@ void Character::handleAction(const SDL_Event &event, SDL_Renderer* renderer) {
 				mCurrentBullet = BulletType::GREEN_BALL;
 			}
 			break;
-		case SDLK_d:
+		case SDLK_q:
 			if (mState == NORMAL) {
-				if (mBulletQuatity[int(mCurrentBullet)] >= 1) {
+				for (int i = -mMaxBullet / 2; i <= mMaxBullet / 2; i++) {
+					if (i == 0 && mMaxBullet % 2 == 0)
+						continue;
 					Bullet* newBullet = new Bullet();
-					newBullet->setRect(mRect.x + mRect.w, mRect.y + mRect.h / 2);
 					newBullet->loadImage(renderer, mCurrentBullet);
-					newBullet->setDirection(5, 0);
+					newBullet->setRect(mRect.x + mRect.w, mRect.y + mRect.h / 2);
+					newBullet->setDirection(5, i);
 					mBulletList.push_back(newBullet);
-					mCurrentFrame = 0;
-					mState = FIRING;
-					mBulletQuatity[int(mCurrentBullet)] -= 1;
 				}
-			}
-			break;
-		case SDLK_s:
-			if (mState == NORMAL) {
-				if (mBulletQuatity[int(mCurrentBullet)] >= 3) {
-					for (int i = 0; i < 3; i++) {
-						Bullet* newBullet = new Bullet();
-						newBullet->loadImage(renderer, mCurrentBullet);
-						newBullet->setRect(mRect.x + mRect.w, mRect.y + mRect.h / 2);
-						newBullet->setDirection(5, 1 - i);
-						mBulletList.push_back(newBullet);
-					}
-					mCurrentFrame = 0;
-					mState = FIRING;
-					mBulletQuatity[mCurrentBullet] -= 3;
-				}
+				mCurrentFrame = 0;
+				mState = FIRING;
+				mBulletQuatity[mCurrentBullet] -= 3;
 			}
 			break;
 		case SDLK_f:

@@ -20,12 +20,10 @@ static std::vector<int> PLANE_ATTACKS = { 3, 4, 5 };
 static std::vector<int> PLANE_HEARTS = { 100, 100, 100 };
 static std::vector<int> PLANE_AMOR = { 0, 0, 0 };
 
-static std::vector<std::string> BOT1_PATHS = { "Image_Folder/Airplane/Bot/Bomber/Idle.png", "Image_Folder/Airplane/Bot/Bomber/Destroyed.png", "Image_Folder/Airplane/Bot/Bomber/Attack_1.png" };
-static std::vector<std::string> BOT2_PATHS = { "Image_Folder/Airplane/Bot/Fighter/Idle.png", "Image_Folder/Airplane/Bot/Fighter/Destroyed.png", "Image_Folder/Airplane/Bot/Fighter/Attack_1.png" };
-static std::vector<std::string> BOT3_PATHS = { "Image_Folder/Airplane/Bot/Corvette/Idle.png", "Image_Folder/Airplane/Bot/Corvette/Destroyed.png", "Image_Folder/Airplane/Bot/Corvette/Attack_1.png" };
+static std::vector<std::string> BOT1_PATHS = { "Image_Folder/Airplane/Bot/Bomber/Idle.png", "Image_Folder/Airplane/Bot/Bomber/Destroyed.png", "Image_Folder/Airplane/Bot/Bomber/Attack_1.png", "Image_Folder/Airplane/Bot/Bomber/Boost.png" };
+static std::vector<std::string> BOT2_PATHS = { "Image_Folder/Airplane/Bot/Fighter/Idle.png", "Image_Folder/Airplane/Bot/Fighter/Destroyed.png", "Image_Folder/Airplane/Bot/Fighter/Attack_1.png", "Image_Folder/Airplane/Bot/Fighter/Boost.png" };
+static std::vector<std::string> BOT3_PATHS = { "Image_Folder/Airplane/Bot/Corvette/Idle.png", "Image_Folder/Airplane/Bot/Corvette/Destroyed.png", "Image_Folder/Airplane/Bot/Corvette/Attack_1.png" , "Image_Folder/Airplane/Bot/Corvette/Boost.png" };
 static std::vector<std::vector<std::string>> BOTS_PATHS = { BOT1_PATHS, BOT2_PATHS, BOT3_PATHS };
-
-
 
 struct Skill {
 	int mMaxTime;
@@ -42,8 +40,6 @@ struct Skill {
 		mTime = 0;
 	}
 };
-
-
 
 class Airplane :public BaseClass {
 public:
@@ -88,7 +84,6 @@ public:
 	void setAmor(int amor) {
 		mAmor = amor;
 	}
-
 	bool getIsAppear() {
 		return mIsAppear;
 	}
@@ -102,14 +97,13 @@ public:
 	std::vector<Skill*>& getSkillList() {
 		return mSkillList;
 	}
-
+	
 	virtual void handleState(SDL_Renderer*) = 0;
 	virtual void handleBulletMove() = 0;
 	virtual void render(SDL_Renderer* renderer, int i);
 	virtual void reborn();
 	void free();
 	void loadImage(SDL_Renderer* renderer, const std::vector<std::string>& listName);
-
 	void handleSkill();
 
 protected:

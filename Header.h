@@ -9,6 +9,8 @@
 
 enum Game1Type {
 	START,
+	START1,
+	START2,
 	LEVEL_1,
 	LEVEL_2,
 	LEVEL_3,
@@ -20,7 +22,7 @@ enum Game1Type {
 	UPGRADE,
 };
 
-static std::vector<std::string> GAME_PATHS = { "Image_Folder/Background/Start.png", "Image_Folder/Background/Level_1.png", "Image_Folder/Background/Level_2.png", "Image_Folder/Background/Level_3.png", "Image_Folder/Background/Level_4.png", "Image_Folder/Background/Level_5.png", "Image_Folder/Background/Lose.png", "Image_Folder/Background/Shop.png", "Image_Folder/Background/Victory.png", "Image_Folder/Background/Upgrade.png" };
+static std::vector<std::string> GAME_PATHS = { "Image_Folder/Background/temp/1.png", "Image_Folder/Background/temp/2.png", "Image_Folder/Background/temp/3.png", "Image_Folder/Background/Level_1.png", "Image_Folder/Background/Level_2.png", "Image_Folder/Background/Level_3.png", "Image_Folder/Background/Level_4.png", "Image_Folder/Background/Level_5.png", "Image_Folder/Background/Lose.png", "Image_Folder/Background/Shop.png", "Image_Folder/Background/Victory.png", "Image_Folder/Background/Upgrade.png" };
 
 
 
@@ -35,6 +37,7 @@ public:
 	Mix_Chunk* mBonkMusic = nullptr;
 	Mix_Music* mGameMusic = nullptr;
 	TTF_Font* font = nullptr;
+	SDL_Color color;
 
 	void handleLogic(SDL_Renderer*);
 	void loadResource(SDL_Renderer*);
@@ -45,6 +48,7 @@ public:
 	void handleCollision(SDL_Renderer*);
 	void renderText(SDL_Renderer*);
 	void handleObject(SDL_Renderer*);
+	void restart(SDL_Renderer*);
 	Game1();
 	
 

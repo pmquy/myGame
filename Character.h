@@ -48,6 +48,13 @@ public:
 	void setScore(int c) {
 		mScore = c;
 	}
+	BulletType getCurrentBullet() {
+		return mCurrentBullet;
+	}
+	void setCurrentBullet(BulletType t) {
+		mCurrentBullet = t;
+	}
+	int mMaxBullet = 1;
 
 private:
 	void handleBulletMove();
