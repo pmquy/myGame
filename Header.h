@@ -7,31 +7,45 @@
 #include "Text.h"
 #include "Item.h"
 
-enum Game1Type {
+enum GameType {
 	START,
 	START1,
 	START2,
-	LEVEL_1,
-	LEVEL_2,
-	LEVEL_3,
-	LEVEL_4,
-	LEVEL_5,
-	DEAD,
+	START3,
+	LEVEL1,
+	LEVEL2,
+	LEVEL3,
+	LEVEL4,
+	LEVEL5,
+	LOSE,
+	LOSE1,
+	LOSE2,
 	SHOP,
-	VICTORY,
+	SHOP1, 
+	SHOP2,
+	SHOP3,
+	SHOP4,
+	WIN,
+	WIN1,
+	WIN2,
+	WIN3,
 	UPGRADE,
+	UPGRADE1,
+	UPGRADE2,
+	UPGRADE3,
+	UPGRADE4,
 };
 
-static std::vector<std::string> GAME_PATHS = { "Image_Folder/Background/temp/1.png", "Image_Folder/Background/temp/2.png", "Image_Folder/Background/temp/3.png", "Image_Folder/Background/Level_1.png", "Image_Folder/Background/Level_2.png", "Image_Folder/Background/Level_3.png", "Image_Folder/Background/Level_4.png", "Image_Folder/Background/Level_5.png", "Image_Folder/Background/Lose.png", "Image_Folder/Background/Shop.png", "Image_Folder/Background/Victory.png", "Image_Folder/Background/Upgrade.png" };
+static std::vector<std::string> GAME_PATHS = { "Image_Folder/Background/Start/0.png", "Image_Folder/Background/Start/1.png", "Image_Folder/Background/Start/2.png", "Image_Folder/Background/Start/3.png",  "Image_Folder/Background/Level/1.png", "Image_Folder/Background/Level/2.png", "Image_Folder/Background/Level/3.png", "Image_Folder/Background/Level/4.png", "Image_Folder/Background/Level/5.png", "Image_Folder/Background/Lose/0.png", "Image_Folder/Background/Lose/1.png", "Image_Folder/Background/Lose/2.png", "Image_Folder/Background/Shop/0.png", "Image_Folder/Background/Shop/1.png", "Image_Folder/Background/Shop/2.png", "Image_Folder/Background/Shop/3.png", "Image_Folder/Background/Shop/4.png", "Image_Folder/Background/Win/0.png", "Image_Folder/Background/Win/1.png", "Image_Folder/Background/Win/2.png", "Image_Folder/Background/Win/3.png", "Image_Folder/Background/Upgrade/0.png", "Image_Folder/Background/Upgrade/1.png", "Image_Folder/Background/Upgrade/2.png", "Image_Folder/Background/Upgrade/3.png", "Image_Folder/Background/Upgrade/4.png" };
 
 
 
-class Game1 : public BaseClass {
+class Game : public BaseClass {
 public:
 	Character *hero = nullptr;
 	std::vector<Bot*> bots;
 	std::vector<Item*> items;
-	Game1Type mState, oldState;
+	GameType mState, oldState;
 	std::vector<SDL_Texture*> mTextures;
 	std::vector<Text*> texts;
 	Mix_Chunk* mBonkMusic = nullptr;
@@ -49,10 +63,10 @@ public:
 	void renderText(SDL_Renderer*);
 	void handleObject(SDL_Renderer*);
 	void restart(SDL_Renderer*);
-	Game1();
+	Game();
 	
 
-	Game1Type getState() {
+	GameType getState() {
 		return mState;
 	}
 };

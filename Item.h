@@ -16,11 +16,9 @@ static std::vector<std::string> ITEM_PATHS = { "Image_Folder/Item/HP_Bonus1.png"
 class Item : public BaseClass {
 public:
 	void loadImage(SDL_Renderer*, ItemType);
-	ItemType getItemType() {
-		return mItemType;
-	}
-	Item();
 	void handleMove();
+	ItemType getItemType();
+	Item();
 private:
 	ItemType mItemType;
 };

@@ -75,7 +75,7 @@ void Character::handleAction(const SDL_Event &event, SDL_Renderer* renderer) {
 			}
 			break;
 		case SDLK_q:
-			if (mState == NORMAL) {
+			if (mState == NORMAL || mState == BOOSTING) {
 				for (int i = -mMaxBullet / 2; i <= mMaxBullet / 2; i++) {
 					if (i == 0 && mMaxBullet % 2 == 0)
 						continue;
@@ -87,7 +87,6 @@ void Character::handleAction(const SDL_Event &event, SDL_Renderer* renderer) {
 				}
 				mCurrentFrame = 0;
 				mState = FIRING;
-				mBulletQuatity[mCurrentBullet] -= 3;
 			}
 			break;
 		case SDLK_f:
@@ -164,11 +163,9 @@ void Character::handleState(SDL_Renderer* renderer) {
 		mState = DESTROYED;
 		mCurrentFrame = 0;
 	}
-
 	if (mState == DESTROYED && mCurrentFrame == mMaxFrames[int(mState)] - 1) {
 		reborn();
 	}
-
 	if (mState == FIRING && mCurrentFrame == mMaxFrames[int(mState)] - 1) {
 		mState = NORMAL;
 		mCurrentFrame = 0;
@@ -178,8 +175,52 @@ void Character::handleState(SDL_Renderer* renderer) {
 	}
 
 }
-
 	
+void Character::renderText(SDL_Renderer* renderer, TTF_Font* font) {
+	
+	for (int i = 0; i < int(mSkillList.size()); i++) {
+		if (mSkillList[i]->mIsAvailable == true) {
+			Text* temp = mTextList[i];
+			temp->loadText(renderer, font, mSkillList[i]->mName + " : " + std::to_string(mSkillList[i]->mCurrentTime));
+			temp->render(renderer);
+		}
+	}
+	mTextList.back()->loadText(renderer, font, BULLET_NAMES[int(mCurrentBullet)] + " : " + std::to_string(mBulletQuatity[int(mCurrentBullet)]));
+	mTextList.back()->render(renderer);
+
+}
+
+bool Character::checkIsDestroyed() {
+
+	return mHeart == 0 && mCurrentFrame == mMaxFrames[int(DESTROYED)] - 1 && mState == DESTROYED;
+
+}
+void Character::reborn() {
+	Airplane::reborn();
+	setRect(0, 0);
+	mXVal = mYVal = 0;
+	mSkillList[0]->mCurrentTime = 0;
+	mScore = 0;
+	mBulletQuatity = { 100, 100, 100 };
+}
+int Character::getCoin() {
+	return mCoin;
+}
+void Character::setCoin(int c) {
+	mCoin = c;
+}
+int Character::getScore() {
+	return mScore;
+}
+void Character::setScore(int c) {
+	mScore = c;
+}
+BulletType Character::getCurrentBullet() {
+	return mCurrentBullet;
+}
+void Character::setCurrentBullet(BulletType t) {
+	mCurrentBullet = t;
+}
 
 
 

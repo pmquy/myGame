@@ -17,15 +17,9 @@ public:
 	void handleMove();
 	void handleState(SDL_Renderer*);
 	void handleAction(SDL_Renderer *);
-	
-	bool checkIsDestroyed() {
-		return mHeart == 0 && mCurrentFrame == 0 && mState == DESTROYED;
-	}
+	bool checkIsDestroyed();
 	void reborn(SDL_Renderer*);
-
-	void setBotType(const BotType& t) {
-		mType = t;
-	}
+	void setBotType(const BotType& t);
 
 private:
 	BotType mType;

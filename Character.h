@@ -11,49 +11,15 @@ public:
 	void handleAction(const SDL_Event &event, SDL_Renderer* renderer);
 	void handleMove();
 	void handleState(SDL_Renderer*);
-
-	void renderText(SDL_Renderer* renderer, TTF_Font* font) {
-		for (int i = 0; i < int(mSkillList.size()); i++) {
-			if (mSkillList[i]->mIsAvailable == true) {
-				Text* temp = mTextList[i];
-				temp->loadText(renderer, font, mSkillList[i]->mName + " : " + std::to_string(mSkillList[i]->mCurrentTime));
-				temp->render(renderer);
-			}
-		}
-
-		mTextList.back()->loadText(renderer, font, BULLET_NAMES[int(mCurrentBullet)] + " : " + std::to_string(mBulletQuatity[int(mCurrentBullet)]));
-		mTextList.back()->render(renderer);
-	}
-
-	bool checkIsDestroyed() {
-		return mHeart == 0 && mCurrentFrame == mMaxFrames[int(DESTROYED)] - 1 && mState == DESTROYED;
-	}
-	void reborn() {
-		Airplane::reborn();
-		setRect(0, 0);
-		mXVal = mYVal = 0;
-		mSkillList[0]->mCurrentTime = 0;
-		mScore = 0;
-		mBulletQuatity = { 100, 100, 100 };
-	}
-	int getCoin() {
-		return mCoin;
-	}
-	void setCoin(int c) {
-		mCoin = c;
-	}
-	int getScore() {
-		return mScore;
-	}
-	void setScore(int c) {
-		mScore = c;
-	}
-	BulletType getCurrentBullet() {
-		return mCurrentBullet;
-	}
-	void setCurrentBullet(BulletType t) {
-		mCurrentBullet = t;
-	}
+	void renderText(SDL_Renderer* renderer, TTF_Font* font);
+	bool checkIsDestroyed();
+	void reborn();
+	void setCoin(int c);
+	int getScore();
+	void setScore(int c);
+	BulletType getCurrentBullet();
+	void setCurrentBullet(BulletType t);
+	int getCoin();
 	int mMaxBullet = 1;
 
 private:

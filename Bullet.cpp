@@ -42,4 +42,10 @@ void Bullet::loadImage(SDL_Renderer* renderer, BulletType t) {
 	BaseClass::loadImage(renderer, BULLET_PATHS[int(t)]);
 }
 
-	
+bool Bullet::getIsAppear() {
+	return mIsAppear;
+}
+
+void Bullet::setIsAppear(bool t) {
+	mIsAppear = t;
+}

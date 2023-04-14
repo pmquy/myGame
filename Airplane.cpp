@@ -152,3 +152,55 @@ void Airplane::handleSkill() {
 		}
 	}
 }
+
+void Airplane::getDamage(int damage) {
+	if (mState != DESTROYED) {
+		mHeart -= damage - damage * mAmor / 10;
+	}
+	if (mHeart <= 0) {
+		mHeart = 0;
+	}
+}
+int Airplane::getHeart() {
+	return mHeart;
+}
+int Airplane::getMaxHeart() {
+	return mMaxHeart;
+}
+void Airplane::setHeart(int heart) {
+	mHeart = heart;
+	if (mHeart >= mMaxHeart) {
+		mHeart = mMaxHeart;
+	}
+	if (mHeart <= 0) {
+		mHeart = 0;
+	}
+}
+void Airplane::setMaxHeart(int mh) {
+	mMaxHeart = mh;
+}
+int Airplane::getAttack() {
+	return mAttack;
+}
+void Airplane::setAttack(int attack) {
+	mAttack = attack;
+}
+int Airplane::getAmor() {
+	return mAmor;
+}
+void Airplane::setAmor(int amor) {
+	mAmor = amor;
+}
+bool Airplane::getIsAppear() {
+	return mIsAppear;
+}
+void Airplane::setIsAppear(bool t) {
+	mIsAppear = t;
+}
+
+std::vector<Bullet*>& Airplane::getBulletList() {
+	return mBulletList;
+}
+std::vector<Skill*>& Airplane::getSkillList() {
+	return mSkillList;
+}

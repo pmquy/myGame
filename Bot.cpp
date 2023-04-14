@@ -15,9 +15,8 @@ Bot::~Bot() {
 	free();
 }
 
-
 void Bot::handleMove() {
-	if (checkToMove(20)) {
+	if (checkToMove(20) && mState != DESTROYED) {
 		BaseClass::handleMove();
 		if (mType == SHIP2 && mRect.x <= 700) {
 			mRect.x = 700;
@@ -26,7 +25,6 @@ void Bot::handleMove() {
 	}
 }
 
-
 void Bot::handleBulletMove() {
 	for (int i = 0; i < mBulletList.size(); i++) {
 		if (mBulletList[i]->getIsMove()) {
@@ -34,7 +32,6 @@ void Bot::handleBulletMove() {
 		}
 	}
 }
-
 
 void Bot::reborn(SDL_Renderer* renderer) {
 	Airplane::reborn();
@@ -59,32 +56,42 @@ void Bot::handleState(SDL_Renderer* renderer) {
 			mBulletList[i]->setIsMove(true);
 		}
 	}
+	if (mState == NORMAL) {
+		mState = BOOSTING;
+	}
+
+	if (mState == BOOSTING && mRect.x == 700 && mType == SHIP2) {
+		mState = NORMAL;
+	}
 }
 
 void Bot::handleAction(SDL_Renderer *renderer) {
-	if (checkToFire(3000)) {
+	if (checkToFire(3000) && (mState == NORMAL || mState == BOOSTING)) {
 		fire(renderer);
 	}
 }
 
 void Bot::fire(SDL_Renderer* renderer) {
 	
-	if (mType == SHIP1) {
+	int max = 1 + rand() % 3;
+	for (int i = -max / 2; i <= max / 2; i++) {
+		if (i == 0 && max % 2 == 0)
+			continue;
 		Bullet* newBullet = new Bullet();
-		newBullet->loadImage(renderer, static_cast<BulletType>(rand()%6));
-		newBullet->setDirection(-5, 0);
-		newBullet->setRect(mRect.x + 10, mRect.y + mRect.h/2);
+		newBullet->loadImage(renderer, static_cast<BulletType>(rand() % 6));
+		newBullet->setRect(mRect.x + 10, mRect.y + mRect.h / 2);
+		newBullet->setDirection(-5, i);
 		mBulletList.push_back(newBullet);
-	}
-	else if (mType == SHIP2) {
-		for (int i = 0; i < 3; i++) {
-			Bullet* newBullet = new Bullet();
-			newBullet->loadImage(renderer, BulletType::RED_BALL);
-			newBullet->setRect(mRect.x + 10, mRect.y + mRect.h / 2);
-			newBullet->setDirection(-5, 1 - i);
-			mBulletList.push_back(newBullet);
-		}
 	}
 	mState = FIRING;
 	mCurrentFrame = mMaxFrames[int(FIRING)] - 1;
+
+}
+
+void Bot::setBotType(const BotType& t) {
+	mType = t;
+}
+
+bool Bot::checkIsDestroyed() {
+	return mHeart == 0 && mCurrentFrame == 0 && mState == DESTROYED;
 }

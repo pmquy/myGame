@@ -24,14 +24,8 @@ public:
 	void handleMove();
 	void setIsMove(bool state);
 	bool getIsMove();
-	bool getIsAppear() {
-		return mIsAppear;
-	}
-
-	void setIsAppear(bool t) {
-		mIsAppear = t;
-	}
-
+	bool getIsAppear();
+	void setIsAppear(bool t);
 	void setDirection(int, int);
 	void loadImage(SDL_Renderer*, BulletType);
 

@@ -1,23 +1,24 @@
 #include"Header.h"
 
-Game1::Game1() {
+Game::Game() {
 	mRect.x = mRect.y = 0;
 	mRect.w = SCREEN_WIDTH;
 	mRect.h = SCREEN_HEIGHT;
 	mXVal = -1; mYVal = 0;
 	mState = oldState = START;
+	color = { 255, 255, 255 };
 }
 
-void Game1::handleMove() {
-	if ((mState == LEVEL_1 || mState == LEVEL_2 || mState == LEVEL_3 || mState == LEVEL_4 || mState == LEVEL_5) && checkToMove(20)) {
+void Game::handleMove() {
+	if ((mState == LEVEL1 || mState == LEVEL2 || mState == LEVEL3 || mState == LEVEL4 || mState == LEVEL5) && checkToMove(20)) {
 		BaseClass::handleMove();
 		if (mRect.x <= -1200) mRect.x = 0;
 	}
 }
 
-void Game1::render(SDL_Renderer* renderer, const SDL_Rect* clip) {
+void Game::render(SDL_Renderer* renderer, const SDL_Rect* clip) {
 	mTexture = mTextures[int(mState)];
-	if (mState == LEVEL_1 || mState == LEVEL_2 || mState == LEVEL_3 || mState == LEVEL_4 || mState == LEVEL_5) {
+	if (mState == LEVEL1 || mState == LEVEL2 || mState == LEVEL3 || mState == LEVEL4 || mState == LEVEL5) {
 		BaseClass::render(renderer);
 		mRect.x += 1200;
 		BaseClass::render(renderer);
@@ -28,7 +29,7 @@ void Game1::render(SDL_Renderer* renderer, const SDL_Rect* clip) {
 	}
 }
 
-void Game1::loadImage(SDL_Renderer* renderer, const std::vector<std::string>& listName) {
+void Game::loadImage(SDL_Renderer* renderer, const std::vector<std::string>& listName) {
 	SDL_Texture* loadedTexture;
 	for (std::string s : listName) {
 		loadedTexture = loadTexture(renderer, s);
@@ -36,274 +37,13 @@ void Game1::loadImage(SDL_Renderer* renderer, const std::vector<std::string>& li
 	}
 }
 
-void Game1::handleState(SDL_Renderer* renderer, std::pair<int, int> mouse, SDL_Event event) {
+void Game::handleState(SDL_Renderer* renderer, std::pair<int, int> mouse, SDL_Event event) {
 
-	if (!(mState == LEVEL_1 || mState == LEVEL_2 || mState == LEVEL_3 || mState == LEVEL_4 || mState == LEVEL_5)) {
+	if (!(mState == LEVEL1 || mState == LEVEL2 || mState == LEVEL3 || mState == LEVEL4 || mState == LEVEL5)) {
 		setRect(0, 0);
 	}
 
-	switch (mState) {
-	case START1:
-		if (event.type == SDL_MOUSEBUTTONDOWN) {
-			mState = LEVEL_1;
-			hero->reborn();
-		}
-		if (!(mouse.first >= 550 && mouse.first <= 650 && mouse.second >= 152 && mouse.second <= 227)) {
-			mState = START;
-		}
-
-		break;
-	case START2:
-		if (event.type == SDL_MOUSEBUTTONDOWN)
-			mState = SHOP;
-
-		if (!(mouse.first >= 540 && mouse.first <= 660 && mouse.second >= 252 && mouse.second <= 327)) {
-			mState = START;
-		}
-		break;
-	
-	case START:
-		if (mouse.first >= 550 && mouse.first <= 650 && mouse.second >= 152 && mouse.second <= 227) {
-			mState = START1;
-		}
-
-		if (mouse.first >= 540 && mouse.first <= 660 && mouse.second >= 252 && mouse.second <= 327) {
-			mState = START2;
-		}
-
-		if (mouse.first >= 500 && mouse.first <= 700 && mouse.second >= 363 && mouse.second <= 438) {
-			if (event.type == SDL_MOUSEBUTTONDOWN)
-				mState = UPGRADE;
-			SDL_Rect rect = { 500, 300, 200, 50 };
-
-			SDL_SetRenderDrawColor(renderer, 0, 253, 253, 150);
-			SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
-			SDL_RenderFillRect(renderer, &rect);
-			SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_NONE);
-		}
-		break;
-	case LEVEL_1:
-	case LEVEL_2:
-	case LEVEL_3:
-	case LEVEL_4:
-	case LEVEL_5:
-		break;
-	case DEAD:
-		if (mouse.first >= 490 && mouse.first <= 710 && mouse.second >= 220 && mouse.second <= 270) {
-			if (event.type == SDL_MOUSEBUTTONDOWN) {
-				mState = oldState;
-			}
-
-			SDL_Rect rect = { 490, 220, 220, 50 };
-
-			SDL_SetRenderDrawColor(renderer, 0, 253, 253, 150);
-			SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
-			SDL_RenderFillRect(renderer, &rect);
-			SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_NONE);
-		}
-		else if (mouse.first >= 550 && mouse.first <= 650 && mouse.second >= 300 && mouse.second <= 350) {
-
-			if (event.type == SDL_MOUSEBUTTONDOWN) {
-				mState = START;
-				for (int i = 0; i < int(bots.size()); i++) {
-					if (i < 2) {
-						bots[i]->setIsAppear(true);
-					}
-					else {
-						bots[i]->setIsAppear(false);
-					}
-				}
-			}
-
-			SDL_Rect rect = { 550, 300, 100, 50 };
-
-			SDL_SetRenderDrawColor(renderer, 0, 253, 253, 150);
-			SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
-			SDL_RenderFillRect(renderer, &rect);
-			SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_NONE);
-		}
-		break;
-	case SHOP:
-		if (mouse.first >= 550 && mouse.first <= 650 && mouse.second >= 240 && mouse.second <= 290) {
-			if (event.type == SDL_MOUSEBUTTONDOWN) {
-				if (hero->getCoin() >= 10) {
-					hero->setCoin(hero->getCoin() - 10);
-					hero->loadImage(renderer, HERO3_PATHS);
-				}
-			}
-			SDL_Rect rect = { 550, 240, 100, 50 };
-			SDL_SetRenderDrawColor(renderer, 0, 253, 253, 150);
-			SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
-			SDL_RenderFillRect(renderer, &rect);
-			SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_NONE);
-		}
-		else if (mouse.first >= 230 && mouse.first <= 330 && mouse.second >= 240 && mouse.second <= 290) {
-			if (event.type == SDL_MOUSEBUTTONDOWN) {
-				if (hero->getCoin() >= 10) {
-					hero->setCoin(hero->getCoin() - 10);
-					hero->loadImage(renderer, HERO1_PATHS);
-				}
-			}
-			SDL_Rect rect = { 230, 240, 100, 50 };
-			SDL_SetRenderDrawColor(renderer, 0, 253, 253, 150);
-			SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
-			SDL_RenderFillRect(renderer, &rect);
-			SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_NONE);
-		}
-		else if (mouse.first >= 860 && mouse.first <= 960 && mouse.second >= 240 && mouse.second <= 290) {
-			if (event.type == SDL_MOUSEBUTTONDOWN) {
-				if (hero->getCoin() >= 10) {
-					hero->setCoin(hero->getCoin() - 10);
-					hero->loadImage(renderer, HERO2_PATHS);
-				}
-			}
-			SDL_Rect rect = { 860, 240, 100, 50 };
-			SDL_SetRenderDrawColor(renderer, 0, 253, 253, 150);
-			SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
-			SDL_RenderFillRect(renderer, &rect);
-			SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_NONE);
-		}
-		else if (mouse.first >= 550 && mouse.first <= 650 && mouse.second >= 380 && mouse.second <= 430) {
-			if (event.type == SDL_MOUSEBUTTONDOWN)
-				mState = START;
-
-			SDL_Rect rect = { 550, 380, 100, 50 };
-			SDL_SetRenderDrawColor(renderer, 0, 253, 253, 150);
-			SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
-			SDL_RenderFillRect(renderer, &rect);
-			SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_NONE);
-		}
-		break;
-
-	case VICTORY:
-		if (mouse.first >= 490 && mouse.first <= 710 && mouse.second >= 140 && mouse.second <= 190) {
-			if (event.type == SDL_MOUSEBUTTONDOWN) {
-				if (oldState == LEVEL_1) {
-					mState = LEVEL_2;
-					bots[2]->setIsAppear(true);
-				}
-				else if (oldState == LEVEL_2) {
-					mState = LEVEL_3;
-					bots[2]->setIsAppear(true);
-				}
-				else if (oldState == LEVEL_3) {
-					mState = LEVEL_4;
-					bots[3]->setIsAppear(true);
-				}
-				else if (oldState == LEVEL_4) {
-					mState = LEVEL_5;
-					bots[4]->setIsAppear(true);
-				}
-				else if (oldState == LEVEL_5) {
-					mState = LEVEL_5;
-					bots[5]->setIsAppear(true);
-				}
-			}
-
-			SDL_Rect rect = { 490, 140, 220, 50 };
-
-			SDL_SetRenderDrawColor(renderer, 0, 253, 253, 150);
-			SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
-			SDL_RenderFillRect(renderer, &rect);
-			SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_NONE);
-		}
-
-		if (mouse.first >= 490 && mouse.first <= 710 && mouse.second >= 220 && mouse.second <= 270) {
-			if (event.type == SDL_MOUSEBUTTONDOWN) {
-				if (oldState == LEVEL_1) {
-					mState = LEVEL_1;
-				}
-				else if (oldState == LEVEL_2) {
-					mState = LEVEL_2;
-				}
-				else if (oldState == LEVEL_3) {
-					mState = LEVEL_3;
-				}
-				else if (oldState == LEVEL_4) {
-					mState = LEVEL_4;
-				}
-				else if (oldState == LEVEL_5) {
-					mState = LEVEL_5;
-				}
-			}
-
-			SDL_Rect rect = { 490, 220, 220, 50 };
-
-			SDL_SetRenderDrawColor(renderer, 0, 253, 253, 150);
-			SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
-			SDL_RenderFillRect(renderer, &rect);
-			SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_NONE);
-		}
-		if (mouse.first >= 550 && mouse.first <= 650 && mouse.second >= 300 && mouse.second <= 350) {
-			if (event.type == SDL_MOUSEBUTTONDOWN)
-				mState = START;
-
-			for (int i = 0; i < int(bots.size()); i++) {
-				if (i < 2) {
-					bots[i]->setIsAppear(true);
-				}
-				else {
-					bots[i]->setIsAppear(false);
-				}
-			}
-			SDL_Rect rect = { 550, 300, 100, 50 };
-
-			SDL_SetRenderDrawColor(renderer, 0, 253, 253, 150);
-			SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
-			SDL_RenderFillRect(renderer, &rect);
-			SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_NONE);
-		}
-		break;
-	case UPGRADE:
-		if (mouse.first >= 550 && mouse.first <= 650 && mouse.second >= 380 && mouse.second <= 430) {
-			if (event.type == SDL_MOUSEBUTTONDOWN)
-				mState = START;
-			SDL_Rect rect = { 550, 380, 100, 50 };
-			SDL_SetRenderDrawColor(renderer, 0, 253, 253, 150);
-			SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
-			SDL_RenderFillRect(renderer, &rect);
-			SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_NONE);
-		}
-		else if (mouse.first >= 1030 && mouse.first <= 1090 && mouse.second >= 130 && mouse.second <= 180) {
-			if (event.type == SDL_MOUSEBUTTONDOWN) {
-				if (hero->getCoin() >= 10 && hero->getMaxHeart() < 110) {
-					hero->setCoin(hero->getCoin() - 10);
-					hero->setMaxHeart(hero->getMaxHeart() + 10);
-				}
-			}
-			SDL_Rect rect = { 1030, 130, 60, 50 };
-			SDL_SetRenderDrawColor(renderer, 0, 253, 253, 150);
-			SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
-			SDL_RenderFillRect(renderer, &rect);
-			SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_NONE);
-		}
-		else if (mouse.first >= 1030 && mouse.first <= 1090 && mouse.second >= 210 && mouse.second <= 260) {
-			if (event.type == SDL_MOUSEBUTTONDOWN) {
-				if (hero->getCoin() >= 10 && hero->getAmor() < 6) {
-					hero->setCoin(hero->getCoin() - 10);
-					hero->setAmor(hero->getAmor() + 1);
-				}
-			}
-			SDL_Rect rect = { 1030, 210, 60, 50 };
-			SDL_SetRenderDrawColor(renderer, 0, 253, 253, 150);
-			SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
-			SDL_RenderFillRect(renderer, &rect);
-			SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_NONE);
-		}
-		else if (mouse.first >= 1030 && mouse.first <= 1090 && mouse.second >= 290 && mouse.second <= 340) {
-			if (event.type == SDL_MOUSEBUTTONDOWN) {
-				if (hero->getCoin() >= 10 && hero->getAttack() < 35) {
-					hero->setCoin(hero->getCoin() - 10);
-					hero->setAttack(hero->getAttack() + 5);
-				}
-			}
-			SDL_Rect rect = { 1030, 290, 60, 50 };
-			SDL_SetRenderDrawColor(renderer, 0, 253, 253, 150);
-			SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
-			SDL_RenderFillRect(renderer, &rect);
-			SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_NONE);
-		}
-
+	if (mState == UPGRADE || mState == UPGRADE2 || mState == UPGRADE1 || mState == UPGRADE3 || mState == UPGRADE4) {
 		SDL_Rect rectBg = { 320, 140, 600, 10 };
 		SDL_SetRenderDrawColor(renderer, 255, 255, 255, 0);
 		SDL_RenderFillRect(renderer, &rectBg);
@@ -320,11 +60,277 @@ void Game1::handleState(SDL_Renderer* renderer, std::pair<int, int> mouse, SDL_E
 		rect = { 320, 320, (hero->getAttack() - 5) / 5 * 100, 10 };
 		SDL_RenderFillRect(renderer, &rect);
 
+	}
+
+
+	switch (mState) {
+
+	case START1:
+		if (event.type == SDL_MOUSEBUTTONDOWN) {
+			mState = LEVEL1;
+			hero->reborn();
+		}
+		if (!(mouse.first >= 550 && mouse.first <= 650 && mouse.second >= 152 && mouse.second <= 227)) {
+			mState = START;
+		}
+		break;
+
+	case START2:
+		if (event.type == SDL_MOUSEBUTTONDOWN)
+			mState = SHOP;
+
+		if (!(mouse.first >= 540 && mouse.first <= 660 && mouse.second >= 252 && mouse.second <= 327)) {
+			mState = START;
+		}
+		break;
+
+	case START3:
+		if (!(mouse.first >= 500 && mouse.first <= 700 && mouse.second >= 363 && mouse.second <= 438)) {
+			mState = START;
+		}
+		if (event.type == SDL_MOUSEBUTTONDOWN)
+			mState = UPGRADE;
+		break;
+
+	case START:
+		if (mouse.first >= 550 && mouse.first <= 650 && mouse.second >= 152 && mouse.second <= 227) {
+			mState = START1;
+		}
+		if (mouse.first >= 540 && mouse.first <= 660 && mouse.second >= 252 && mouse.second <= 327) {
+			mState = START2;
+		}
+		if (mouse.first >= 500 && mouse.first <= 700 && mouse.second >= 363 && mouse.second <= 438) {
+			mState = START3;
+		}
+		break;
+	
+	case LOSE1:
+		if (!(mouse.first >= 520 && mouse.first <= 680 && mouse.second >= 252 && mouse.second <= 327)) {
+			mState = LOSE;
+		}
+		if (event.type == SDL_MOUSEBUTTONDOWN)
+			mState = oldState;
+		break;
+
+	case LOSE2:
+		if (!(mouse.first >= 500 && mouse.first <= 700 && mouse.second >= 352 && mouse.second <= 427)) {
+			mState = LOSE;
+		}
+		if (event.type == SDL_MOUSEBUTTONDOWN)
+			mState = START;
+		break;
+
+	case LOSE:
+		if (mouse.first >= 520 && mouse.first <= 680 && mouse.second >= 252 && mouse.second <= 327) {
+			mState = LOSE1;
+		}
+		if (mouse.first >= 500 && mouse.first <= 700 && mouse.second >= 352 && mouse.second <= 427) {
+			mState = LOSE2;
+		}
+		break;
+	
+	case SHOP1:
+		if (event.type == SDL_MOUSEBUTTONDOWN) {
+			if (hero->getCoin() >= 50) {
+				hero->setCoin(hero->getCoin() - 50);
+				hero->loadImage(renderer, HERO1_PATHS);
+			}
+		}
+		if (!(mouse.first >= 230 && mouse.first <= 330 && mouse.second >= 216 && mouse.second <= 291)) {
+			mState = SHOP;
+		}
+		break;
+
+	case SHOP2:
+		if (event.type == SDL_MOUSEBUTTONDOWN) {
+			if (hero->getCoin() >= 50) {
+				hero->setCoin(hero->getCoin() - 50);
+				hero->loadImage(renderer, HERO3_PATHS);
+			}
+		}
+		if (!(mouse.first >= 550 && mouse.first <= 650 && mouse.second >= 216 && mouse.second <= 291)) {
+			mState = SHOP;
+		}
+		break;
+	case SHOP3:
+		if (!(mouse.first >= 860 && mouse.first <= 960 && mouse.second >= 216 && mouse.second <= 291)) {
+			mState = SHOP;
+		}
+		if (event.type == SDL_MOUSEBUTTONDOWN) {
+			if (hero->getCoin() >= 50) {
+				hero->setCoin(hero->getCoin() - 50);
+				hero->loadImage(renderer, HERO2_PATHS);
+			}
+		}
+		break;
+	case SHOP4:
+		if (event.type == SDL_MOUSEBUTTONDOWN)
+			mState = START;
+		if (!(mouse.first >= 500 && mouse.first <= 700 && mouse.second >= 352 && mouse.second <= 427)) {
+			mState = SHOP;
+		}
+		break;
+
+	case SHOP:
+		if (mouse.first >= 230 && mouse.first <= 330 && mouse.second >= 216 && mouse.second <= 291) {
+			mState = SHOP1;
+		}
+		if (mouse.first >= 550 && mouse.first <= 650 && mouse.second >= 216  && mouse.second <= 291) {
+			mState = SHOP2;
+		}
+		if (mouse.first >= 860 && mouse.first <= 960 && mouse.second >= 216 && mouse.second <= 291) {
+			mState = SHOP3;
+		}
+		if (mouse.first >= 500 && mouse.first <= 700 && mouse.second >= 352 && mouse.second <= 427) {
+			mState = SHOP4;
+		}
+		break;
+
+	case WIN1:
+		if (!(mouse.first >= 550 && mouse.first <= 650 && mouse.second >= 152 && mouse.second <= 227)) {
+			mState = WIN;
+		}
+		if (event.type == SDL_MOUSEBUTTONDOWN) {
+			if (oldState == LEVEL1) {
+				mState = LEVEL2;
+				bots[2]->setIsAppear(true);
+			}
+			else if (oldState == LEVEL2) {
+				mState = LEVEL3;
+				bots[2]->setIsAppear(true);
+			}
+			else if (oldState == LEVEL3) {
+				mState = LEVEL4;
+				bots[3]->setIsAppear(true);
+			}
+			else if (oldState == LEVEL4) {
+				mState = LEVEL5;
+				bots[4]->setIsAppear(true);
+			}
+			else if (oldState == LEVEL5) {
+				mState = LEVEL5;
+				bots[5]->setIsAppear(true);
+			}
+		}
+		break;
+	case WIN2:
+		if (!(mouse.first >= 540 && mouse.first <= 660 && mouse.second >= 252 && mouse.second <= 327)) {
+			mState = WIN;
+		}
+		if (event.type == SDL_MOUSEBUTTONDOWN) {
+			if (oldState == LEVEL1) {
+				mState = LEVEL1;
+			}
+			else if (oldState == LEVEL2) {
+				mState = LEVEL2;
+			}
+			else if (oldState == LEVEL3) {
+				mState = LEVEL3;
+			}
+			else if (oldState == LEVEL4) {
+				mState = LEVEL4;
+			}
+			else if (oldState == LEVEL5) {
+				mState = LEVEL5;
+			}
+		}
+		break;
+	case WIN3:
+		if (!(mouse.first >= 500 && mouse.first <= 700 && mouse.second >= 352 && mouse.second <= 427)) {
+			mState = WIN;
+		}
+		if (event.type == SDL_MOUSEBUTTONDOWN)
+			mState = START;
+
+		for (int i = 0; i < int(bots.size()); i++) {
+			if (i < 2) {
+				bots[i]->setIsAppear(true);
+			}
+			else {
+				bots[i]->setIsAppear(false);
+			}
+		}
+		break;
+
+	case WIN:
+		if (mouse.first >= 550 && mouse.first <= 650 && mouse.second >= 152 && mouse.second <= 227) {
+			mState = WIN1;
+		}
+
+		if (mouse.first >= 540 && mouse.first <= 660 && mouse.second >= 252 && mouse.second <= 327) {
+			mState = WIN2;
+		}
+
+		if (mouse.first >= 500 && mouse.first <= 700 && mouse.second >= 352 && mouse.second <= 427) {
+			mState = WIN3;
+		}
+		break;
+	case UPGRADE1:
+		if (event.type == SDL_MOUSEBUTTONDOWN) {
+			if (hero->getCoin() >= 20 && hero->getMaxHeart() < 110) {
+				hero->setCoin(hero->getCoin() - 20);
+				hero->setMaxHeart(hero->getMaxHeart() + 20);
+			}
+		}
+		if (!(mouse.first >= 1030 && mouse.first <= 1090 && mouse.second >= 119 && mouse.second <= 180)) {
+			mState = UPGRADE;
+		}
+		break;
+
+	case UPGRADE2:
+		if (event.type == SDL_MOUSEBUTTONDOWN) {
+			if (hero->getCoin() >= 20 && hero->getAmor() < 6) {
+				hero->setCoin(hero->getCoin() - 20);
+				hero->setAmor(hero->getAmor() + 1);
+			}
+		}
+		if (!(mouse.first >= 1030 && mouse.first <= 1090 && mouse.second >= 204 && mouse.second <= 265)) {
+			mState = UPGRADE;
+		}
+		break;
+
+	case UPGRADE3:
+		if (event.type == SDL_MOUSEBUTTONDOWN) {
+			if (hero->getCoin() >= 20 && hero->getAttack() < 35) {
+				hero->setCoin(hero->getCoin() - 20);
+				hero->setAttack(hero->getAttack() + 5);
+			}
+		}
+		if (!(mouse.first >= 1030 && mouse.first <= 1090 && mouse.second >= 291 && mouse.second <= 352)) {
+			mState = UPGRADE;
+		}
+		break;
+
+	case UPGRADE4:
+		if (!(mouse.first >= 500 && mouse.first <= 700 && mouse.second >= 352 && mouse.second <= 427)) {
+			mState = UPGRADE;
+		}
+		if (event.type == SDL_MOUSEBUTTONDOWN) {
+			mState = START;
+		}
+		break;
+
+	case UPGRADE:
+		if (mouse.first >= 500 && mouse.first <= 700 && mouse.second >= 352 && mouse.second <= 427) {
+			mState = UPGRADE4;
+		}
+		if (mouse.first >= 1030 && mouse.first <= 1090 && mouse.second >= 119 && mouse.second <= 180) {
+			
+			mState = UPGRADE1;
+		}
+		if (mouse.first >= 1030 && mouse.first <= 1090 && mouse.second >= 204 && mouse.second <= 265) {
+
+			mState = UPGRADE2;
+		}
+		if (mouse.first >= 1030 && mouse.first <= 1090 && mouse.second >= 291 && mouse.second <= 352) {
+			
+			mState = UPGRADE3;
+		}
 		break;
 	}
 }
 
-void Game1::restart(SDL_Renderer* renderer) {
+void Game::restart(SDL_Renderer* renderer) {
 	hero->reborn();
 	
 	for (int j = 0; j < int(bots.size()); j++) {
@@ -340,20 +346,20 @@ void Game1::restart(SDL_Renderer* renderer) {
 	}
 }
 
-void Game1::handleLogic(SDL_Renderer* renderer) {
+void Game::handleLogic(SDL_Renderer* renderer) {
 	if (hero->checkIsDestroyed()) {
-		mState = DEAD;
+		mState = LOSE;
 		this->restart(renderer);
 	}
 
 	if (hero->getScore() >= 10) {
-		mState = VICTORY;
+		mState = WIN;
 		this->restart(renderer);
 	}
 	this->handleCollision(renderer);
 }
 
-void Game1::handleCollision(SDL_Renderer* renderer) {
+void Game::handleCollision(SDL_Renderer* renderer) {
 	for (int j = 0; j < int(bots.size()); j++) {
 		if (bots[j]->getIsAppear()) {
 
@@ -382,7 +388,7 @@ void Game1::handleCollision(SDL_Renderer* renderer) {
 			hero->setCoin(hero->getCoin() + 3);
 			
 			Item* newItem = new Item();
-			newItem->loadImage(renderer, static_cast<ItemType>(rand() % 3));
+			newItem->loadImage(renderer, static_cast<ItemType>(rand() % 4));
 			newItem->setRect(bots[j]->getRect().x + 10, bots[j]->getRect().y + bots[j]->getRect().h / 2);
 			items.push_back(newItem);
 		}
@@ -444,17 +450,18 @@ void Game1::handleCollision(SDL_Renderer* renderer) {
 }
 
 
-void Game1::renderText(SDL_Renderer* renderer) {
-	if (mState == LEVEL_1 || mState == LEVEL_2 || mState == LEVEL_3 || mState == LEVEL_4 || mState == LEVEL_5) {
+void Game::renderText(SDL_Renderer* renderer) {
+	if (mState == LEVEL1 || mState == LEVEL2 || mState == LEVEL3 || mState == LEVEL4 || mState == LEVEL5) {
 		texts[0]->loadText(renderer, font, "Score : " + std::to_string(hero->getScore()), color) ; texts[0]->render(renderer);
 		texts[1]->loadText(renderer, font, "Coin : " + std::to_string(hero->getCoin()), color); texts[1]->render(renderer);
 	}
-	else if (mState == SHOP || mState == UPGRADE) {
+	if (mState == UPGRADE || mState == UPGRADE2 || mState == UPGRADE1 || mState == UPGRADE3 || mState == UPGRADE4 ||
+		mState == SHOP || mState == SHOP1 || mState == SHOP2 || mState == SHOP3 || mState == SHOP4) {
 		texts[1]->loadText(renderer, font, "Coin : " + std::to_string(hero->getCoin()), color); texts[1]->render(renderer);
 	}
 }
 
-void Game1::loadResource(SDL_Renderer* renderer) {
+void Game::loadResource(SDL_Renderer* renderer) {
 	hero = new Character();
 	this->loadImage(renderer, GAME_PATHS);
 	hero->loadImage(renderer, HERO1_PATHS);
@@ -481,12 +488,12 @@ void Game1::loadResource(SDL_Renderer* renderer) {
 		newText->setRect(0, i * 30);
 		texts.push_back(newText);
 	}
-	mState = oldState = Game1Type::START;
+	mState = oldState = GameType::START;
 	font = TTF_OpenFont("Font_Folder/font2.ttf", 30);
 }
 
 
-void Game1::handleObject(SDL_Renderer* renderer) {
+void Game::handleObject(SDL_Renderer* renderer) {
 
 	hero->handleMove(); hero->handleState(renderer); hero->handleSkill(); hero->renderText(renderer, font); hero->render(renderer, 1);
 

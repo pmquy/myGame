@@ -5,8 +5,7 @@ SDL_Renderer* gRenderer = nullptr;
 SDL_Event gEvent;
 std::pair<int, int> gMouse(0, 0);
 
-
-Game1 game;
+Game game;
 
 void Init() {
 	srand(time(0));
@@ -30,13 +29,10 @@ void Close() {
 }
 
 void gameLoop() {
-
+	
 	Mix_PlayMusic(game.mGameMusic, -1);
+	
 	while (true) {
-
-		game.render(gRenderer);
-		game.renderText(gRenderer);
-		game.handleState(gRenderer, gMouse, gEvent);
 
 		while (SDL_PollEvent(&gEvent)) {
 			if (gEvent.type == SDL_QUIT) {
@@ -45,28 +41,20 @@ void gameLoop() {
 			SDL_GetMouseState(&gMouse.first, &gMouse.second);
 			game.handleState(gRenderer, gMouse, gEvent);
 
-			if (game.getState() != START && game.getState() != SHOP && game.getState() != DEAD && game.getState() != UPGRADE && game.getState() != VICTORY) {
+			if (game.mState == LEVEL1 || game.mState == LEVEL2 || game.mState == LEVEL3 || game.mState == LEVEL4 || game.mState == LEVEL5) {
 				game.hero->handleAction(gEvent, gRenderer);
 			}
 		}
-		switch (game.getState()) {
 
-		case UPGRADE:
-		case SHOP:
-		case START:
-		case DEAD:
-		case VICTORY:
-			break;
-		case LEVEL_1:
-		case LEVEL_2:
-		case LEVEL_3:
-		case LEVEL_4:
-		case LEVEL_5:
+		game.render(gRenderer);
+		game.renderText(gRenderer);
+		game.handleState(gRenderer, gMouse, gEvent);
+
+		if (game.mState == LEVEL1 || game.mState == LEVEL2 || game.mState == LEVEL3 || game.mState == LEVEL4 || game.mState == LEVEL5) {
 			game.oldState = game.getState();
 			game.handleMove();
 			game.handleLogic(gRenderer);
 			game.handleObject(gRenderer);
-			break;
 		}
 		SDL_RenderPresent(gRenderer);
 	}
