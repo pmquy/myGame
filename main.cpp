@@ -1,10 +1,9 @@
-#include "Header.h"
+#include "Game.h"
 
 SDL_Window* gWindow = nullptr;
 SDL_Renderer* gRenderer = nullptr;
 SDL_Event gEvent;
 std::pair<int, int> gMouse(0, 0);
-
 Game game;
 
 void Init() {
@@ -18,6 +17,7 @@ void Init() {
 }
 
 void Close() {
+	game.~Game();
 	SDL_DestroyWindow(gWindow);
 	gWindow = nullptr;
 	SDL_DestroyRenderer(gRenderer);
@@ -47,15 +47,14 @@ void gameLoop() {
 		}
 
 		game.render(gRenderer);
-		game.renderText(gRenderer);
 		game.handleState(gRenderer, gMouse, gEvent);
 
 		if (game.mState == LEVEL1 || game.mState == LEVEL2 || game.mState == LEVEL3 || game.mState == LEVEL4 || game.mState == LEVEL5) {
 			game.oldState = game.getState();
 			game.handleMove();
-			game.handleLogic(gRenderer);
 			game.handleObject(gRenderer);
 		}
+
 		SDL_RenderPresent(gRenderer);
 	}
 }

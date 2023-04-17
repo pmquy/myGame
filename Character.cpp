@@ -12,8 +12,10 @@ Character::Character() {
 	mRect.y = 200;
 	mScore = 0;
 	mAmor = 0;
+	mMaxBullet = 1;
+	mCurrentSkill = 0;
 
-	Skill* newSkill = new Skill(20, "heal");
+	Skill* newSkill = new Skill(20, SkillType::BUFF_HP_SKILL);
 	newSkill->mIsAvailable = true;
 	mSkillList.push_back(newSkill);
 
@@ -90,15 +92,7 @@ void Character::handleAction(const SDL_Event &event, SDL_Renderer* renderer) {
 			}
 			break;
 		case SDLK_f:
-			if (mState != DESTROYED) {
-				if (mSkillList[0]->mIsAvailable && mSkillList[0]->mCurrentTime == 0) {
-					mHeart += 0.25 * mMaxHeart;
-					if (mHeart >= mMaxHeart) {
-						mHeart = mMaxHeart;
-					}
-					mSkillList[0]->mCurrentTime = mSkillList[0]->mMaxTime;
-				}
-			}
+			useSkill(mSkillList[0]);
 			break;
 		}
 	}
@@ -138,10 +132,10 @@ void Character::handleAction(const SDL_Event &event, SDL_Renderer* renderer) {
 }
 
 void Character::handleMove() {
-	if (mRect.x <= 0) mRect.x = 0;
-	if (mRect.x >= 1200 - 192) mRect.x = 1200 - 192;
-	if (mRect.y <= 0) mRect.y = 0;
-	if (mRect.y >= 600 - 192) mRect.y = 600 - 192;
+	if (mRect.x <= 0 - mRect.h/2) mRect.x = -mRect.h/2;
+	if (mRect.x >= 1200 - mRect.h/2) mRect.x = 1200 - mRect.h/2;
+	if (mRect.y <= -mRect.h/2) mRect.y = -mRect.h/2;
+	if (mRect.y >= 600 - mRect.h/2) mRect.y = 600 - mRect.h/2;
 
 	if (checkToMove(10)) {
 		if (mState == NORMAL || mState == BOOSTING) {
@@ -164,7 +158,7 @@ void Character::handleState(SDL_Renderer* renderer) {
 		mCurrentFrame = 0;
 	}
 	if (mState == DESTROYED && mCurrentFrame == mMaxFrames[int(mState)] - 1) {
-		reborn();
+		restart();
 	}
 	if (mState == FIRING && mCurrentFrame == mMaxFrames[int(mState)] - 1) {
 		mState = NORMAL;
@@ -177,11 +171,15 @@ void Character::handleState(SDL_Renderer* renderer) {
 }
 	
 void Character::renderText(SDL_Renderer* renderer, TTF_Font* font) {
-	
+
 	for (int i = 0; i < int(mSkillList.size()); i++) {
 		if (mSkillList[i]->mIsAvailable == true) {
 			Text* temp = mTextList[i];
-			temp->loadText(renderer, font, mSkillList[i]->mName + " : " + std::to_string(mSkillList[i]->mCurrentTime));
+			std::string name;
+			if (mSkillList[i]->mType == BUFF_HP_SKILL) {
+				name = "buff hp : ";
+			}
+			temp->loadText(renderer, font, name + std::to_string(mSkillList[i]->mCurrentTime));
 			temp->render(renderer);
 		}
 	}
@@ -195,12 +193,15 @@ bool Character::checkIsDestroyed() {
 	return mHeart == 0 && mCurrentFrame == mMaxFrames[int(DESTROYED)] - 1 && mState == DESTROYED;
 
 }
-void Character::reborn() {
-	Airplane::reborn();
+void Character::restart() {
+	Airplane::restart();
 	setRect(0, 0);
 	mXVal = mYVal = 0;
 	mSkillList[0]->mCurrentTime = 0;
+	mMaxBullet = 1;
 	mScore = 0;
+	mCurrentBullet = BulletType::GREEN_BALL;
+	mCurrentSkill = 0;
 	mBulletQuatity = { 100, 100, 100 };
 }
 int Character::getCoin() {

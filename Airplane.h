@@ -4,12 +4,6 @@
 #include "BaseClass.h"
 #include "Bullet.h"
 
-enum State {
-	NORMAL,
-	DESTROYED,
-	FIRING,
-	BOOSTING
-};
 
 static std::vector<std::string> HERO1_PATHS = { "Image_Folder/Airplane/Hero/Fighter/Idle.png", "Image_Folder/Airplane/Hero/Fighter/Destroyed.png", "Image_Folder/Airplane/Hero/Fighter/Attack_1.png","Image_Folder/Airplane/Hero/Fighter/Boost.png" };
 static std::vector<std::string> HERO2_PATHS = { "Image_Folder/Airplane/Hero/Bomber/Idle.png", "Image_Folder/Airplane/Hero/Bomber/Destroyed.png", "Image_Folder/Airplane/Hero/Bomber/Attack_1.png","Image_Folder/Airplane/Hero/Bomber/Boost.png" };
@@ -17,24 +11,36 @@ static std::vector<std::string> HERO3_PATHS = { "Image_Folder/Airplane/Hero/Corv
 static std::vector<std::vector<std::string>> HEROES_PATHS = { HERO1_PATHS, HERO2_PATHS, HERO3_PATHS };
 
 static std::vector<int> PLANE_ATTACKS = { 3, 4, 5 };
-static std::vector<int> PLANE_HEARTS = { 100, 100, 100 };
-static std::vector<int> PLANE_AMOR = { 0, 0, 0 };
+static std::vector<int> PLANE_HEARTS = { 50, 100, 150 };
+static std::vector<int> PLANE_AMOR = { 1, 2, 3 };
 
 static std::vector<std::string> BOT1_PATHS = { "Image_Folder/Airplane/Bot/Bomber/Idle.png", "Image_Folder/Airplane/Bot/Bomber/Destroyed.png", "Image_Folder/Airplane/Bot/Bomber/Attack_1.png", "Image_Folder/Airplane/Bot/Bomber/Boost.png" };
 static std::vector<std::string> BOT2_PATHS = { "Image_Folder/Airplane/Bot/Fighter/Idle.png", "Image_Folder/Airplane/Bot/Fighter/Destroyed.png", "Image_Folder/Airplane/Bot/Fighter/Attack_1.png", "Image_Folder/Airplane/Bot/Fighter/Boost.png" };
 static std::vector<std::string> BOT3_PATHS = { "Image_Folder/Airplane/Bot/Corvette/Idle.png", "Image_Folder/Airplane/Bot/Corvette/Destroyed.png", "Image_Folder/Airplane/Bot/Corvette/Attack_1.png" , "Image_Folder/Airplane/Bot/Corvette/Boost.png" };
 static std::vector<std::vector<std::string>> BOTS_PATHS = { BOT1_PATHS, BOT2_PATHS, BOT3_PATHS };
 
+enum State {
+	NORMAL,
+	DESTROYED,
+	FIRING,
+	BOOSTING
+};
+
+enum SkillType {
+	BUFF_HP_SKILL,
+	BUFF_ATK_SKILL,
+};
+
 struct Skill {
 	int mMaxTime;
 	int mCurrentTime;
 	Uint64 mTime;
-	std::string mName;
+	SkillType mType;
 	bool mIsAvailable;
 
-	Skill(int t, std::string name) {
+	Skill(int t, SkillType tp) {
 		mMaxTime = t;
-		mName = name;
+		mType = tp;
 		mCurrentTime = mMaxTime;
 		mIsAvailable = false;
 		mTime = 0;
@@ -58,14 +64,32 @@ public:
 	void setIsAppear(bool t);
 	std::vector<Bullet*>& getBulletList();
 	std::vector<Skill*>& getSkillList();	
-
 	virtual void handleState(SDL_Renderer*) = 0;
 	virtual void handleBulletMove() = 0;
 	virtual void render(SDL_Renderer* renderer, int i);
-	virtual void reborn();
+	virtual void restart();
 	void free();
 	void loadImage(SDL_Renderer* renderer, const std::vector<std::string>& listName);
 	void handleSkill();
+
+	friend void check(Airplane* a, Airplane* b) {
+		if (b->getHeart() > 0 && checkConllision(a, b)) {
+			a->getDamage(a->getMaxHeart() / 2);
+			b->getDamage(10000);
+		}
+		for (int i = 0; i < int(a->getBulletList().size()); i++) {
+			if (checkConllision(a->getBulletList()[i], b)) {
+				b->getDamage(a->getAttack());
+				a->getBulletList()[i]->setIsAppear(false);
+			}
+		}
+		for (int i = 0; i < int(b->getBulletList().size()); i++) {
+			if (checkConllision(b->getBulletList()[i], a)) {
+				a->getDamage(b->getAttack());
+				b->getBulletList()[i]->setIsAppear(false);
+			}
+		}
+	}
 
 protected:
 	virtual bool checkIsDestroyed();
@@ -73,7 +97,7 @@ protected:
 	void renderBullet(SDL_Renderer *renderer);
 	bool checkToNextFrame(int);
 	bool checkToFire(int t);
-
+	void useSkill(Skill*);
 	std::vector<Skill*> mSkillList = {};
 	std::vector<Bullet*> mBulletList = {};
 	std::vector<SDL_Texture*> mTextures = {};

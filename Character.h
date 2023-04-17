@@ -13,7 +13,7 @@ public:
 	void handleState(SDL_Renderer*);
 	void renderText(SDL_Renderer* renderer, TTF_Font* font);
 	bool checkIsDestroyed();
-	void reborn();
+	void restart();
 	void setCoin(int c);
 	int getScore();
 	void setScore(int c);
@@ -26,6 +26,7 @@ private:
 	void handleBulletMove();
 	int mCoin;
 	int mScore;
+	int mCurrentSkill;
 	BulletType mCurrentBullet = BulletType::GREEN_BALL;
 	std::vector<Text*> mTextList;
 	std::vector<int> mBulletQuatity = { 100, 100, 100 };

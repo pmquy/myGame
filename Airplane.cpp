@@ -34,6 +34,9 @@ void Airplane::free() {
 			it = nullptr;
 		}
 	}
+	mTextures = {};
+	mBulletList = {};
+	mMaxFrames = {};
 }
 
 void Airplane::renderHeart(SDL_Renderer *renderer) {
@@ -78,17 +81,8 @@ void Airplane::renderBullet(SDL_Renderer* renderer) {
 	}
 }
 
-
 void Airplane::loadImage(SDL_Renderer* renderer, const std::vector<std::string>& listName) {
-	for (int i = mTextures.size() - 1; i >= 0 ; i--) {
-		if (mTextures[i] != nullptr) {
-			SDL_DestroyTexture(mTextures[i]);
-			mTextures[i] = nullptr;
-		}
-		mTextures.pop_back();
-		mMaxFrames.pop_back();
-	}
-
+	free();
 	SDL_Surface* loadedSurface = nullptr;
 	for (int i = 0; i < int(listName.size()); i++) {
 		loadedSurface = IMG_Load(listName[i].c_str());
@@ -104,7 +98,7 @@ void Airplane::loadImage(SDL_Renderer* renderer, const std::vector<std::string>&
 	loadedSurface = nullptr;
 }
 
-void Airplane::reborn() {
+void Airplane::restart() {
 
 	while(!mBulletList.empty()) {
 		mBulletList.back()->free();
@@ -203,4 +197,16 @@ std::vector<Bullet*>& Airplane::getBulletList() {
 }
 std::vector<Skill*>& Airplane::getSkillList() {
 	return mSkillList;
+}
+
+void Airplane::useSkill(Skill* sk) {
+	if (sk->mIsAvailable && sk->mCurrentTime == 0) {
+		if (sk->mType == SkillType::BUFF_HP_SKILL && mHeart > 0) {
+			mHeart += 0.25 * mMaxHeart;
+			if (mHeart >= mMaxHeart) {
+				mHeart = mMaxHeart;
+			}
+		}
+		sk->mCurrentTime = sk->mMaxTime;
+	}
 }

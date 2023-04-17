@@ -30,7 +30,6 @@ static SDL_Texture* loadTexture(SDL_Renderer* renderer, std::string path) {
 }
 
 
-
 class BaseClass {
 	public:
 		BaseClass();

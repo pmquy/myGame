@@ -4,25 +4,22 @@
 #include "Airplane.h"
 #include "Bullet.h"
 
-enum BotType {
-	SHIP1,
-	SHIP2,
-	SHIP3
-};
+
 
 class Bot : public Airplane {
 public:
 	Bot();
 	~Bot();
-	void handleMove();
+	virtual void handleMove();
 	void handleState(SDL_Renderer*);
 	void handleAction(SDL_Renderer *);
 	bool checkIsDestroyed();
-	void reborn(SDL_Renderer*);
-	void setBotType(const BotType& t);
+	void restart(SDL_Renderer*);
 
-private:
-	BotType mType;
+protected:
+	Uint64 mTurnTime = 0;
+	bool checkToTurn(long long);
+	void changeDirection();
 	void handleBulletMove();
 	void fire(SDL_Renderer*);
 };
