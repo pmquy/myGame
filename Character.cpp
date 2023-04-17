@@ -4,14 +4,14 @@ Character::Character() {
 	
 	mXVal = 0;
 	mYVal = 0;
-	mMaxHeart = 50;
-	mHeart = 50;
-	mAttack = 5;
+	mHp = mMaxHp = 50;
+	mAtk = mMaxAtk = 5;
+	mDef = mMaxDef = 0;
 	mCoin = 100;
+	
 	mRect.x = 0;
 	mRect.y = 200;
 	mScore = 0;
-	mAmor = 0;
 	mMaxBullet = 1;
 	mCurrentSkill = 0;
 
@@ -19,12 +19,16 @@ Character::Character() {
 	newSkill->mIsAvailable = true;
 	mSkillList.push_back(newSkill);
 
+	newSkill = new Skill(20, SkillType::BUFF_ATK_SKILL);
+	newSkill->mIsAvailable = true;
+	mSkillList.push_back(newSkill);
+
 	Text* newText = new Text();
-	newText->setRect(1000, 0);
+	newText->setRect(1050, 0);
 	mTextList.push_back(newText);
 
 	Text* newText1 = new Text();
-	newText1->setRect(0, 500);
+	newText1->setRect(1050, 0);
 	mTextList.push_back(newText1);
 }
 
@@ -65,18 +69,13 @@ void Character::handleAction(const SDL_Event &event, SDL_Renderer* renderer) {
 				mXVal = -5;
 			}
 			break;
-		case SDLK_a:
-			if (mCurrentBullet == BulletType::GREEN_BALL) {
-				mCurrentBullet = BulletType::RED_BALL;
-			}
-			else if (mCurrentBullet == BulletType::RED_BALL) {
-				mCurrentBullet = BulletType::BLUE_BALL;
-			}
-			else {
-				mCurrentBullet = BulletType::GREEN_BALL;
+		case SDLK_c:
+			mCurrentSkill += 1;
+			if (mCurrentSkill == mSkillList.size()) {
+				mCurrentSkill = 0;
 			}
 			break;
-		case SDLK_q:
+		case SDLK_d:
 			if (mState == NORMAL || mState == BOOSTING) {
 				for (int i = -mMaxBullet / 2; i <= mMaxBullet / 2; i++) {
 					if (i == 0 && mMaxBullet % 2 == 0)
@@ -92,7 +91,7 @@ void Character::handleAction(const SDL_Event &event, SDL_Renderer* renderer) {
 			}
 			break;
 		case SDLK_f:
-			useSkill(mSkillList[0]);
+			useSkill(mSkillList[mCurrentSkill]);
 			break;
 		}
 	}
@@ -153,7 +152,7 @@ void Character::handleBulletMove() {
 
 void Character::handleState(SDL_Renderer* renderer) {
 
-	if (mHeart == 0 && mState != DESTROYED) {
+	if (mHp == 0 && mState != DESTROYED) {
 		mState = DESTROYED;
 		mCurrentFrame = 0;
 	}
@@ -172,25 +171,24 @@ void Character::handleState(SDL_Renderer* renderer) {
 	
 void Character::renderText(SDL_Renderer* renderer, TTF_Font* font) {
 
-	for (int i = 0; i < int(mSkillList.size()); i++) {
-		if (mSkillList[i]->mIsAvailable == true) {
-			Text* temp = mTextList[i];
-			std::string name;
-			if (mSkillList[i]->mType == BUFF_HP_SKILL) {
-				name = "buff hp : ";
-			}
-			temp->loadText(renderer, font, name + std::to_string(mSkillList[i]->mCurrentTime));
-			temp->render(renderer);
+	if (mSkillList[mCurrentSkill]->mIsAvailable == true) {
+		Text* temp = mTextList[mCurrentSkill];
+		std::string name;
+		if (mSkillList[mCurrentSkill]->mType == BUFF_HP_SKILL) {
+			name = "buff hp : ";
 		}
+		else if (mSkillList[mCurrentSkill]->mType == BUFF_ATK_SKILL) {
+			name = "buff atk : ";
+		}
+		temp->loadText(renderer, font, name + std::to_string(mSkillList[mCurrentSkill]->mCurrentTime));
+		temp->render(renderer);
 	}
-	mTextList.back()->loadText(renderer, font, BULLET_NAMES[int(mCurrentBullet)] + " : " + std::to_string(mBulletQuatity[int(mCurrentBullet)]));
-	mTextList.back()->render(renderer);
 
 }
 
 bool Character::checkIsDestroyed() {
 
-	return mHeart == 0 && mCurrentFrame == mMaxFrames[int(DESTROYED)] - 1 && mState == DESTROYED;
+	return mHp == 0 && mCurrentFrame == mMaxFrames[int(DESTROYED)] - 1 && mState == DESTROYED;
 
 }
 void Character::restart() {

@@ -1,11 +1,11 @@
 #include "Boss.h"
 
 Boss::Boss() {
-	mHeart = mMaxHeart = 100;
+	mHp = mMaxHp = 100;
 	mTurnTime = 0;
 	mIsAppear = false;
 	mXVal = -2;
-	mAttack = 5;
+	mAtk = mMaxAtk = 5;
 	mRect.x = SCREEN_WIDTH;
 	mRect.y = rand() % 400;
 

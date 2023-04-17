@@ -5,7 +5,7 @@ Game::Game() {
 	mRect.w = SCREEN_WIDTH;
 	mRect.h = SCREEN_HEIGHT;
 	mXVal = -1; mYVal = 0;
-	mState = oldState = START;
+	mState = oldState = HOME;
 	color = { 255, 255, 255 };
 }
 
@@ -43,17 +43,31 @@ void Game::handleMove() {
 		BaseClass::handleMove();
 		if (mRect.x <= -1200) mRect.x = 0;
 	}
+	if (mState == HOME2 && checkToMove(5)) {
+		BaseClass::handleMove();
+	}
 }
 
 void Game::render(SDL_Renderer* renderer, const SDL_Rect* clip) {
-	mTexture = mTextures[int(mState)];
-	if (mState == LEVEL1 || mState == LEVEL2 || mState == LEVEL3 || mState == LEVEL4 || mState == LEVEL5) {
-		BaseClass::render(renderer);
-		mRect.x += SCREEN_WIDTH;
-		BaseClass::render(renderer);
-		mRect.x -= SCREEN_WIDTH;
+	if (mState != HOME2) {
+		mTexture = mTextures[int(mState)];
+		if (mState == LEVEL1 || mState == LEVEL2 || mState == LEVEL3 || mState == LEVEL4 || mState == LEVEL5) {
+			BaseClass::render(renderer);
+			mRect.x += SCREEN_WIDTH;
+			BaseClass::render(renderer);
+			mRect.x -= SCREEN_WIDTH;
+		}
+		else {
+			BaseClass::render(renderer);
+		}
 	}
 	else {
+		SDL_Rect oldRect = mRect;
+		mTexture = mTextures[int(START)];
+		setRect(0, 0);
+		BaseClass::render(renderer);
+		setRect(oldRect.x, oldRect.y);
+		mTexture = mTextures[int(HOME)];
 		BaseClass::render(renderer);
 	}
 
@@ -67,11 +81,11 @@ void Game::render(SDL_Renderer* renderer, const SDL_Rect* clip) {
 		SDL_RenderFillRect(renderer, &rectBg);
 
 		SDL_SetRenderDrawColor(renderer, 255, 0, 0, 0);
-		SDL_Rect rect = { 320, 140, (hero->getMaxHeart() - 50) / 10 * 100, 10 };
+		SDL_Rect rect = { 320, 140, (hero->getMaxHp() - 50) / 10 * 100, 10 };
 		SDL_RenderFillRect(renderer, &rect);
-		rect = { 320, 230, (hero->getAmor() - 0) * 100, 10 };
+		rect = { 320, 230, (hero->getDef() - 0) * 100, 10 };
 		SDL_RenderFillRect(renderer, &rect);
-		rect = { 320, 320, (hero->getAttack() - 5) / 5 * 100, 10 };
+		rect = { 320, 320, (hero->getAtk() - 5) / 5 * 100, 10 };
 		SDL_RenderFillRect(renderer, &rect);
 	}
 
@@ -96,7 +110,10 @@ void Game::loadImage(SDL_Renderer* renderer, const std::vector<std::string>& lis
 	}
 }
 
-void Game::handleState(SDL_Renderer* renderer, std::pair<int, int> mouse, SDL_Event event) {
+void Game::handleState(SDL_Renderer* renderer, SDL_Event event) {
+	std::pair<int, int> mouse;
+	SDL_GetMouseState(&mouse.first, &mouse.second);
+
 	switch (mState) {
 
 	case LEVEL1:
@@ -106,14 +123,34 @@ void Game::handleState(SDL_Renderer* renderer, std::pair<int, int> mouse, SDL_Ev
 	case LEVEL5:
 		if (hero->checkIsDestroyed()) {
 			mState = LOSE;
-			setRect(0, 0);
 			this->restart(renderer);
 		}
 		if (boss->getIsAppear() && boss->checkIsDestroyed()) {
 			mState = WIN;
-			setRect(0, 0);
-			boss->setIsAppear(false);
 			this->restart(renderer);
+		}
+		break;
+	case HOME:
+		if (mouse.first >= 500 && mouse.first <= 700 && mouse.second >= 252 && mouse.second <= 327) {
+			mState = HOME1;
+		}
+		break;
+
+	case HOME1:
+		if (!(mouse.first >= 500 && mouse.first <= 700 && mouse.second >= 252 && mouse.second <= 327)) {
+			mState = HOME;
+		}
+		if (event.type == SDL_MOUSEBUTTONDOWN) {
+			mState = HOME2;
+			mYVal = -1; mXVal = 0;
+		}
+		break;
+
+	case HOME2:
+		if (event.type == SDL_MOUSEBUTTONDOWN || mRect.y <= -SCREEN_HEIGHT) {
+			setRect(0, 0);
+			mState = START;
+			mXVal = -1; mYVal = 0;
 		}
 		break;
 
@@ -328,9 +365,9 @@ void Game::handleState(SDL_Renderer* renderer, std::pair<int, int> mouse, SDL_Ev
 		break;
 	case UPGRADE1:
 		if (event.type == SDL_MOUSEBUTTONDOWN) {
-			if (hero->getCoin() >= 20 && hero->getMaxHeart() < 110) {
+			if (hero->getCoin() >= 20 && hero->getMaxHp() < 110) {
 				hero->setCoin(hero->getCoin() - 20);
-				hero->setMaxHeart(hero->getMaxHeart() + 20);
+				hero->setMaxHp(hero->getMaxHp() + 20);
 			}
 		}
 		if (!(mouse.first >= 1030 && mouse.first <= 1090 && mouse.second >= 119 && mouse.second <= 180)) {
@@ -340,9 +377,9 @@ void Game::handleState(SDL_Renderer* renderer, std::pair<int, int> mouse, SDL_Ev
 
 	case UPGRADE2:
 		if (event.type == SDL_MOUSEBUTTONDOWN) {
-			if (hero->getCoin() >= 20 && hero->getAmor() < 6) {
+			if (hero->getCoin() >= 20 && hero->getDef() < 6) {
 				hero->setCoin(hero->getCoin() - 20);
-				hero->setAmor(hero->getAmor() + 1);
+				hero->setDef(hero->getDef() + 1);
 			}
 		}
 		if (!(mouse.first >= 1030 && mouse.first <= 1090 && mouse.second >= 204 && mouse.second <= 265)) {
@@ -352,9 +389,9 @@ void Game::handleState(SDL_Renderer* renderer, std::pair<int, int> mouse, SDL_Ev
 
 	case UPGRADE3:
 		if (event.type == SDL_MOUSEBUTTONDOWN) {
-			if (hero->getCoin() >= 20 && hero->getAttack() < 35) {
+			if (hero->getCoin() >= 20 && hero->getAtk() < 35) {
 				hero->setCoin(hero->getCoin() - 20);
-				hero->setAttack(hero->getAttack() + 5);
+				hero->setAtk(hero->getAtk() + 5);
 			}
 		}
 		if (!(mouse.first >= 1030 && mouse.first <= 1090 && mouse.second >= 291 && mouse.second <= 352)) {
@@ -405,7 +442,7 @@ void Game::restart(SDL_Renderer* renderer) {
 			items.pop_back();
 		}
 	}
-
+	setRect(0, 0);
 	boss->setIsAppear(false);
 	boss->restart(renderer);
 }
@@ -443,11 +480,11 @@ void Game::handleCollision(SDL_Renderer* renderer) {
 	}
 
 	for (int i = 0; i < int(items.size()); i++) {
-		if (hero->getHeart() > 0 && checkConllision(hero, items[i])) {
+		if (hero->getHp() > 0 && checkConllision(hero, items[i])) {
 
 			switch (items[i]->getItemType()) {
 			case BUFF_HP:
-				hero->setHeart(hero->getHeart() + 10);
+				hero->setHp(hero->getHp() + 10);
 				break;
 			case ADD_BLUE_BALL:
 				if (hero->getCurrentBullet() == BLUE_BALL) {
@@ -529,7 +566,7 @@ void Game::loadResource(SDL_Renderer* renderer) {
 		newText->setRect(0, i * 30);
 		texts.push_back(newText);
 	}
-	mState = oldState = GameType::START;
+	mState = oldState = GameType::HOME;
 }
 
 

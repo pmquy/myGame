@@ -3,9 +3,9 @@
 Bot::Bot() {
 	mRect.x = SCREEN_WIDTH + rand() % 1000;
 	mRect.y = rand() % 400;
-	mAttack = 2;
-	mMaxHeart = 100;
-	mHeart = 100;
+	mAtk = mMaxAtk = 2;
+	mMaxHp = mHp = 100;
+	mDef = mMaxDef = 0;
 	mXVal = -2;
 	mYVal = 0;
 };
@@ -44,7 +44,7 @@ void Bot::restart(SDL_Renderer* renderer) {
 }
 
 void Bot::handleState(SDL_Renderer* renderer) {
-	if (mHeart == 0 && mState != DESTROYED) {
+	if (mHp == 0 && mState != DESTROYED) {
 		mState = DESTROYED;
 		mCurrentFrame = mMaxFrames[int(mState)] - 1;
 	}
@@ -112,7 +112,7 @@ void Bot::fire(SDL_Renderer* renderer) {
 
 
 bool Bot::checkIsDestroyed() {
-	return mHeart == 0 && mCurrentFrame == 0 && mState == DESTROYED;
+	return mHp == 0 && mCurrentFrame == 0 && mState == DESTROYED;
 }
 
 bool Bot::checkToTurn(long long t) {

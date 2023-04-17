@@ -1,11 +1,11 @@
 #include "Airplane.h"
 
 Airplane::Airplane() {
-	mMaxHeart = 100;
-	mHeart = 100;
-	mAmor = 0;
-	mAttack = 2;
+	mHp = mMaxHp = 100;
+	mDef = mMaxDef = 0;
+	mAtk = mMaxAtk = 2;
 	mFireTime = mFrameTime = mMoveTime = 0;
+	
 	mState = NORMAL;
 	mCurrentFrame = 0;
 	mIsAppear = true;
@@ -39,21 +39,21 @@ void Airplane::free() {
 	mMaxFrames = {};
 }
 
-void Airplane::renderHeart(SDL_Renderer *renderer) {
+void Airplane::renderHp(SDL_Renderer *renderer) {
 	SDL_Rect rectBg = { mRect.x, mRect.y + mRect.h - 50, mRect.w, 5 };
 	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 0);
 	SDL_RenderFillRect(renderer, &rectBg);
 
-	SDL_Rect rectHeart = { mRect.x, mRect.y + mRect.h - 50, mHeart * mRect.w / mMaxHeart , 5 };
+	SDL_Rect rectHp = { mRect.x, mRect.y + mRect.h - 50, mHp * mRect.w / mMaxHp , 5 };
 	SDL_SetRenderDrawColor(renderer, 255, 0, 0, 0);
-	SDL_RenderFillRect(renderer, &rectHeart);
+	SDL_RenderFillRect(renderer, &rectHp);
 }
 
 void Airplane::render(SDL_Renderer* renderer, int i) {
 	mTexture = mTextures[int(mState)];
 	SDL_Rect rect = { mCurrentFrame * mRect.w, 0, mRect.w, mRect.h };
 	BaseClass::render(renderer, &rect);
-	renderHeart(renderer);
+	renderHp(renderer);
 	renderBullet(renderer);
 
 	if (checkToNextFrame(100)) {
@@ -106,7 +106,9 @@ void Airplane::restart() {
 		mBulletList.pop_back();
 	}
 	
-	mHeart = mMaxHeart;
+	mHp = mMaxHp;
+	mAtk = mMaxAtk;
+	mDef = mMaxDef;
 	mState = NORMAL;
 	mCurrentFrame = 0;
 }
@@ -133,57 +135,44 @@ bool Airplane::checkToNextFrame(int t) {
 	return false;
 }
 
-void Airplane::handleSkill() {
-	for (auto& it : mSkillList) {
-		if (it->mIsAvailable) {
-			if (SDL_GetTicks64() - it->mTime > 1000) {
-				it->mTime = SDL_GetTicks64();
-				it->mCurrentTime -= 1;
-				if (it->mCurrentTime <= 0) {
-					it->mCurrentTime = 0;
-				}
-			}
-		}
-	}
-}
 
 void Airplane::getDamage(int damage) {
 	if (mState != DESTROYED) {
-		mHeart -= damage - damage * mAmor / 10;
+		mHp -= damage - damage * mDef / 10;
 	}
-	if (mHeart <= 0) {
-		mHeart = 0;
-	}
-}
-int Airplane::getHeart() {
-	return mHeart;
-}
-int Airplane::getMaxHeart() {
-	return mMaxHeart;
-}
-void Airplane::setHeart(int heart) {
-	mHeart = heart;
-	if (mHeart >= mMaxHeart) {
-		mHeart = mMaxHeart;
-	}
-	if (mHeart <= 0) {
-		mHeart = 0;
+	if (mHp <= 0) {
+		mHp = 0;
 	}
 }
-void Airplane::setMaxHeart(int mh) {
-	mMaxHeart = mh;
+int Airplane::getHp() {
+	return mHp;
 }
-int Airplane::getAttack() {
-	return mAttack;
+int Airplane::getMaxHp() {
+	return mMaxHp;
 }
-void Airplane::setAttack(int attack) {
-	mAttack = attack;
+void Airplane::setHp(int Hp) {
+	mHp = Hp;
+	if (mHp >= mMaxHp) {
+		mHp = mMaxHp;
+	}
+	if (mHp <= 0) {
+		mHp = 0;
+	}
 }
-int Airplane::getAmor() {
-	return mAmor;
+void Airplane::setMaxHp(int mh) {
+	mMaxHp = mh;
 }
-void Airplane::setAmor(int amor) {
-	mAmor = amor;
+int Airplane::getAtk() {
+	return mAtk;
+}
+void Airplane::setAtk(int Atk) {
+	mAtk = Atk;
+}
+int Airplane::getDef() {
+	return mDef;
+}
+void Airplane::setDef(int Def) {
+	mDef = Def;
 }
 bool Airplane::getIsAppear() {
 	return mIsAppear;
@@ -199,14 +188,41 @@ std::vector<Skill*>& Airplane::getSkillList() {
 	return mSkillList;
 }
 
+
 void Airplane::useSkill(Skill* sk) {
 	if (sk->mIsAvailable && sk->mCurrentTime == 0) {
-		if (sk->mType == SkillType::BUFF_HP_SKILL && mHeart > 0) {
-			mHeart += 0.25 * mMaxHeart;
-			if (mHeart >= mMaxHeart) {
-				mHeart = mMaxHeart;
+		switch (sk->mType) {
+		case BUFF_HP_SKILL:
+			if (mHp > 0) {
+				mHp += 0.25 * mMaxHp;
+				if (mHp >= mMaxHp) {
+					mHp = mMaxHp;
+				}
 			}
+			break;
+		case BUFF_ATK_SKILL:
+			if (mHp > 0) {
+				mAtk *= 3;
+			}
+			break;
 		}
 		sk->mCurrentTime = sk->mMaxTime;
+	}
+}
+
+void Airplane::handleSkill() {
+	for (auto& it : mSkillList) {
+		if (it->mIsAvailable) {
+			if (SDL_GetTicks64() - it->mTime > 1000) {
+				it->mTime = SDL_GetTicks64();
+				it->mCurrentTime -= 1;
+				if (it->mCurrentTime <= 0) {
+					it->mCurrentTime = 0;
+				}
+				if (it->mCurrentTime == 15 && it->mType == BUFF_ATK_SKILL) {
+					mAtk /= 3;
+				}
+			}
+		}
 	}
 }

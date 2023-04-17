@@ -3,7 +3,6 @@
 SDL_Window* gWindow = nullptr;
 SDL_Renderer* gRenderer = nullptr;
 SDL_Event gEvent;
-std::pair<int, int> gMouse(0, 0);
 Game game;
 
 void Init() {
@@ -38,8 +37,7 @@ void gameLoop() {
 			if (gEvent.type == SDL_QUIT) {
 				return;
 			}
-			SDL_GetMouseState(&gMouse.first, &gMouse.second);
-			game.handleState(gRenderer, gMouse, gEvent);
+			game.handleState(gRenderer, gEvent);
 
 			if (game.mState == LEVEL1 || game.mState == LEVEL2 || game.mState == LEVEL3 || game.mState == LEVEL4 || game.mState == LEVEL5) {
 				game.hero->handleAction(gEvent, gRenderer);
@@ -47,11 +45,11 @@ void gameLoop() {
 		}
 
 		game.render(gRenderer);
-		game.handleState(gRenderer, gMouse, gEvent);
+		game.handleState(gRenderer, gEvent);
+		game.handleMove();
 
 		if (game.mState == LEVEL1 || game.mState == LEVEL2 || game.mState == LEVEL3 || game.mState == LEVEL4 || game.mState == LEVEL5) {
 			game.oldState = game.getState();
-			game.handleMove();
 			game.handleObject(gRenderer);
 		}
 
