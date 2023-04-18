@@ -49,19 +49,21 @@ void Game::handleMove() {
 }
 
 void Game::render(SDL_Renderer* renderer, const SDL_Rect* clip) {
-	if (mState != HOME2) {
+	
+	switch (mState) {
+	case LEVEL1:
+	case LEVEL2:
+	case LEVEL3:
+	case LEVEL4:
+	case LEVEL5:
 		mTexture = mTextures[int(mState)];
-		if (mState == LEVEL1 || mState == LEVEL2 || mState == LEVEL3 || mState == LEVEL4 || mState == LEVEL5) {
-			BaseClass::render(renderer);
-			mRect.x += SCREEN_WIDTH;
-			BaseClass::render(renderer);
-			mRect.x -= SCREEN_WIDTH;
-		}
-		else {
-			BaseClass::render(renderer);
-		}
-	}
-	else {
+		BaseClass::render(renderer);
+		mRect.x += SCREEN_WIDTH;
+		BaseClass::render(renderer);
+		mRect.x -= SCREEN_WIDTH;
+		break;
+
+	case HOME2:
 		SDL_Rect oldRect = mRect;
 		mTexture = mTextures[int(START)];
 		setRect(0, 0);
@@ -69,9 +71,16 @@ void Game::render(SDL_Renderer* renderer, const SDL_Rect* clip) {
 		setRect(oldRect.x, oldRect.y);
 		mTexture = mTextures[int(HOME)];
 		BaseClass::render(renderer);
-	}
-
-	if (mState == UPGRADE || mState == UPGRADE2 || mState == UPGRADE1 || mState == UPGRADE3 || mState == UPGRADE4) {
+		break;
+	case UPGRADE:
+	case UPGRADE1:
+	case UPGRADE2:
+	case UPGRADE3:
+	case UPGRADE4:
+	{
+		mTexture = mTextures[int(mState)];
+		BaseClass::render(renderer);
+		
 		SDL_Rect rectBg = { 320, 140, 600, 10 };
 		SDL_SetRenderDrawColor(renderer, 255, 255, 255, 0);
 		SDL_RenderFillRect(renderer, &rectBg);
@@ -87,19 +96,26 @@ void Game::render(SDL_Renderer* renderer, const SDL_Rect* clip) {
 		SDL_RenderFillRect(renderer, &rect);
 		rect = { 320, 320, (hero->getAtk() - 5) / 5 * 100, 10 };
 		SDL_RenderFillRect(renderer, &rect);
-	}
 
-	if (mState == LEVEL1 || mState == LEVEL2 || mState == LEVEL3 || mState == LEVEL4 || mState == LEVEL5) {
-		texts[0]->loadText(renderer, font, "Score : " + std::to_string(hero->getScore()), color); texts[0]->render(renderer);
-		texts[1]->loadText(renderer, font, "Coin : " + std::to_string(hero->getCoin()), color); texts[1]->render(renderer);
+		hero->renderCoin(renderer, font);
+		break;
 	}
-	if (mState == UPGRADE || mState == UPGRADE2 || mState == UPGRADE1 || mState == UPGRADE3 || mState == UPGRADE4 ||
-		mState == SHOP || mState == SHOP1 || mState == SHOP2 || mState == SHOP3 || mState == SHOP4) {
-		texts[1]->loadText(renderer, font, "Coin : " + std::to_string(hero->getCoin()), color); texts[1]->render(renderer);
+	case SHOP:
+	case SHOP1:
+	case SHOP2:
+	case SHOP3:
+	case SHOP4:
+		hero->renderCoin(renderer, font);
+		mTexture = mTextures[int(mState)];
+		BaseClass::render(renderer);
+		break;
+
+	default:
+		mTexture = mTextures[int(mState)];
+		BaseClass::render(renderer);
+		break;
 	}
-	if (boss->getIsAppear()) {
-		texts[2]->setRect(boss->getRect().x + 80, boss->getRect().y); texts[2]->render(renderer);
-	}
+	
 }
 
 void Game::loadImage(SDL_Renderer* renderer, const std::vector<std::string>& listName) {
@@ -121,12 +137,15 @@ void Game::handleState(SDL_Renderer* renderer, SDL_Event event) {
 	case LEVEL3:
 	case LEVEL4:
 	case LEVEL5:
+		oldState = mState;
 		if (hero->checkIsDestroyed()) {
 			mState = LOSE;
+			Mix_PlayMusic(mHomeMusic, -1);
 			this->restart(renderer);
 		}
 		if (boss->getIsAppear() && boss->checkIsDestroyed()) {
 			mState = WIN;
+			Mix_PlayMusic(mHomeMusic, -1);
 			this->restart(renderer);
 		}
 		break;
@@ -150,6 +169,7 @@ void Game::handleState(SDL_Renderer* renderer, SDL_Event event) {
 		if (event.type == SDL_MOUSEBUTTONDOWN || mRect.y <= -SCREEN_HEIGHT) {
 			setRect(0, 0);
 			mState = START;
+			Mix_PlayMusic(mHomeMusic, -1);
 			mXVal = -1; mYVal = 0;
 		}
 		break;
@@ -157,6 +177,7 @@ void Game::handleState(SDL_Renderer* renderer, SDL_Event event) {
 	case START1:
 		if (event.type == SDL_MOUSEBUTTONDOWN) {
 			mState = LEVEL1;
+			Mix_PlayMusic(mGameMusic, -1);
 			hero->restart();
 		}
 		if (!(mouse.first >= 550 && mouse.first <= 650 && mouse.second >= 152 && mouse.second <= 227)) {
@@ -413,15 +434,12 @@ void Game::handleState(SDL_Renderer* renderer, SDL_Event event) {
 			mState = UPGRADE4;
 		}
 		if (mouse.first >= 1030 && mouse.first <= 1090 && mouse.second >= 119 && mouse.second <= 180) {
-			
 			mState = UPGRADE1;
 		}
 		if (mouse.first >= 1030 && mouse.first <= 1090 && mouse.second >= 204 && mouse.second <= 265) {
-
 			mState = UPGRADE2;
 		}
 		if (mouse.first >= 1030 && mouse.first <= 1090 && mouse.second >= 291 && mouse.second <= 352) {
-			
 			mState = UPGRADE3;
 		}
 		break;
@@ -448,101 +466,17 @@ void Game::restart(SDL_Renderer* renderer) {
 }
 
 
-void Game::handleCollision(SDL_Renderer* renderer) {
-	for (int j = 0; j < int(bots.size()); j++) {
-		if (bots[j]->getIsAppear()) {
-			check(hero, bots[j]);
-		}
-		if (bots[j]->checkIsDestroyed()) {
-			Mix_PlayChannel(-1, mBonkMusic, 0);
-			hero->setScore(hero->getScore() + 2);
-			hero->setCoin(hero->getCoin() + 3);
-			
-			Item* newItem = new Item();
-			newItem->loadImage(renderer, static_cast<ItemType>(rand() % 4));
-			newItem->setRect(bots[j]->getRect().x + 10, bots[j]->getRect().y + bots[j]->getRect().h / 2);
-			items.push_back(newItem);
-		}
-	}
-
-	if (boss->getIsAppear()) {
-		check(boss, hero);
-	}
-
-	if (boss->checkIsDestroyed()) {
-		Mix_PlayChannel(-1, mBonkMusic, 0);
-		hero->setScore(hero->getScore() + 50);
-		hero->setCoin(hero->getCoin() + 50);
-	}
-
-	if (hero->checkIsDestroyed()) {
-		Mix_PlayChannel(-1, mBonkMusic, 0);
-	}
-
-	for (int i = 0; i < int(items.size()); i++) {
-		if (hero->getHp() > 0 && checkConllision(hero, items[i])) {
-
-			switch (items[i]->getItemType()) {
-			case BUFF_HP:
-				hero->setHp(hero->getHp() + 10);
-				break;
-			case ADD_BLUE_BALL:
-				if (hero->getCurrentBullet() == BLUE_BALL) {
-					hero->mMaxBullet += 1;
-					if (hero->mMaxBullet >= 5) {
-						hero->mMaxBullet = 5;
-					}
-				}
-				else {
-					hero->setCurrentBullet(BLUE_BALL);
-					hero->mMaxBullet = 1;
-				}
-				break;
-			case ADD_GREEN_BALL:
-				if (hero->getCurrentBullet() == GREEN_BALL) {
-					hero->mMaxBullet += 1;
-					if (hero->mMaxBullet >= 5) {
-						hero->mMaxBullet = 5;
-					}
-				}
-				else {
-					hero->setCurrentBullet(GREEN_BALL);
-					hero->mMaxBullet = 1;
-				}
-				break;
-			case ADD_RED_BALL:
-				if (hero->getCurrentBullet() == RED_BALL) {
-					hero->mMaxBullet += 1;
-					if (hero->mMaxBullet >= 5) {
-						hero->mMaxBullet = 5;
-					}
-				}
-				else {
-					hero->setCurrentBullet(RED_BALL);
-					hero->mMaxBullet = 1;
-				}
-				break;
-
-			}
-			if (items[i] != nullptr) {
-				delete items[i];
-				items.erase(items.begin() + i);
-			}
-		}
-	}
-}
-
-
 void Game::loadResource(SDL_Renderer* renderer) {
 	
 	this->loadImage(renderer, GAME_PATHS);
-
 	hero = new Character(); hero->loadImage(renderer, HERO1_PATHS);
-
 	boss = new Boss(); boss->loadImage(renderer, BOTS_PATHS[rand() % 3]);
 
 	mGameMusic = Mix_LoadMUS("Music_Folder/music.mp3");
+	mHomeMusic = Mix_LoadMUS("Music_Folder/home.mp3");
 	mBonkMusic = Mix_LoadWAV("Music_Folder/bonk.wav");
+	mItemMusic = Mix_LoadWAV("Music_Folder/item.wav");
+	mGameOverMusic = Mix_LoadWAV("Music_Folder/game_over.wav");;
 
 	for (int i = 0; i < 10; i++) {
 		Bot* newBot = new Bot();
@@ -556,23 +490,21 @@ void Game::loadResource(SDL_Renderer* renderer) {
 		}
 		bots.push_back(newBot);
 	}
-	font = TTF_OpenFont("Font_Folder/font2.ttf", 30);
 
-	for (int i = 0; i < 3; i++) {
-		Text* newText = new Text();
-		if (i == 2) {
-			newText->loadText(renderer, font, "BOSS");
-		}
-		newText->setRect(0, i * 30);
-		texts.push_back(newText);
-	}
-	mState = oldState = GameType::HOME;
+	font = TTF_OpenFont("Font_Folder/font2.ttf", 30);
+	
+	Text* newText = new Text();
+	newText->loadText(renderer, font, "BOSS");
+	texts.push_back(newText);
+
+	mState = oldState = GameState::HOME;
 }
 
 
 void Game::handleObject(SDL_Renderer* renderer) {
 
-	hero->handleMove(); hero->handleState(renderer); hero->handleSkill(); hero->renderText(renderer, font); hero->render(renderer, 1);
+	hero->handleMove(); hero->handleState(renderer); hero->handleSkill(); hero->render(renderer, 1);
+	hero->renderCoin(renderer, font); hero->renderScore(renderer, font); hero->renderSkill(renderer, font);
 
 	for (int i = 0; i < int(bots.size()); i++) {
 		if (bots[i]->getIsAppear()) {
@@ -590,6 +522,7 @@ void Game::handleObject(SDL_Renderer* renderer) {
 
 	if (boss->getIsAppear()) {
 		boss->handleAction(renderer); boss->handleMove(); boss->handleState(renderer); boss->render(renderer, -1); boss->handleSkill();
+		boss->renderText(renderer, font);
 	}
 
 	if (hero->getScore() >= 4) {
@@ -597,4 +530,75 @@ void Game::handleObject(SDL_Renderer* renderer) {
 	}
 
 	this->handleCollision(renderer);
+}
+
+
+void Game::handleCollision(SDL_Renderer* renderer) {
+	for (int j = 0; j < int(bots.size()); j++) {
+		if (bots[j]->getIsAppear()) {
+			check(hero, bots[j]);
+		}
+		if (bots[j]->checkIsDestroyed() && bots[j]->getIsAppear()) {
+			Mix_PlayChannel(-1, mBonkMusic, 0);
+			hero->setScore(hero->getScore() + 2);
+			hero->setCoin(hero->getCoin() + 3);
+
+			Item* newItem = new Item();
+			newItem->loadImage(renderer, static_cast<ItemType>(rand() % 5));
+			newItem->setRect(bots[j]->getRect().x + 10, bots[j]->getRect().y + bots[j]->getRect().h / 2);
+			items.push_back(newItem);
+		}
+	}
+
+	if (boss->getIsAppear()) {
+		check(boss, hero);
+	}
+
+	if (boss->getIsAppear() && boss->checkIsDestroyed()) {
+		Mix_PlayChannel(-1, mBonkMusic, 0);
+		hero->setScore(hero->getScore() + 50);
+		hero->setCoin(hero->getCoin() + 50);
+	}
+
+	if (hero->getHp() == 0) {
+		Mix_PlayChannel(-1, mGameOverMusic, 0);
+	}
+
+	for (int i = 0; i < int(items.size()); i++) {
+
+		if (hero->getHp() > 0 && checkConllision(hero, items[i])) {
+			Mix_PlayChannel(-1, mItemMusic, 0);
+			switch (items[i]->getItemType()) {
+			case BUFF_HP:
+				hero->setHp(hero->getHp() + 10);
+				break;
+
+			case ADD_BULLET:
+				hero->setMaxBullet(hero->getMaxBullet() + 1);
+				if (hero->getMaxBullet() >= 5) {
+					hero->setMaxBullet(5);
+				}
+				break;
+
+			case ADD_BLUE_BALL:
+			case ADD_GREEN_BALL:
+			case ADD_RED_BALL:
+				if (int(hero->getCurrentBullet()) == int(items[i]->getItemType())) {
+					hero->setMaxBullet(hero->getMaxBullet() + 1);
+					if (hero->getMaxBullet() >= 5) {
+						hero->setMaxBullet(5);
+					}
+				}
+				else {
+					hero->setCurrentBullet(static_cast<BulletType>(items[i]->getItemType()));
+					hero->setMaxBullet(1);
+				}
+				break;
+			}
+			if (items[i] != nullptr) {
+				delete items[i];
+				items.erase(items.begin() + i);
+			}
+		}
+	}
 }

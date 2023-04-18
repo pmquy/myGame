@@ -8,7 +8,7 @@
 #include "Item.h"
 #include "Boss.h"
 
-enum GameType {
+enum GameState {
 	HOME,
 	HOME1,
 	START,
@@ -44,16 +44,24 @@ static std::vector<std::string> GAME_PATHS = {"Image_Folder/Background/Home/0.pn
 
 class Game : public BaseClass {
 public:
+	
 	Character *hero = nullptr;
 	Boss* boss = nullptr;
 	std::vector<Bot*> bots;
 	std::vector<Item*> items;
-	GameType mState, oldState;
+
+	GameState mState, oldState;
+
 	std::vector<SDL_Texture*> mTextures;
 	std::vector<Text*> texts;
-	Mix_Chunk* mBonkMusic = nullptr;
-	Mix_Music* mGameMusic = nullptr;
-	TTF_Font* font = nullptr;
+
+	Mix_Chunk* mBonkMusic;
+	Mix_Music* mGameMusic;
+	Mix_Chunk* mItemMusic;
+	Mix_Chunk* mGameOverMusic;
+	Mix_Music* mHomeMusic;
+
+	TTF_Font* font;
 	SDL_Color color;
 
 	void loadResource(SDL_Renderer*);
@@ -63,10 +71,11 @@ public:
 	void handleState(SDL_Renderer*, SDL_Event);
 	void handleObject(SDL_Renderer*);
 	void restart(SDL_Renderer*);
+
 	Game();
 	~Game();
 
-	GameType getState() {
+	GameState getState() {
 		return mState;
 	}
 private:

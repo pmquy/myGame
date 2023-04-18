@@ -44,13 +44,16 @@ void Bot::restart(SDL_Renderer* renderer) {
 }
 
 void Bot::handleState(SDL_Renderer* renderer) {
+	
 	if (mHp == 0 && mState != DESTROYED) {
 		mState = DESTROYED;
 		mCurrentFrame = mMaxFrames[int(mState)] - 1;
 	}
-	if (mRect.x < -10 || mRect.y < -10 || mRect.y > SCREEN_HEIGHT + 10 || checkIsDestroyed()) {
+	
+	if (mRect.x < -10 || mRect.y < -10 || checkIsDestroyed()) {
 		restart(renderer);
 	}
+	
 	if (mState == FIRING && mCurrentFrame == 0) {
 		for (int i = 0; i < int(mBulletList.size()); i++) {
 			mBulletList[i]->setIsMove(true);
@@ -63,6 +66,7 @@ void Bot::handleState(SDL_Renderer* renderer) {
 		}
 		mCurrentFrame = mMaxFrames[int(mState)] - 1;
 	}
+	
 	if (mState == NORMAL && (mXVal || mYVal)) {
 		mState = BOOSTING;
 		mCurrentFrame = mMaxFrames[int(mState)] - 1;

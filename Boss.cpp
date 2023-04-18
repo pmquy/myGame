@@ -1,7 +1,7 @@
 #include "Boss.h"
 
 Boss::Boss() {
-	mHp = mMaxHp = 100;
+	mHp = mMaxHp = 200;
 	mTurnTime = 0;
 	mIsAppear = false;
 	mXVal = -2;
@@ -12,6 +12,8 @@ Boss::Boss() {
 	Skill* newSkill = new Skill(10, SkillType::BUFF_HP_SKILL);
 	newSkill->mIsAvailable = true;
 	mSkillList.push_back(newSkill);
+
+	mName = new Text();
 }
 
 
@@ -37,3 +39,8 @@ void Boss::handleSkill() {
 	}
 }
 
+void Boss::renderText(SDL_Renderer* renderer, TTF_Font* font) {
+	mName->loadText(renderer, font, "BOSS");
+	mName->setRect(mRect.x + 50, mRect.y);
+	mName->render(renderer);
+}

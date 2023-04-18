@@ -29,8 +29,6 @@ void Close() {
 
 void gameLoop() {
 	
-	Mix_PlayMusic(game.mGameMusic, -1);
-	
 	while (true) {
 
 		while (SDL_PollEvent(&gEvent)) {
@@ -49,7 +47,6 @@ void gameLoop() {
 		game.handleMove();
 
 		if (game.mState == LEVEL1 || game.mState == LEVEL2 || game.mState == LEVEL3 || game.mState == LEVEL4 || game.mState == LEVEL5) {
-			game.oldState = game.getState();
 			game.handleObject(gRenderer);
 		}
 

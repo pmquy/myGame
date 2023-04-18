@@ -7,13 +7,14 @@ Character::Character() {
 	mHp = mMaxHp = 50;
 	mAtk = mMaxAtk = 5;
 	mDef = mMaxDef = 0;
-	mCoin = 100;
+	mCoin = 0;
 	
 	mRect.x = 0;
 	mRect.y = 200;
 	mScore = 0;
 	mMaxBullet = 1;
 	mCurrentSkill = 0;
+	mCurrentBullet = BulletType::GREEN_BALL;
 
 	Skill* newSkill = new Skill(20, SkillType::BUFF_HP_SKILL);
 	newSkill->mIsAvailable = true;
@@ -23,22 +24,16 @@ Character::Character() {
 	newSkill->mIsAvailable = true;
 	mSkillList.push_back(newSkill);
 
-	Text* newText = new Text();
-	newText->setRect(1050, 0);
-	mTextList.push_back(newText);
-
-	Text* newText1 = new Text();
-	newText1->setRect(1050, 0);
-	mTextList.push_back(newText1);
+	mScoreText = new Text(); mScoreText->setRect(0, 0);
+	mCoinText = new Text(); mCoinText->setRect(0, 50);
+	mSkillText = new Text(); mSkillText->setRect(0, 550);
 }
 
 Character::~Character() {
 	free();
-	for (auto &it : mTextList) {
-		it->free();
-		delete it;
-		it = nullptr;
-	}
+	delete mScoreText;
+	delete mCoinText;
+	delete mSkillText;
 }
 
 void Character::handleAction(const SDL_Event &event, SDL_Renderer* renderer) {
@@ -71,7 +66,7 @@ void Character::handleAction(const SDL_Event &event, SDL_Renderer* renderer) {
 			break;
 		case SDLK_c:
 			mCurrentSkill += 1;
-			if (mCurrentSkill == mSkillList.size()) {
+			if (mCurrentSkill == 2) {
 				mCurrentSkill = 0;
 			}
 			break;
@@ -99,7 +94,6 @@ void Character::handleAction(const SDL_Event &event, SDL_Renderer* renderer) {
 	else if (event.type == SDL_KEYUP) {
 		
 		switch (event.key.keysym.sym) {
-
 		case SDLK_UP:
 		case SDLK_DOWN:
 			mYVal = 0;
@@ -108,6 +102,7 @@ void Character::handleAction(const SDL_Event &event, SDL_Renderer* renderer) {
 				mState = NORMAL;
 			}
 			break;
+
 		case SDLK_LEFT:
 		case SDLK_RIGHT:
 			mXVal = 0;
@@ -151,7 +146,6 @@ void Character::handleBulletMove() {
 }
 
 void Character::handleState(SDL_Renderer* renderer) {
-
 	if (mHp == 0 && mState != DESTROYED) {
 		mState = DESTROYED;
 		mCurrentFrame = 0;
@@ -166,31 +160,13 @@ void Character::handleState(SDL_Renderer* renderer) {
 			mBulletList[i]->setIsMove(true);
 		}
 	}
-
 }
 	
-void Character::renderText(SDL_Renderer* renderer, TTF_Font* font) {
-
-	if (mSkillList[mCurrentSkill]->mIsAvailable == true) {
-		Text* temp = mTextList[mCurrentSkill];
-		std::string name;
-		if (mSkillList[mCurrentSkill]->mType == BUFF_HP_SKILL) {
-			name = "buff hp : ";
-		}
-		else if (mSkillList[mCurrentSkill]->mType == BUFF_ATK_SKILL) {
-			name = "buff atk : ";
-		}
-		temp->loadText(renderer, font, name + std::to_string(mSkillList[mCurrentSkill]->mCurrentTime));
-		temp->render(renderer);
-	}
-
-}
 
 bool Character::checkIsDestroyed() {
-
 	return mHp == 0 && mCurrentFrame == mMaxFrames[int(DESTROYED)] - 1 && mState == DESTROYED;
-
 }
+
 void Character::restart() {
 	Airplane::restart();
 	setRect(0, 0);
@@ -200,8 +176,8 @@ void Character::restart() {
 	mScore = 0;
 	mCurrentBullet = BulletType::GREEN_BALL;
 	mCurrentSkill = 0;
-	mBulletQuatity = { 100, 100, 100 };
 }
+
 int Character::getCoin() {
 	return mCoin;
 }
@@ -220,7 +196,33 @@ BulletType Character::getCurrentBullet() {
 void Character::setCurrentBullet(BulletType t) {
 	mCurrentBullet = t;
 }
-
+int Character::getMaxBullet() {
+	return mMaxBullet;
+}
+void Character::setMaxBullet(int t) {
+	mMaxBullet = t;
+}
+void Character::renderCoin(SDL_Renderer* renderer, TTF_Font* font) {
+	mCoinText->loadText(renderer, font, "Coin : " + std::to_string(mCoin));
+	mCoinText->render(renderer);
+}
+void Character::renderScore(SDL_Renderer* renderer, TTF_Font* font) {
+	mScoreText->loadText(renderer, font, "Score : " + std::to_string(mScore));
+	mScoreText->render(renderer);
+}
+void Character::renderSkill(SDL_Renderer* renderer, TTF_Font* font) {
+	if (mSkillList[mCurrentSkill]->mIsAvailable == true) {
+		std::string name;
+		if (mSkillList[mCurrentSkill]->mType == BUFF_HP_SKILL) {
+			name = "buff hp : ";
+		}
+		else if (mSkillList[mCurrentSkill]->mType == BUFF_ATK_SKILL) {
+			name = "buff atk : ";
+		}
+		mSkillText->loadText(renderer, font, name + std::to_string(mSkillList[mCurrentSkill]->mCurrentTime));
+		mSkillText->render(renderer);
+	}
+}
 
 
 

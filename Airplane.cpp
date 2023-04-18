@@ -1,9 +1,10 @@
 #include "Airplane.h"
 
 Airplane::Airplane() {
-	mHp = mMaxHp = 100;
+	mHp = mMaxHp = 50;
 	mDef = mMaxDef = 0;
 	mAtk = mMaxAtk = 2;
+
 	mFireTime = mFrameTime = mMoveTime = 0;
 	
 	mState = NORMAL;
@@ -106,6 +107,11 @@ void Airplane::restart() {
 		mBulletList.pop_back();
 	}
 	
+	for (auto it : mSkillList) {
+		it->mCurrentTime = 0;
+	}
+
+	mXVal = mYVal = 0;
 	mHp = mMaxHp;
 	mAtk = mMaxAtk;
 	mDef = mMaxDef;
@@ -202,7 +208,7 @@ void Airplane::useSkill(Skill* sk) {
 			break;
 		case BUFF_ATK_SKILL:
 			if (mHp > 0) {
-				mAtk *= 3;
+				mAtk *= 10;
 			}
 			break;
 		}
@@ -220,7 +226,7 @@ void Airplane::handleSkill() {
 					it->mCurrentTime = 0;
 				}
 				if (it->mCurrentTime == 15 && it->mType == BUFF_ATK_SKILL) {
-					mAtk /= 3;
+					mAtk /= 10;
 				}
 			}
 		}

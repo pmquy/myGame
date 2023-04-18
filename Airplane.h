@@ -10,7 +10,7 @@ static std::vector<std::string> HERO3_PATHS = { "Image_Folder/Airplane/Hero/Corv
 static std::vector<std::vector<std::string>> HEROES_PATHS = { HERO1_PATHS, HERO2_PATHS, HERO3_PATHS };
 
 static std::vector<int> PLANE_ATK = { 3, 4, 5 };
-static std::vector<int> PLANE_HP = { 50, 100, 150 };
+static std::vector<int> PLANE_HP = { 50, 60, 70 };
 static std::vector<int> PLANE_DEF = { 1, 2, 3 };
 
 static std::vector<std::string> BOT1_PATHS = { "Image_Folder/Airplane/Bot/Bomber/Idle.png", "Image_Folder/Airplane/Bot/Bomber/Destroyed.png", "Image_Folder/Airplane/Bot/Bomber/Attack_1.png", "Image_Folder/Airplane/Bot/Bomber/Boost.png" };

@@ -11,7 +11,6 @@ public:
 	void handleAction(const SDL_Event &event, SDL_Renderer* renderer);
 	void handleMove();
 	void handleState(SDL_Renderer*);
-	void renderText(SDL_Renderer* renderer, TTF_Font* font);
 	bool checkIsDestroyed();
 	void restart();
 	void setCoin(int c);
@@ -20,16 +19,23 @@ public:
 	BulletType getCurrentBullet();
 	void setCurrentBullet(BulletType t);
 	int getCoin();
-	int mMaxBullet = 1;
+	int getMaxBullet();
+	void setMaxBullet(int);
+
+	void renderScore(SDL_Renderer*, TTF_Font*);
+	void renderSkill(SDL_Renderer*, TTF_Font*);
+	void renderCoin(SDL_Renderer*, TTF_Font*);
 
 private:
+	int mMaxBullet;
 	void handleBulletMove();
 	int mCoin;
 	int mScore;
 	int mCurrentSkill;
-	BulletType mCurrentBullet = BulletType::GREEN_BALL;
-	std::vector<Text*> mTextList;
-	std::vector<int> mBulletQuatity = { 100, 100, 100 };
+	BulletType mCurrentBullet;
+	Text* mScoreText;
+	Text* mSkillText;
+	Text* mCoinText;
 };
 
 #endif 
