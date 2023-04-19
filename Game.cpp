@@ -43,7 +43,7 @@ void Game::handleMove() {
 		BaseClass::handleMove();
 		if (mRect.x <= -1200) mRect.x = 0;
 	}
-	if (mState == HOME2 && checkToMove(5)) {
+	if (mState == HOME2 && checkToMove(10)) {
 		BaseClass::handleMove();
 	}
 }
@@ -90,11 +90,11 @@ void Game::render(SDL_Renderer* renderer, const SDL_Rect* clip) {
 		SDL_RenderFillRect(renderer, &rectBg);
 
 		SDL_SetRenderDrawColor(renderer, 255, 0, 0, 0);
-		SDL_Rect rect = { 320, 140, (hero->getMaxHp() - 50) / 10 * 100, 10 };
+		SDL_Rect rect = { 320, 140, (hero->getMaxHp() - 50) * 100 / 10 , 10 };
 		SDL_RenderFillRect(renderer, &rect);
-		rect = { 320, 230, (hero->getDef() - 0) * 100, 10 };
+		rect = { 320, 230, (hero->getMaxDef() - 0) * 100 / 1, 10 };
 		SDL_RenderFillRect(renderer, &rect);
-		rect = { 320, 320, (hero->getAtk() - 5) / 5 * 100, 10 };
+		rect = { 320, 320, (hero->getMaxAtk() - 5) * 100 / 2, 10 };
 		SDL_RenderFillRect(renderer, &rect);
 
 		hero->renderCoin(renderer, font);
@@ -105,9 +105,9 @@ void Game::render(SDL_Renderer* renderer, const SDL_Rect* clip) {
 	case SHOP2:
 	case SHOP3:
 	case SHOP4:
-		hero->renderCoin(renderer, font);
 		mTexture = mTextures[int(mState)];
 		BaseClass::render(renderer);
+		hero->renderCoin(renderer, font);
 		break;
 
 	default:
@@ -140,13 +140,13 @@ void Game::handleState(SDL_Renderer* renderer, SDL_Event event) {
 		oldState = mState;
 		if (hero->checkIsDestroyed()) {
 			mState = LOSE;
+			setRect(0, 0);
 			Mix_PlayMusic(mHomeMusic, -1);
-			this->restart(renderer);
 		}
 		if (boss->getIsAppear() && boss->checkIsDestroyed()) {
 			mState = WIN;
+			setRect(0, 0);
 			Mix_PlayMusic(mHomeMusic, -1);
-			this->restart(renderer);
 		}
 		break;
 	case HOME:
@@ -161,6 +161,7 @@ void Game::handleState(SDL_Renderer* renderer, SDL_Event event) {
 		}
 		if (event.type == SDL_MOUSEBUTTONDOWN) {
 			mState = HOME2;
+			Mix_PlayMusic(mIntroMusic, -1);
 			mYVal = -1; mXVal = 0;
 		}
 		break;
@@ -177,8 +178,8 @@ void Game::handleState(SDL_Renderer* renderer, SDL_Event event) {
 	case START1:
 		if (event.type == SDL_MOUSEBUTTONDOWN) {
 			mState = LEVEL1;
+			setUpLevel(renderer, LEVEL1);
 			Mix_PlayMusic(mGameMusic, -1);
-			hero->restart();
 		}
 		if (!(mouse.first >= 550 && mouse.first <= 650 && mouse.second >= 152 && mouse.second <= 227)) {
 			mState = START;
@@ -312,23 +313,27 @@ void Game::handleState(SDL_Renderer* renderer, SDL_Event event) {
 		if (event.type == SDL_MOUSEBUTTONDOWN) {
 			if (oldState == LEVEL1) {
 				mState = LEVEL2;
-				bots[2]->setIsAppear(true);
+				setUpLevel(renderer, LEVEL2);
+				Mix_PlayMusic(mGameMusic, -1);
 			}
 			else if (oldState == LEVEL2) {
+				setUpLevel(renderer, LEVEL3);
 				mState = LEVEL3;
-				bots[2]->setIsAppear(true);
+				Mix_PlayMusic(mGameMusic, -1);
 			}
 			else if (oldState == LEVEL3) {
+				setUpLevel(renderer, LEVEL4);
 				mState = LEVEL4;
-				bots[3]->setIsAppear(true);
+				Mix_PlayMusic(mGameMusic, -1);
 			}
 			else if (oldState == LEVEL4) {
+				setUpLevel(renderer, LEVEL5);
 				mState = LEVEL5;
-				bots[4]->setIsAppear(true);
+				Mix_PlayMusic(mGameMusic, -1);
 			}
 			else if (oldState == LEVEL5) {
 				mState = LEVEL5;
-				bots[5]->setIsAppear(true);
+				Mix_PlayMusic(mGameMusic, -1);
 			}
 		}
 		break;
@@ -339,18 +344,23 @@ void Game::handleState(SDL_Renderer* renderer, SDL_Event event) {
 		if (event.type == SDL_MOUSEBUTTONDOWN) {
 			if (oldState == LEVEL1) {
 				mState = LEVEL1;
+				Mix_PlayMusic(mGameMusic, -1);
 			}
 			else if (oldState == LEVEL2) {
 				mState = LEVEL2;
+				Mix_PlayMusic(mGameMusic, -1);
 			}
 			else if (oldState == LEVEL3) {
 				mState = LEVEL3;
+				Mix_PlayMusic(mGameMusic, -1);
 			}
 			else if (oldState == LEVEL4) {
 				mState = LEVEL4;
+				Mix_PlayMusic(mGameMusic, -1);
 			}
 			else if (oldState == LEVEL5) {
 				mState = LEVEL5;
+				Mix_PlayMusic(mGameMusic, -1);
 			}
 		}
 		break;
@@ -359,14 +369,6 @@ void Game::handleState(SDL_Renderer* renderer, SDL_Event event) {
 			mState = WIN;
 		}
 		if (event.type == SDL_MOUSEBUTTONDOWN) {
-			for (int i = 0; i < int(bots.size()); i++) {
-				if (i < 2) {
-					bots[i]->setIsAppear(true);
-				}
-				else {
-					bots[i]->setIsAppear(false);
-				}
-			}
 			mState = START;
 		}
 		break;
@@ -400,7 +402,7 @@ void Game::handleState(SDL_Renderer* renderer, SDL_Event event) {
 		if (event.type == SDL_MOUSEBUTTONDOWN) {
 			if (hero->getCoin() >= 20 && hero->getDef() < 6) {
 				hero->setCoin(hero->getCoin() - 20);
-				hero->setDef(hero->getDef() + 1);
+				hero->setMaxDef(hero->getMaxDef() + 1);
 			}
 		}
 		if (!(mouse.first >= 1030 && mouse.first <= 1090 && mouse.second >= 204 && mouse.second <= 265)) {
@@ -410,9 +412,9 @@ void Game::handleState(SDL_Renderer* renderer, SDL_Event event) {
 
 	case UPGRADE3:
 		if (event.type == SDL_MOUSEBUTTONDOWN) {
-			if (hero->getCoin() >= 20 && hero->getAtk() < 35) {
+			if (hero->getCoin() >= 20 && hero->getAtk() < 17) {
 				hero->setCoin(hero->getCoin() - 20);
-				hero->setAtk(hero->getAtk() + 5);
+				hero->setMaxAtk(hero->getMaxAtk() + 2);
 			}
 		}
 		if (!(mouse.first >= 1030 && mouse.first <= 1090 && mouse.second >= 291 && mouse.second <= 352)) {
@@ -446,25 +448,6 @@ void Game::handleState(SDL_Renderer* renderer, SDL_Event event) {
 	}
 }
 
-void Game::restart(SDL_Renderer* renderer) {
-	hero->restart();
-	
-	for (int j = 0; j < int(bots.size()); j++) {
-		bots[j]->restart(renderer);
-	}
-
-	while(!items.empty()) {
-		if (items[items.size() - 1] != nullptr) {
-			items[items.size() - 1]->free();
-			delete items[items.size() - 1];
-			items.pop_back();
-		}
-	}
-	setRect(0, 0);
-	boss->setIsAppear(false);
-	boss->restart(renderer);
-}
-
 
 void Game::loadResource(SDL_Renderer* renderer) {
 	
@@ -474,6 +457,7 @@ void Game::loadResource(SDL_Renderer* renderer) {
 
 	mGameMusic = Mix_LoadMUS("Music_Folder/music.mp3");
 	mHomeMusic = Mix_LoadMUS("Music_Folder/home.mp3");
+	mIntroMusic = Mix_LoadMUS("Music_Folder/intro.mp3");
 	mBonkMusic = Mix_LoadWAV("Music_Folder/bonk.wav");
 	mItemMusic = Mix_LoadWAV("Music_Folder/item.wav");
 	mGameOverMusic = Mix_LoadWAV("Music_Folder/game_over.wav");;
@@ -501,7 +485,7 @@ void Game::loadResource(SDL_Renderer* renderer) {
 }
 
 
-void Game::handleObject(SDL_Renderer* renderer) {
+void Game::updateObject(SDL_Renderer* renderer) {
 
 	hero->handleMove(); hero->handleState(renderer); hero->handleSkill(); hero->render(renderer, 1);
 	hero->renderCoin(renderer, font); hero->renderScore(renderer, font); hero->renderSkill(renderer, font);
@@ -601,4 +585,120 @@ void Game::handleCollision(SDL_Renderer* renderer) {
 			}
 		}
 	}
+}
+
+void Game::restart(SDL_Renderer* renderer) {
+	hero->restart();
+	for (int j = 0; j < int(bots.size()); j++) {
+		bots[j]->restart(renderer);
+	}
+
+	while (!items.empty()) {
+		if (items[items.size() - 1] != nullptr) {
+			items[items.size() - 1]->free();
+			delete items[items.size() - 1];
+			items.pop_back();
+		}
+	}
+	setRect(0, 0);
+	boss->setIsAppear(false);
+	boss->restart(renderer);
+}
+
+void Game::setUpLevel(SDL_Renderer* renderer, GameState state) {
+	switch (state) {
+	case LEVEL1:
+		for (int i = 0; i < int(bots.size()); i++) {
+			bots[i]->setMaxAtk(2);
+			bots[i]->setMaxHp(50);
+			bots[i]->setMaxDef(0);
+			bots[i]->setMaxBullet(2);
+			if (i < 2) {
+				bots[i]->setIsAppear(true);
+			}
+			else {
+				bots[i]->setIsAppear(false);
+			}
+		}
+		boss->setMaxAtk(5);
+		boss->setMaxHp(100);
+		boss->setMaxDef(0);
+		boss->setMaxBullet(4);
+		break;
+
+	case LEVEL2:
+		for (int i = 0; i < int(bots.size()); i++) {
+			bots[i]->setMaxAtk(3);
+			bots[i]->setMaxHp(60);
+			bots[i]->setMaxDef(0);
+			bots[i]->setMaxBullet(3);
+			if (i < 3) {
+				bots[i]->setIsAppear(true);
+			}
+			else {
+				bots[i]->setIsAppear(false);
+			}
+		}
+		boss->setMaxAtk(5);
+		boss->setMaxHp(100);
+		boss->setMaxDef(1);
+		boss->setMaxBullet(4);
+		break;
+	case LEVEL3:
+		for (int i = 0; i < int(bots.size()); i++) {
+			bots[i]->setMaxAtk(3);
+			bots[i]->setMaxHp(70);
+			bots[i]->setMaxDef(1);
+			bots[i]->setMaxBullet(3);
+			if (i < 4) {
+				bots[i]->setIsAppear(true);
+			}
+			else {
+				bots[i]->setIsAppear(false);
+			}
+		}
+		boss->setMaxAtk(8);
+		boss->setMaxHp(150);
+		boss->setMaxDef(1);
+		boss->setMaxBullet(5);
+		break;
+	case LEVEL4:
+		for (int i = 0; i < int(bots.size()); i++) {
+			bots[i]->setMaxAtk(4);
+			bots[i]->setMaxHp(80);
+			bots[i]->setMaxDef(1);
+			bots[i]->setMaxBullet(3);
+			if (i < 5) {
+				bots[i]->setIsAppear(true);
+			}
+			else {
+				bots[i]->setIsAppear(false);
+			}
+		}
+		boss->setMaxAtk(10);
+		boss->setMaxHp(200);
+		boss->setMaxDef(2);
+		boss->setMaxBullet(6);
+		break;
+	case LEVEL5:
+		for (int i = 0; i < int(bots.size()); i++) {
+			bots[i]->setMaxAtk(5);
+			bots[i]->setMaxHp(100);
+			bots[i]->setMaxDef(1);
+			bots[i]->setMaxBullet(3);
+			if (i < 7) {
+				bots[i]->setIsAppear(true);
+			}
+			else {
+				bots[i]->setIsAppear(false);
+			}
+		}
+		boss->setMaxAtk(20);
+		boss->setMaxHp(250);
+		boss->setMaxDef(4);
+		boss->setMaxBullet(6);
+		break;
+	}
+	this->restart(renderer);
+
 }

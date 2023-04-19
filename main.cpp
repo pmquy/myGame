@@ -42,12 +42,12 @@ void gameLoop() {
 			}
 		}
 
-		game.render(gRenderer);
 		game.handleState(gRenderer, gEvent);
+		game.render(gRenderer);
 		game.handleMove();
 
 		if (game.mState == LEVEL1 || game.mState == LEVEL2 || game.mState == LEVEL3 || game.mState == LEVEL4 || game.mState == LEVEL5) {
-			game.handleObject(gRenderer);
+			game.updateObject(gRenderer);
 		}
 
 		SDL_RenderPresent(gRenderer);

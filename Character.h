@@ -16,18 +16,15 @@ public:
 	void setCoin(int c);
 	int getScore();
 	void setScore(int c);
-	BulletType getCurrentBullet();
 	void setCurrentBullet(BulletType t);
 	int getCoin();
-	int getMaxBullet();
-	void setMaxBullet(int);
-
 	void renderScore(SDL_Renderer*, TTF_Font*);
 	void renderSkill(SDL_Renderer*, TTF_Font*);
 	void renderCoin(SDL_Renderer*, TTF_Font*);
+	BulletType getCurrentBullet();
 
 private:
-	int mMaxBullet;
+	void fire(SDL_Renderer* renderer);
 	void handleBulletMove();
 	int mCoin;
 	int mScore;

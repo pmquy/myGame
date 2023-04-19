@@ -1,9 +1,33 @@
-#OBJS specifies which files to compile as part of the project
-OBJS = CommonFunction.cpp 
+CC = g++
 
-#OBJ_NAME specifies the name of our exectuable
-OBJ_NAME = CommonFunction
+CFLAGS = -Wall -g
 
-#This is the target that compiles our executable
-all : $(OBJS)
-	g++ $(OBJS) -w -lSDL2 -o $(OBJ_NAME)
+INCLUDES = -I/include
+
+LFLAGS = -L/lib
+
+LIBS = -lSDL2
+
+SRCS = BaseClass.cpp
+
+OBJS = $(SRCS:.cpp=.o)
+
+MAIN = mycc
+
+.PHONY: depend clean
+
+all: $(MAIN)
+
+$(MAIN): $(OBJS) 
+	$(CC) $(CFLAGS) $(INCLUDES) -o $(MAIN) $(OBJS) $(LFLAGS) $(LIBS)
+
+.cpp.o:
+	$(CC) $(CFLAGS) $(INCLUDES) -c $<  -o $@
+
+clean:
+	$(RM) *.o *~ $(MAIN)
+
+depend: $(SRCS)
+	makedepend $(INCLUDES) $^
+
+# DO NOT DELETE THIS LINE -- make depend needs it

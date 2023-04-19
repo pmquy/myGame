@@ -4,9 +4,8 @@ Airplane::Airplane() {
 	mHp = mMaxHp = 50;
 	mDef = mMaxDef = 0;
 	mAtk = mMaxAtk = 2;
-
 	mFireTime = mFrameTime = mMoveTime = 0;
-	
+	mMaxBullet = 3;
 	mState = NORMAL;
 	mCurrentFrame = 0;
 	mIsAppear = true;
@@ -168,6 +167,12 @@ void Airplane::setHp(int Hp) {
 void Airplane::setMaxHp(int mh) {
 	mMaxHp = mh;
 }
+void Airplane::setMaxDef(int mh) {
+	mMaxDef = mh;
+}
+void Airplane::setMaxAtk(int mh) {
+	mMaxAtk = mh;
+}
 int Airplane::getAtk() {
 	return mAtk;
 }
@@ -186,6 +191,12 @@ bool Airplane::getIsAppear() {
 void Airplane::setIsAppear(bool t) {
 	mIsAppear = t;
 }
+int Airplane::getMaxDef() {
+	return mMaxDef;
+}
+int Airplane::getMaxAtk() {
+	return mMaxAtk;
+}
 
 std::vector<Bullet*>& Airplane::getBulletList() {
 	return mBulletList;
@@ -193,7 +204,12 @@ std::vector<Bullet*>& Airplane::getBulletList() {
 std::vector<Skill*>& Airplane::getSkillList() {
 	return mSkillList;
 }
-
+int Airplane::getMaxBullet() {
+	return mMaxBullet;
+}
+void Airplane::setMaxBullet(int t) {
+	mMaxBullet = t;
+}
 
 void Airplane::useSkill(Skill* sk) {
 	if (sk->mIsAvailable && sk->mCurrentTime == 0) {
@@ -209,6 +225,11 @@ void Airplane::useSkill(Skill* sk) {
 		case BUFF_ATK_SKILL:
 			if (mHp > 0) {
 				mAtk *= 10;
+			}
+			break;
+		case SUPER:
+			if (mHp > 0) {
+				mMaxBullet += 3;
 			}
 			break;
 		}
@@ -227,6 +248,9 @@ void Airplane::handleSkill() {
 				}
 				if (it->mCurrentTime == 15 && it->mType == BUFF_ATK_SKILL) {
 					mAtk /= 10;
+				}
+				if (it->mCurrentTime == 15 && it->mType == SUPER) {
+					mMaxBullet -= 3;
 				}
 			}
 		}

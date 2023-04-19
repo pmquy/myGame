@@ -1,13 +1,12 @@
 #include "Character.h"
 
 Character::Character() {
-	
 	mXVal = 0;
 	mYVal = 0;
 	mHp = mMaxHp = 50;
 	mAtk = mMaxAtk = 5;
 	mDef = mMaxDef = 0;
-	mCoin = 0;
+	mCoin = 100;
 	
 	mRect.x = 0;
 	mRect.y = 200;
@@ -16,13 +15,9 @@ Character::Character() {
 	mCurrentSkill = 0;
 	mCurrentBullet = BulletType::GREEN_BALL;
 
-	Skill* newSkill = new Skill(20, SkillType::BUFF_HP_SKILL);
-	newSkill->mIsAvailable = true;
-	mSkillList.push_back(newSkill);
-
-	newSkill = new Skill(20, SkillType::BUFF_ATK_SKILL);
-	newSkill->mIsAvailable = true;
-	mSkillList.push_back(newSkill);
+	mSkillList.push_back(new Skill(20, SkillType::BUFF_HP_SKILL));
+	mSkillList.push_back(new Skill(20, SkillType::BUFF_ATK_SKILL));
+	mSkillList.push_back(new Skill(20, SkillType::SUPER));
 
 	mScoreText = new Text(); mScoreText->setRect(0, 0);
 	mCoinText = new Text(); mCoinText->setRect(0, 50);
@@ -66,23 +61,13 @@ void Character::handleAction(const SDL_Event &event, SDL_Renderer* renderer) {
 			break;
 		case SDLK_c:
 			mCurrentSkill += 1;
-			if (mCurrentSkill == 2) {
+			if (mCurrentSkill == mSkillList.size()) {
 				mCurrentSkill = 0;
 			}
 			break;
 		case SDLK_d:
 			if (mState == NORMAL || mState == BOOSTING) {
-				for (int i = -mMaxBullet / 2; i <= mMaxBullet / 2; i++) {
-					if (i == 0 && mMaxBullet % 2 == 0)
-						continue;
-					Bullet* newBullet = new Bullet();
-					newBullet->loadImage(renderer, mCurrentBullet);
-					newBullet->setRect(mRect.x + mRect.w, mRect.y + mRect.h / 2);
-					newBullet->setDirection(5, i);
-					mBulletList.push_back(newBullet);
-				}
-				mCurrentFrame = 0;
-				mState = FIRING;
+				fire(renderer);
 			}
 			break;
 		case SDLK_f:
@@ -196,12 +181,7 @@ BulletType Character::getCurrentBullet() {
 void Character::setCurrentBullet(BulletType t) {
 	mCurrentBullet = t;
 }
-int Character::getMaxBullet() {
-	return mMaxBullet;
-}
-void Character::setMaxBullet(int t) {
-	mMaxBullet = t;
-}
+
 void Character::renderCoin(SDL_Renderer* renderer, TTF_Font* font) {
 	mCoinText->loadText(renderer, font, "Coin : " + std::to_string(mCoin));
 	mCoinText->render(renderer);
@@ -219,11 +199,27 @@ void Character::renderSkill(SDL_Renderer* renderer, TTF_Font* font) {
 		else if (mSkillList[mCurrentSkill]->mType == BUFF_ATK_SKILL) {
 			name = "buff atk : ";
 		}
+		else if (mSkillList[mCurrentSkill]->mType == SUPER) {
+			name = "super : ";
+		}
 		mSkillText->loadText(renderer, font, name + std::to_string(mSkillList[mCurrentSkill]->mCurrentTime));
 		mSkillText->render(renderer);
 	}
 }
 
 
+void Character::fire(SDL_Renderer* renderer) {
+	for (int i = -mMaxBullet / 2; i <= mMaxBullet / 2; i++) {
+		if (i == 0 && mMaxBullet % 2 == 0)
+			continue;
+		Bullet* newBullet = new Bullet();
+		newBullet->loadImage(renderer, mCurrentBullet);
+		newBullet->setRect(mRect.x + mRect.w, mRect.y + mRect.h / 2);
+		newBullet->setDirection(5, i);
+		mBulletList.push_back(newBullet);
+	}
+	mCurrentFrame = 0;
+	mState = FIRING;
+}
 
 

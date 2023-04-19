@@ -28,6 +28,7 @@ enum State {
 enum SkillType {
 	BUFF_HP_SKILL,
 	BUFF_ATK_SKILL,
+	SUPER,
 };
 
 struct Skill {
@@ -41,7 +42,7 @@ struct Skill {
 		mMaxTime = t;
 		mType = tp;
 		mCurrentTime = 0;
-		mIsAvailable = false;
+		mIsAvailable = true;
 		mTime = 0;
 	}
 };
@@ -54,19 +55,26 @@ public:
 	int getHp();
 	int getMaxHp();
 	void setHp(int Hp);
+	void setMaxAtk(int);
+	void setMaxDef(int);
 	void setMaxHp(int mh);
 	int getAtk();
+	int getMaxAtk();
+	int getMaxDef();
 	void setAtk(int Atk);
 	int getDef();
 	void setDef(int Def);
 	bool getIsAppear();
 	void setIsAppear(bool t);
+
 	std::vector<Bullet*>& getBulletList();
 	std::vector<Skill*>& getSkillList();	
+	
 	virtual void handleState(SDL_Renderer*) = 0;
 	virtual void handleBulletMove() = 0;
 	virtual void render(SDL_Renderer* renderer, int i);
 	virtual void restart();
+	
 	void free();
 	void loadImage(SDL_Renderer* renderer, const std::vector<std::string>& listName);
 	void handleSkill();
@@ -89,6 +97,8 @@ public:
 			}
 		}
 	}
+	int getMaxBullet();
+	void setMaxBullet(int);
 
 protected:
 	virtual bool checkIsDestroyed();
@@ -97,6 +107,7 @@ protected:
 	bool checkToNextFrame(int);
 	bool checkToFire(int t);
 	void useSkill(Skill*);
+	int mMaxBullet;
 	std::vector<Skill*> mSkillList = {};
 	std::vector<Bullet*> mBulletList = {};
 	std::vector<SDL_Texture*> mTextures = {};

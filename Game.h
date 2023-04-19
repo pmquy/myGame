@@ -45,32 +45,21 @@ static std::vector<std::string> GAME_PATHS = {"Image_Folder/Background/Home/0.pn
 class Game : public BaseClass {
 public:
 	
-	Character *hero = nullptr;
-	Boss* boss = nullptr;
+	Character *hero;
+	Boss* boss;
 	std::vector<Bot*> bots;
 	std::vector<Item*> items;
-
-	GameState mState, oldState;
-
 	std::vector<SDL_Texture*> mTextures;
 	std::vector<Text*> texts;
 
-	Mix_Chunk* mBonkMusic;
-	Mix_Music* mGameMusic;
-	Mix_Chunk* mItemMusic;
-	Mix_Chunk* mGameOverMusic;
-	Mix_Music* mHomeMusic;
-
-	TTF_Font* font;
-	SDL_Color color;
-
+	GameState mState, oldState;
+	
 	void loadResource(SDL_Renderer*);
 	void handleMove();
 	void render(SDL_Renderer* renderer, const SDL_Rect* clip = nullptr);
 	void loadImage(SDL_Renderer* renderer, const std::vector<std::string>& listName);
 	void handleState(SDL_Renderer*, SDL_Event);
-	void handleObject(SDL_Renderer*);
-	void restart(SDL_Renderer*);
+	void updateObject(SDL_Renderer*);
 
 	Game();
 	~Game();
@@ -79,6 +68,17 @@ public:
 		return mState;
 	}
 private:
+	void restart(SDL_Renderer*);
+	void setUpLevel(SDL_Renderer*, GameState);
+	Mix_Chunk* mBonkMusic;
+	Mix_Music* mGameMusic;
+	Mix_Chunk* mItemMusic;
+	Mix_Chunk* mGameOverMusic;
+	Mix_Music* mHomeMusic;
+	Mix_Music* mIntroMusic;
+
+	TTF_Font* font;
+	SDL_Color color;
 	void handleCollision(SDL_Renderer*);
 };
 

@@ -8,6 +8,7 @@ Boss::Boss() {
 	mAtk = mMaxAtk = 5;
 	mRect.x = SCREEN_WIDTH;
 	mRect.y = rand() % 400;
+	mMaxBullet = 6;
 
 	Skill* newSkill = new Skill(10, SkillType::BUFF_HP_SKILL);
 	newSkill->mIsAvailable = true;
@@ -44,3 +45,4 @@ void Boss::renderText(SDL_Renderer* renderer, TTF_Font* font) {
 	mName->setRect(mRect.x + 50, mRect.y);
 	mName->render(renderer);
 }
+
