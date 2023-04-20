@@ -13,6 +13,7 @@ Item::Item() {
 	mHeight = mWidth = 0;
 	mXVal = -2;
 	mYVal = 0;
+	mItemType = BUFF_HP;
 }
 ItemType Item::getItemType() {
 	return mItemType;

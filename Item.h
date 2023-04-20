@@ -19,7 +19,7 @@ public:
 	ItemType getItemType();
 	Item();
 private:
-	ItemType mItemType;
+	ItemType mItemType = BUFF_HP;
 };
 
 #endif

@@ -150,16 +150,14 @@ void Game::handleState(SDL_Renderer* renderer, SDL_Event event) {
 		}
 		break;
 	case HOME:
-		if (mouse.first >= 500 && mouse.first <= 700 && mouse.second >= 252 && mouse.second <= 327) {
+		if (mouse.first >= 500 && mouse.first <= 700 && mouse.second >= 252 && mouse.second <= 327 && event.type == SDL_MOUSEBUTTONDOWN) {
 			mState = HOME1;
 		}
 		break;
 
 	case HOME1:
-		if (!(mouse.first >= 500 && mouse.first <= 700 && mouse.second >= 252 && mouse.second <= 327)) {
-			mState = HOME;
-		}
-		if (event.type == SDL_MOUSEBUTTONDOWN) {
+		
+		if (event.type == SDL_MOUSEBUTTONUP) {
 			mState = HOME2;
 			Mix_PlayMusic(mIntroMusic, -1);
 			mYVal = -1; mXVal = 0;
@@ -176,141 +174,118 @@ void Game::handleState(SDL_Renderer* renderer, SDL_Event event) {
 		break;
 
 	case START1:
-		if (event.type == SDL_MOUSEBUTTONDOWN) {
+		if (event.type == SDL_MOUSEBUTTONUP) {
 			mState = LEVEL1;
 			setUpLevel(renderer, LEVEL1);
 			Mix_PlayMusic(mGameMusic, -1);
 		}
-		if (!(mouse.first >= 550 && mouse.first <= 650 && mouse.second >= 152 && mouse.second <= 227)) {
-			mState = START;
-		}
+
 		break;
 
 	case START2:
-		if (event.type == SDL_MOUSEBUTTONDOWN)
+		if (event.type == SDL_MOUSEBUTTONUP)
 			mState = SHOP;
 
-		if (!(mouse.first >= 540 && mouse.first <= 660 && mouse.second >= 252 && mouse.second <= 327)) {
-			mState = START;
-		}
 		break;
 
 	case START3:
-		if (!(mouse.first >= 500 && mouse.first <= 700 && mouse.second >= 363 && mouse.second <= 438)) {
-			mState = START;
-		}
-		if (event.type == SDL_MOUSEBUTTONDOWN)
+		if (event.type == SDL_MOUSEBUTTONUP)
 			mState = UPGRADE;
 		break;
 
 	case START:
-		if (mouse.first >= 550 && mouse.first <= 650 && mouse.second >= 152 && mouse.second <= 227) {
-			mState = START1;
-		}
-		if (mouse.first >= 540 && mouse.first <= 660 && mouse.second >= 252 && mouse.second <= 327) {
-			mState = START2;
-		}
-		if (mouse.first >= 500 && mouse.first <= 700 && mouse.second >= 363 && mouse.second <= 438) {
-			mState = START3;
+		if (event.type == SDL_MOUSEBUTTONDOWN) {
+			if (mouse.first >= 550 && mouse.first <= 650 && mouse.second >= 152 && mouse.second <= 227) {
+				mState = START1;
+			}
+			if (mouse.first >= 540 && mouse.first <= 660 && mouse.second >= 252 && mouse.second <= 327) {
+				mState = START2;
+			}
+			if (mouse.first >= 500 && mouse.first <= 700 && mouse.second >= 363 && mouse.second <= 438) {
+				mState = START3;
+			}
 		}
 		break;
 	
 	case LOSE1:
-		if (!(mouse.first >= 520 && mouse.first <= 680 && mouse.second >= 252 && mouse.second <= 327)) {
-			mState = LOSE;
-		}
-		if (event.type == SDL_MOUSEBUTTONDOWN)
+		if (event.type == SDL_MOUSEBUTTONUP) {
 			mState = oldState;
+			setUpLevel(renderer, mState);
+		}
 		break;
 
 	case LOSE2:
-		if (!(mouse.first >= 500 && mouse.first <= 700 && mouse.second >= 352 && mouse.second <= 427)) {
-			mState = LOSE;
-		}
-		if (event.type == SDL_MOUSEBUTTONDOWN) {
-			for (int i = 0; i < int(bots.size()); i++) {
-				if (i < 2) {
-					bots[i]->setIsAppear(true);
-				}
-				else {
-					bots[i]->setIsAppear(false);
-				}
-			}
+		if (event.type == SDL_MOUSEBUTTONUP) {
 			mState = START;
 		}
 		break;
 
 	case LOSE:
-		if (mouse.first >= 520 && mouse.first <= 680 && mouse.second >= 252 && mouse.second <= 327) {
-			mState = LOSE1;
-		}
-		if (mouse.first >= 500 && mouse.first <= 700 && mouse.second >= 352 && mouse.second <= 427) {
-			mState = LOSE2;
+		if (event.type == SDL_MOUSEBUTTONDOWN) {
+			if (mouse.first >= 520 && mouse.first <= 680 && mouse.second >= 252 && mouse.second <= 327) {
+				mState = LOSE1;
+			}
+			if (mouse.first >= 500 && mouse.first <= 700 && mouse.second >= 352 && mouse.second <= 427) {
+				mState = LOSE2;
+			}
 		}
 		break;
 	
 	case SHOP1:
-		if (event.type == SDL_MOUSEBUTTONDOWN) {
+
+		if (event.type == SDL_MOUSEBUTTONUP) {
+			mState = SHOP;
 			if (hero->getCoin() >= 50) {
 				hero->setCoin(hero->getCoin() - 50);
 				hero->loadImage(renderer, HERO1_PATHS);
 			}
 		}
-		if (!(mouse.first >= 230 && mouse.first <= 330 && mouse.second >= 216 && mouse.second <= 291)) {
-			mState = SHOP;
-		}
 		break;
 
 	case SHOP2:
-		if (event.type == SDL_MOUSEBUTTONDOWN) {
+		if (event.type == SDL_MOUSEBUTTONUP) {
 			if (hero->getCoin() >= 50) {
 				hero->setCoin(hero->getCoin() - 50);
 				hero->loadImage(renderer, HERO3_PATHS);
 			}
-		}
-		if (!(mouse.first >= 550 && mouse.first <= 650 && mouse.second >= 216 && mouse.second <= 291)) {
 			mState = SHOP;
 		}
 		break;
 	case SHOP3:
-		if (!(mouse.first >= 860 && mouse.first <= 960 && mouse.second >= 216 && mouse.second <= 291)) {
-			mState = SHOP;
-		}
-		if (event.type == SDL_MOUSEBUTTONDOWN) {
+		if (event.type == SDL_MOUSEBUTTONUP) {
 			if (hero->getCoin() >= 50) {
 				hero->setCoin(hero->getCoin() - 50);
 				hero->loadImage(renderer, HERO2_PATHS);
 			}
+			mState = SHOP;
 		}
 		break;
 	case SHOP4:
-		if (event.type == SDL_MOUSEBUTTONDOWN)
+		if (event.type == SDL_MOUSEBUTTONUP) {
 			mState = START;
-		if (!(mouse.first >= 500 && mouse.first <= 700 && mouse.second >= 352 && mouse.second <= 427)) {
-			mState = SHOP;
 		}
 		break;
 
 	case SHOP:
-		if (mouse.first >= 230 && mouse.first <= 330 && mouse.second >= 216 && mouse.second <= 291) {
-			mState = SHOP1;
-		}
-		if (mouse.first >= 550 && mouse.first <= 650 && mouse.second >= 216  && mouse.second <= 291) {
-			mState = SHOP2;
-		}
-		if (mouse.first >= 860 && mouse.first <= 960 && mouse.second >= 216 && mouse.second <= 291) {
-			mState = SHOP3;
-		}
-		if (mouse.first >= 500 && mouse.first <= 700 && mouse.second >= 352 && mouse.second <= 427) {
-			mState = SHOP4;
+		
+		if (event.type == SDL_MOUSEBUTTONDOWN) {
+			if (mouse.first >= 230 && mouse.first <= 330 && mouse.second >= 216 && mouse.second <= 291) {
+				mState = SHOP1;
+			}
+			if (mouse.first >= 550 && mouse.first <= 650 && mouse.second >= 216  && mouse.second <= 291) {
+				mState = SHOP2;
+			}
+			if (mouse.first >= 860 && mouse.first <= 960 && mouse.second >= 216 && mouse.second <= 291) {
+				mState = SHOP3;
+			}
+			if (mouse.first >= 500 && mouse.first <= 700 && mouse.second >= 352 && mouse.second <= 427) {
+				mState = SHOP4;
+			}
 		}
 		break;
 
 	case WIN1:
-		if (!(mouse.first >= 550 && mouse.first <= 650 && mouse.second >= 152 && mouse.second <= 227)) {
-			mState = WIN;
-		}
-		if (event.type == SDL_MOUSEBUTTONDOWN) {
+		if (event.type == SDL_MOUSEBUTTONUP) {
 			if (oldState == LEVEL1) {
 				mState = LEVEL2;
 				setUpLevel(renderer, LEVEL2);
@@ -338,111 +313,105 @@ void Game::handleState(SDL_Renderer* renderer, SDL_Event event) {
 		}
 		break;
 	case WIN2:
-		if (!(mouse.first >= 540 && mouse.first <= 660 && mouse.second >= 252 && mouse.second <= 327)) {
-			mState = WIN;
-		}
-		if (event.type == SDL_MOUSEBUTTONDOWN) {
+		if (event.type == SDL_MOUSEBUTTONUP) {
 			if (oldState == LEVEL1) {
 				mState = LEVEL1;
+				setUpLevel(renderer, LEVEL1);
 				Mix_PlayMusic(mGameMusic, -1);
 			}
 			else if (oldState == LEVEL2) {
+				setUpLevel(renderer, LEVEL2);
 				mState = LEVEL2;
 				Mix_PlayMusic(mGameMusic, -1);
 			}
 			else if (oldState == LEVEL3) {
+				setUpLevel(renderer, LEVEL3);
 				mState = LEVEL3;
 				Mix_PlayMusic(mGameMusic, -1);
 			}
 			else if (oldState == LEVEL4) {
+				setUpLevel(renderer, LEVEL4);
 				mState = LEVEL4;
 				Mix_PlayMusic(mGameMusic, -1);
 			}
 			else if (oldState == LEVEL5) {
+				setUpLevel(renderer, LEVEL5);
 				mState = LEVEL5;
 				Mix_PlayMusic(mGameMusic, -1);
 			}
 		}
 		break;
 	case WIN3:
-		if (!(mouse.first >= 500 && mouse.first <= 700 && mouse.second >= 352 && mouse.second <= 427)) {
-			mState = WIN;
-		}
-		if (event.type == SDL_MOUSEBUTTONDOWN) {
+		if (event.type == SDL_MOUSEBUTTONUP) {
 			mState = START;
 		}
 		break;
 
 	case WIN:
-		if (mouse.first >= 550 && mouse.first <= 650 && mouse.second >= 152 && mouse.second <= 227) {
-			mState = WIN1;
-		}
+		if (event.type == SDL_MOUSEBUTTONDOWN) {
+			if (mouse.first >= 550 && mouse.first <= 650 && mouse.second >= 152 && mouse.second <= 227) {
+				mState = WIN1;
+			}
 
-		if (mouse.first >= 540 && mouse.first <= 660 && mouse.second >= 252 && mouse.second <= 327) {
-			mState = WIN2;
-		}
+			if (mouse.first >= 540 && mouse.first <= 660 && mouse.second >= 252 && mouse.second <= 327) {
+				mState = WIN2;
+			}
 
-		if (mouse.first >= 500 && mouse.first <= 700 && mouse.second >= 352 && mouse.second <= 427) {
-			mState = WIN3;
+			if (mouse.first >= 500 && mouse.first <= 700 && mouse.second >= 352 && mouse.second <= 427) {
+				mState = WIN3;
+			}
 		}
 		break;
 	case UPGRADE1:
-		if (event.type == SDL_MOUSEBUTTONDOWN) {
+		if (event.type == SDL_MOUSEBUTTONUP) {
 			if (hero->getCoin() >= 20 && hero->getMaxHp() < 110) {
 				hero->setCoin(hero->getCoin() - 20);
 				hero->setMaxHp(hero->getMaxHp() + 20);
 			}
-		}
-		if (!(mouse.first >= 1030 && mouse.first <= 1090 && mouse.second >= 119 && mouse.second <= 180)) {
 			mState = UPGRADE;
 		}
 		break;
 
 	case UPGRADE2:
-		if (event.type == SDL_MOUSEBUTTONDOWN) {
+		if (event.type == SDL_MOUSEBUTTONUP) {
 			if (hero->getCoin() >= 20 && hero->getDef() < 6) {
 				hero->setCoin(hero->getCoin() - 20);
 				hero->setMaxDef(hero->getMaxDef() + 1);
 			}
-		}
-		if (!(mouse.first >= 1030 && mouse.first <= 1090 && mouse.second >= 204 && mouse.second <= 265)) {
 			mState = UPGRADE;
 		}
 		break;
 
 	case UPGRADE3:
-		if (event.type == SDL_MOUSEBUTTONDOWN) {
+		if (event.type == SDL_MOUSEBUTTONUP) {
 			if (hero->getCoin() >= 20 && hero->getAtk() < 17) {
 				hero->setCoin(hero->getCoin() - 20);
 				hero->setMaxAtk(hero->getMaxAtk() + 2);
 			}
-		}
-		if (!(mouse.first >= 1030 && mouse.first <= 1090 && mouse.second >= 291 && mouse.second <= 352)) {
 			mState = UPGRADE;
 		}
 		break;
 
 	case UPGRADE4:
-		if (!(mouse.first >= 500 && mouse.first <= 700 && mouse.second >= 352 && mouse.second <= 427)) {
-			mState = UPGRADE;
-		}
-		if (event.type == SDL_MOUSEBUTTONDOWN) {
+		if (event.type == SDL_MOUSEBUTTONUP) {
 			mState = START;
 		}
 		break;
 
 	case UPGRADE:
-		if (mouse.first >= 500 && mouse.first <= 700 && mouse.second >= 352 && mouse.second <= 427) {
-			mState = UPGRADE4;
-		}
-		if (mouse.first >= 1030 && mouse.first <= 1090 && mouse.second >= 119 && mouse.second <= 180) {
-			mState = UPGRADE1;
-		}
-		if (mouse.first >= 1030 && mouse.first <= 1090 && mouse.second >= 204 && mouse.second <= 265) {
-			mState = UPGRADE2;
-		}
-		if (mouse.first >= 1030 && mouse.first <= 1090 && mouse.second >= 291 && mouse.second <= 352) {
-			mState = UPGRADE3;
+		if (event.type == SDL_MOUSEBUTTONDOWN) {
+			if (mouse.first >= 500 && mouse.first <= 700 && mouse.second >= 352 && mouse.second <= 427) {
+				mState = UPGRADE4;
+			}
+			if (mouse.first >= 1030 && mouse.first <= 1090 && mouse.second >= 119 && mouse.second <= 180) {
+				mState = UPGRADE1;
+			}
+			if (mouse.first >= 1030 && mouse.first <= 1090 && mouse.second >= 204 && mouse.second <= 265) {
+				mState = UPGRADE2;
+			}
+			if (mouse.first >= 1030 && mouse.first <= 1090 && mouse.second >= 291 && mouse.second <= 352) {
+				mState = UPGRADE3;
+			}
 		}
 		break;
 	}
@@ -460,6 +429,7 @@ void Game::loadResource(SDL_Renderer* renderer) {
 	mIntroMusic = Mix_LoadMUS("Music_Folder/intro.mp3");
 	mBonkMusic = Mix_LoadWAV("Music_Folder/bonk.wav");
 	mItemMusic = Mix_LoadWAV("Music_Folder/item.wav");
+	mWinMusic = Mix_LoadWAV("Music_Folder/win.wav");
 	mGameOverMusic = Mix_LoadWAV("Music_Folder/game_over.wav");;
 
 	for (int i = 0; i < 10; i++) {
@@ -523,9 +493,9 @@ void Game::handleCollision(SDL_Renderer* renderer) {
 			check(hero, bots[j]);
 		}
 		if (bots[j]->checkIsDestroyed() && bots[j]->getIsAppear()) {
-			Mix_PlayChannel(-1, mBonkMusic, 0);
 			hero->setScore(hero->getScore() + 2);
 			hero->setCoin(hero->getCoin() + 3);
+			Mix_PlayChannel(-1, mBonkMusic, 0);
 
 			Item* newItem = new Item();
 			newItem->loadImage(renderer, static_cast<ItemType>(rand() % 5));
@@ -539,12 +509,13 @@ void Game::handleCollision(SDL_Renderer* renderer) {
 	}
 
 	if (boss->getIsAppear() && boss->checkIsDestroyed()) {
-		Mix_PlayChannel(-1, mBonkMusic, 0);
-		hero->setScore(hero->getScore() + 50);
-		hero->setCoin(hero->getCoin() + 50);
+		Mix_PlayChannel(-1, mWinMusic, 0);
+		hero->setScore(hero->getScore() + 10);
+		hero->setCoin(hero->getCoin() + 10);
 	}
 
-	if (hero->getHp() == 0) {
+
+	if (hero->checkIsDestroyed()) {
 		Mix_PlayChannel(-1, mGameOverMusic, 0);
 	}
 

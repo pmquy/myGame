@@ -70,8 +70,10 @@ public:
 private:
 	void restart(SDL_Renderer*);
 	void setUpLevel(SDL_Renderer*, GameState);
+
 	Mix_Chunk* mBonkMusic;
 	Mix_Music* mGameMusic;
+	Mix_Chunk* mWinMusic;
 	Mix_Chunk* mItemMusic;
 	Mix_Chunk* mGameOverMusic;
 	Mix_Music* mHomeMusic;

@@ -224,7 +224,7 @@ void Airplane::useSkill(Skill* sk) {
 			break;
 		case BUFF_ATK_SKILL:
 			if (mHp > 0) {
-				mAtk *= 10;
+				mAtk += 10;
 			}
 			break;
 		case SUPER:
