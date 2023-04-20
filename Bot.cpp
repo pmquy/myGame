@@ -120,7 +120,7 @@ bool Bot::checkIsDestroyed() {
 }
 
 bool Bot::checkToTurn(long long t) {
-	if (SDL_GetTicks64() - mTurnTime >= t) {
+	if (SDL_GetTicks64() - mTurnTime >= int(t)) {
 		mTurnTime = SDL_GetTicks64();
 		return true;
 	}

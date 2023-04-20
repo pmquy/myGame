@@ -15,10 +15,6 @@ Character::Character() {
 	mCurrentSkill = 0;
 	mCurrentBullet = BulletType::GREEN_BALL;
 
-	mSkillList.push_back(new Skill(20, SkillType::BUFF_HP_SKILL));
-	mSkillList.push_back(new Skill(20, SkillType::BUFF_ATK_SKILL));
-	mSkillList.push_back(new Skill(20, SkillType::SUPER));
-
 	mScoreText = new Text(); mScoreText->setRect(0, 0);
 	mCoinText = new Text(); mCoinText->setRect(0, 50);
 	mSkillText = new Text(); mSkillText->setRect(0, 550);
@@ -29,6 +25,10 @@ Character::~Character() {
 	delete mScoreText;
 	delete mCoinText;
 	delete mSkillText;
+}
+
+void Character::addSkill(SkillType t) {
+	mSkillList.push_back(new Skill(20, t));
 }
 
 void Character::handleAction(const SDL_Event &event, SDL_Renderer* renderer) {
@@ -71,7 +71,9 @@ void Character::handleAction(const SDL_Event &event, SDL_Renderer* renderer) {
 			}
 			break;
 		case SDLK_f:
-			useSkill(mSkillList[mCurrentSkill]);
+			if(mCurrentSkill < int(mSkillList.size())) {
+				useSkill(mSkillList[mCurrentSkill]);
+			}
 			break;
 		}
 	}
@@ -156,7 +158,9 @@ void Character::restart() {
 	Airplane::restart();
 	setRect(0, 0);
 	mXVal = mYVal = 0;
-	mSkillList[0]->mCurrentTime = 0;
+	for (auto& it : mSkillList) {
+		it->mCurrentTime = 0;
+	}
 	mMaxBullet = 1;
 	mScore = 0;
 	mCurrentBullet = BulletType::GREEN_BALL;
@@ -191,7 +195,7 @@ void Character::renderScore(SDL_Renderer* renderer, TTF_Font* font) {
 	mScoreText->render(renderer);
 }
 void Character::renderSkill(SDL_Renderer* renderer, TTF_Font* font) {
-	if (mSkillList[mCurrentSkill]->mIsAvailable == true) {
+	if (int(mSkillList.size()) > 0 && mSkillList[mCurrentSkill]->mIsAvailable == true) {
 		std::string name;
 		if (mSkillList[mCurrentSkill]->mType == BUFF_HP_SKILL) {
 			name = "buff hp : ";

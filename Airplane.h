@@ -13,8 +13,8 @@ static std::vector<int> PLANE_ATK = { 3, 4, 5 };
 static std::vector<int> PLANE_HP = { 50, 60, 70 };
 static std::vector<int> PLANE_DEF = { 1, 2, 3 };
 
-static std::vector<std::string> BOT1_PATHS = { "Image_Folder/Airplane/Bot/Bomber/Idle.png", "Image_Folder/Airplane/Bot/Bomber/Destroyed.png", "Image_Folder/Airplane/Bot/Bomber/Attack_1.png", "Image_Folder/Airplane/Bot/Bomber/Boost.png" };
-static std::vector<std::string> BOT2_PATHS = { "Image_Folder/Airplane/Bot/Fighter/Idle.png", "Image_Folder/Airplane/Bot/Fighter/Destroyed.png", "Image_Folder/Airplane/Bot/Fighter/Attack_1.png", "Image_Folder/Airplane/Bot/Fighter/Boost.png" };
+static std::vector<std::string> BOT1_PATHS = { "Image_Folder/Airplane/Bot/Fighter/Idle.png", "Image_Folder/Airplane/Bot/Fighter/Destroyed.png", "Image_Folder/Airplane/Bot/Fighter/Attack_1.png", "Image_Folder/Airplane/Bot/Fighter/Boost.png" };
+static std::vector<std::string> BOT2_PATHS = { "Image_Folder/Airplane/Bot/Bomber/Idle.png", "Image_Folder/Airplane/Bot/Bomber/Destroyed.png", "Image_Folder/Airplane/Bot/Bomber/Attack_1.png", "Image_Folder/Airplane/Bot/Bomber/Boost.png" };
 static std::vector<std::string> BOT3_PATHS = { "Image_Folder/Airplane/Bot/Corvette/Idle.png", "Image_Folder/Airplane/Bot/Corvette/Destroyed.png", "Image_Folder/Airplane/Bot/Corvette/Attack_1.png" , "Image_Folder/Airplane/Bot/Corvette/Boost.png" };
 static std::vector<std::vector<std::string>> BOTS_PATHS = { BOT1_PATHS, BOT2_PATHS, BOT3_PATHS };
 

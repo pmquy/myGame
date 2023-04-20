@@ -104,7 +104,12 @@ void Game::render(SDL_Renderer* renderer, const SDL_Rect* clip) {
 	case SHOP1:
 	case SHOP2:
 	case SHOP3:
-	case SHOP4:
+	case SHOP5:
+	case SHOP6:
+	case SHOP7:
+	case SHOP8:
+	case SHOP9:
+
 		mTexture = mTextures[int(mState)];
 		BaseClass::render(renderer);
 		hero->renderCoin(renderer, font);
@@ -210,6 +215,7 @@ void Game::handleState(SDL_Renderer* renderer, SDL_Event event) {
 	case LOSE1:
 		if (event.type == SDL_MOUSEBUTTONUP) {
 			mState = oldState;
+			Mix_PlayMusic(mGameMusic, -1);
 			setUpLevel(renderer, mState);
 		}
 		break;
@@ -282,6 +288,66 @@ void Game::handleState(SDL_Renderer* renderer, SDL_Event event) {
 				mState = SHOP4;
 			}
 		}
+		else if (event.type == SDL_KEYDOWN && (event.key.keysym.sym == SDLK_RIGHT || event.key.keysym.sym == SDLK_LEFT)) {
+			mState = SHOP5;
+		}
+		break;
+
+	case SHOP6:
+
+		if (event.type == SDL_MOUSEBUTTONUP) {
+			mState = SHOP5;
+			if (hero->getCoin() >= 20) {
+				hero->setCoin(hero->getCoin() - 20);
+				hero->addSkill(BUFF_HP_SKILL);
+			}
+		}
+		break;
+
+	case SHOP7:
+		if (event.type == SDL_MOUSEBUTTONUP) {
+			mState = SHOP5;
+			if (hero->getCoin() >= 20) {
+				hero->setCoin(hero->getCoin() - 20);
+				hero->addSkill(BUFF_ATK_SKILL);
+			}
+		}
+		break;
+
+	case SHOP8:
+		if (event.type == SDL_MOUSEBUTTONUP) {
+			mState = SHOP5;
+			if (hero->getCoin() >= 20) {
+				hero->setCoin(hero->getCoin() - 20);
+				hero->addSkill(SUPER);
+			}
+		}
+		break;
+
+	case SHOP9:
+		if (event.type == SDL_MOUSEBUTTONUP) {
+			mState = START;
+		}
+		break;
+
+	case SHOP5:
+		if (event.type == SDL_MOUSEBUTTONDOWN) {
+			if (mouse.first >= 900 && mouse.first <= 1000 && mouse.second >= 72 && mouse.second <= 147) {
+				mState = SHOP6;
+			}
+			if (mouse.first >= 900 && mouse.first <= 1000 && mouse.second >= 164 && mouse.second <= 239) {
+				mState = SHOP7;
+			}
+			if (mouse.first >= 860 && mouse.first <= 960 && mouse.second >= 250 && mouse.second <= 325) {
+				mState = SHOP8;
+			}
+			if (mouse.first >= 500 && mouse.first <= 700 && mouse.second >= 352 && mouse.second <= 427) {
+				mState = SHOP9;
+			}
+		}
+		else if (event.type == SDL_KEYDOWN && (event.key.keysym.sym == SDLK_RIGHT || event.key.keysym.sym == SDLK_LEFT)) {
+			mState = SHOP;
+		}
 		break;
 
 	case WIN1:
@@ -307,6 +373,7 @@ void Game::handleState(SDL_Renderer* renderer, SDL_Event event) {
 				Mix_PlayMusic(mGameMusic, -1);
 			}
 			else if (oldState == LEVEL5) {
+				setUpLevel(renderer, LEVEL5);
 				mState = LEVEL5;
 				Mix_PlayMusic(mGameMusic, -1);
 			}
@@ -479,11 +546,12 @@ void Game::updateObject(SDL_Renderer* renderer) {
 		boss->renderText(renderer, font);
 	}
 
-	if (hero->getScore() >= 4) {
+	this->handleCollision(renderer);
+
+	if (hero->getScore() >= 6) {
 		boss->setIsAppear(true);
 	}
-
-	this->handleCollision(renderer);
+	
 }
 
 

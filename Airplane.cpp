@@ -216,7 +216,7 @@ void Airplane::useSkill(Skill* sk) {
 		switch (sk->mType) {
 		case BUFF_HP_SKILL:
 			if (mHp > 0) {
-				mHp += 0.25 * mMaxHp;
+				mHp += int(0.25 * mMaxHp);
 				if (mHp >= mMaxHp) {
 					mHp = mMaxHp;
 				}

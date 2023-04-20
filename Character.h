@@ -21,6 +21,7 @@ public:
 	void renderScore(SDL_Renderer*, TTF_Font*);
 	void renderSkill(SDL_Renderer*, TTF_Font*);
 	void renderCoin(SDL_Renderer*, TTF_Font*);
+	void addSkill(SkillType);
 	BulletType getCurrentBullet();
 
 private:
