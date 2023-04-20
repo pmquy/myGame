@@ -247,7 +247,7 @@ void Airplane::handleSkill() {
 					it->mCurrentTime = 0;
 				}
 				if (it->mCurrentTime == 15 && it->mType == BUFF_ATK_SKILL) {
-					mAtk /= 10;
+					mAtk -= 10;
 				}
 				if (it->mCurrentTime == 15 && it->mType == SUPER) {
 					mMaxBullet -= 3;

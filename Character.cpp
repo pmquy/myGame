@@ -6,7 +6,7 @@ Character::Character() {
 	mHp = mMaxHp = 50;
 	mAtk = mMaxAtk = 5;
 	mDef = mMaxDef = 0;
-	mCoin = 100;
+	mCoin = 300;
 	
 	mRect.x = 0;
 	mRect.y = 200;

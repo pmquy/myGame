@@ -49,21 +49,17 @@ void Game::handleMove() {
 }
 
 void Game::render(SDL_Renderer* renderer, const SDL_Rect* clip) {
-	
-	switch (mState) {
-	case LEVEL1:
-	case LEVEL2:
-	case LEVEL3:
-	case LEVEL4:
-	case LEVEL5:
+	if (mState != HOME2) {
 		mTexture = mTextures[int(mState)];
+	}
+
+	if (mState >= LEVEL1 && mState <= LEVEL5) {
 		BaseClass::render(renderer);
 		mRect.x += SCREEN_WIDTH;
 		BaseClass::render(renderer);
 		mRect.x -= SCREEN_WIDTH;
-		break;
-
-	case HOME2:
+	}
+	else if (mState == HOME2) {
 		SDL_Rect oldRect = mRect;
 		mTexture = mTextures[int(START)];
 		setRect(0, 0);
@@ -71,16 +67,13 @@ void Game::render(SDL_Renderer* renderer, const SDL_Rect* clip) {
 		setRect(oldRect.x, oldRect.y);
 		mTexture = mTextures[int(HOME)];
 		BaseClass::render(renderer);
-		break;
-	case UPGRADE:
-	case UPGRADE1:
-	case UPGRADE2:
-	case UPGRADE3:
-	case UPGRADE4:
-	{
-		mTexture = mTextures[int(mState)];
+	}
+	else {
 		BaseClass::render(renderer);
-		
+	}
+
+	if (mState >= UPGRADE && mState <= UPGRADE4) {
+
 		SDL_Rect rectBg = { 320, 140, 600, 10 };
 		SDL_SetRenderDrawColor(renderer, 255, 255, 255, 0);
 		SDL_RenderFillRect(renderer, &rectBg);
@@ -98,29 +91,11 @@ void Game::render(SDL_Renderer* renderer, const SDL_Rect* clip) {
 		SDL_RenderFillRect(renderer, &rect);
 
 		hero->renderCoin(renderer, font);
-		break;
-	}
-	case SHOP:
-	case SHOP1:
-	case SHOP2:
-	case SHOP3:
-	case SHOP5:
-	case SHOP6:
-	case SHOP7:
-	case SHOP8:
-	case SHOP9:
-
-		mTexture = mTextures[int(mState)];
-		BaseClass::render(renderer);
-		hero->renderCoin(renderer, font);
-		break;
-
-	default:
-		mTexture = mTextures[int(mState)];
-		BaseClass::render(renderer);
-		break;
 	}
 	
+	if (mState >= SHOP && mState <= SHOP9) {
+		hero->renderCoin(renderer, font);
+	}	
 }
 
 void Game::loadImage(SDL_Renderer* renderer, const std::vector<std::string>& listName) {
@@ -155,14 +130,21 @@ void Game::handleState(SDL_Renderer* renderer, SDL_Event event) {
 		}
 		break;
 	case HOME:
-		if (mouse.first >= 500 && mouse.first <= 700 && mouse.second >= 252 && mouse.second <= 327 && event.type == SDL_MOUSEBUTTONDOWN) {
-			mState = HOME1;
+		if (event.type == SDL_KEYDOWN) {
+			switch (event.key.keysym.sym) {
+			case SDLK_DOWN:
+			case SDLK_UP:
+			case SDLK_LEFT:
+			case SDLK_RIGHT:
+				mState = HOME1;
+				break;
+			}
 		}
 		break;
 
 	case HOME1:
-		
-		if (event.type == SDL_MOUSEBUTTONUP) {
+
+		if (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_RETURN) {
 			mState = HOME2;
 			Mix_PlayMusic(mIntroMusic, -1);
 			mYVal = -1; mXVal = 0;
@@ -170,7 +152,7 @@ void Game::handleState(SDL_Renderer* renderer, SDL_Event event) {
 		break;
 
 	case HOME2:
-		if (event.type == SDL_MOUSEBUTTONDOWN || mRect.y <= -SCREEN_HEIGHT) {
+		if ((event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_RETURN) || mRect.y <= -SCREEN_HEIGHT) {
 			setRect(0, 0);
 			mState = START;
 			Mix_PlayMusic(mHomeMusic, -1);
@@ -179,310 +161,539 @@ void Game::handleState(SDL_Renderer* renderer, SDL_Event event) {
 		break;
 
 	case START1:
-		if (event.type == SDL_MOUSEBUTTONUP) {
-			mState = LEVEL1;
-			setUpLevel(renderer, LEVEL1);
-			Mix_PlayMusic(mGameMusic, -1);
+
+		if (event.type == SDL_KEYDOWN) {
+			switch (event.key.keysym.sym) {
+			case SDLK_DOWN:
+				mState = START2;
+				break;
+			case SDLK_UP:
+				mState = START3;
+				break;
+			case SDLK_LEFT:
+				break;
+			case SDLK_RIGHT:
+				break;
+			case SDLK_RETURN:
+				mState = LEVEL1;
+				setUpLevel(renderer, LEVEL1);
+				Mix_PlayMusic(mGameMusic, -1);
+				break;
+			}
 		}
 
 		break;
 
 	case START2:
-		if (event.type == SDL_MOUSEBUTTONUP)
-			mState = SHOP;
 
-		break;
-
-	case START3:
-		if (event.type == SDL_MOUSEBUTTONUP)
-			mState = UPGRADE;
-		break;
-
-	case START:
-		if (event.type == SDL_MOUSEBUTTONDOWN) {
-			if (mouse.first >= 550 && mouse.first <= 650 && mouse.second >= 152 && mouse.second <= 227) {
-				mState = START1;
-			}
-			if (mouse.first >= 540 && mouse.first <= 660 && mouse.second >= 252 && mouse.second <= 327) {
-				mState = START2;
-			}
-			if (mouse.first >= 500 && mouse.first <= 700 && mouse.second >= 363 && mouse.second <= 438) {
+		if (event.type == SDL_KEYDOWN) {
+			switch (event.key.keysym.sym) {
+			case SDLK_DOWN:
 				mState = START3;
+				break;
+			case SDLK_UP:
+				mState = START1;
+				break;
+			case SDLK_LEFT:
+				break;
+			case SDLK_RIGHT:
+				break;
+			case SDLK_RETURN:
+				mState = SHOP;
+				break;
 			}
 		}
 		break;
-	
+
+	case START3:
+		if (event.type == SDL_KEYDOWN) {
+			switch (event.key.keysym.sym) {
+			case SDLK_DOWN:
+				mState = START1;
+				break;
+			case SDLK_UP:
+				mState = START2;
+				break;
+			case SDLK_LEFT:
+				break;
+			case SDLK_RIGHT:
+				break;
+			case SDLK_RETURN:
+				mState = UPGRADE;
+				break;
+			}
+		}
+		break;
+
+	case START:
+		if (event.type == SDL_KEYDOWN) {
+			switch (event.key.keysym.sym) {
+			case SDLK_DOWN:
+			case SDLK_UP:
+			case SDLK_LEFT:
+			case SDLK_RIGHT:
+				mState = START1;
+				break;
+			}
+		}
+		break;
+
 	case LOSE1:
-		if (event.type == SDL_MOUSEBUTTONUP) {
-			mState = oldState;
-			Mix_PlayMusic(mGameMusic, -1);
-			setUpLevel(renderer, mState);
+		if (event.type == SDL_KEYDOWN) {
+			switch (event.key.keysym.sym) {
+			case SDLK_DOWN:
+				mState = LOSE2;
+				break;
+			case SDLK_UP:
+				mState = LOSE2;
+				break;
+			case SDLK_LEFT:
+				break;
+			case SDLK_RIGHT:
+				break;
+			case SDLK_RETURN:
+				mState = oldState;
+				Mix_PlayMusic(mGameMusic, -1);
+				setUpLevel(renderer, mState);
+				break;
+			}
 		}
 		break;
 
 	case LOSE2:
-		if (event.type == SDL_MOUSEBUTTONUP) {
-			mState = START;
+		if (event.type == SDL_KEYDOWN) {
+			switch (event.key.keysym.sym) {
+			case SDLK_DOWN:
+				mState = LOSE1;
+				break;
+			case SDLK_UP:
+				mState = LOSE1;
+				break;
+			case SDLK_LEFT:
+				break;
+			case SDLK_RIGHT:
+				break;
+			case SDLK_RETURN:
+				mState = START;
+				break;
+			}
 		}
 		break;
 
 	case LOSE:
-		if (event.type == SDL_MOUSEBUTTONDOWN) {
-			if (mouse.first >= 520 && mouse.first <= 680 && mouse.second >= 252 && mouse.second <= 327) {
+		if (event.type == SDL_KEYDOWN) {
+			switch (event.key.keysym.sym) {
+			case SDLK_DOWN:
+			case SDLK_UP:
+			case SDLK_LEFT:
+			case SDLK_RIGHT:
 				mState = LOSE1;
-			}
-			if (mouse.first >= 500 && mouse.first <= 700 && mouse.second >= 352 && mouse.second <= 427) {
-				mState = LOSE2;
+				break;
 			}
 		}
 		break;
-	
+
 	case SHOP1:
 
-		if (event.type == SDL_MOUSEBUTTONUP) {
-			mState = SHOP;
-			if (hero->getCoin() >= 50) {
-				hero->setCoin(hero->getCoin() - 50);
-				hero->loadImage(renderer, HERO1_PATHS);
+		if (event.type == SDL_KEYDOWN) {
+			switch (event.key.keysym.sym) {
+			case SDLK_DOWN:
+				mState = SHOP4;
+				break;
+			case SDLK_UP:
+				mState = SHOP4;
+				break;
+			case SDLK_LEFT:
+				mState = SHOP3;
+				break;
+			case SDLK_RIGHT:
+				mState = SHOP2;
+				break;
+			case SDLK_RETURN:
+				mState = SHOP;
+				if (hero->getCoin() >= 50) {
+					hero->setCoin(hero->getCoin() - 50);
+					hero->loadImage(renderer, HERO1_PATHS);
+				}
+				break;
 			}
 		}
 		break;
 
 	case SHOP2:
-		if (event.type == SDL_MOUSEBUTTONUP) {
-			if (hero->getCoin() >= 50) {
-				hero->setCoin(hero->getCoin() - 50);
-				hero->loadImage(renderer, HERO3_PATHS);
+		if (event.type == SDL_KEYDOWN) {
+			switch (event.key.keysym.sym) {
+			case SDLK_DOWN:
+				mState = SHOP4;
+				break;
+			case SDLK_UP:
+				mState = SHOP4;
+				break;
+			case SDLK_LEFT:
+				mState = SHOP1;
+				break;
+			case SDLK_RIGHT:
+				mState = SHOP3;
+				break;
+			case SDLK_RETURN:
+				mState = SHOP;
+				if (hero->getCoin() >= 50) {
+					hero->setCoin(hero->getCoin() - 50);
+					hero->loadImage(renderer, HERO3_PATHS);
+				}
+				break;
 			}
-			mState = SHOP;
 		}
 		break;
 	case SHOP3:
-		if (event.type == SDL_MOUSEBUTTONUP) {
-			if (hero->getCoin() >= 50) {
-				hero->setCoin(hero->getCoin() - 50);
-				hero->loadImage(renderer, HERO2_PATHS);
+		if (event.type == SDL_KEYDOWN) {
+			switch (event.key.keysym.sym) {
+			case SDLK_DOWN:
+				mState = SHOP4;
+				break;
+			case SDLK_UP:
+				mState = SHOP4;
+				break;
+			case SDLK_LEFT:
+				mState = SHOP2;
+				break;
+			case SDLK_RIGHT:
+				mState = SHOP5;
+				break;
+			case SDLK_RETURN:
+				mState = SHOP;
+				if (hero->getCoin() >= 50) {
+					hero->setCoin(hero->getCoin() - 50);
+					hero->loadImage(renderer, HERO2_PATHS);
+				}
+				break;
 			}
-			mState = SHOP;
 		}
 		break;
 	case SHOP4:
-		if (event.type == SDL_MOUSEBUTTONUP) {
-			mState = START;
+		if (event.type == SDL_KEYDOWN) {
+			switch (event.key.keysym.sym) {
+			case SDLK_DOWN:
+				mState = SHOP1;
+				break;
+			case SDLK_UP:
+				mState = SHOP3;
+				break;
+			case SDLK_LEFT:
+			case SDLK_RIGHT:
+				mState = SHOP5;
+				break;
+			case SDLK_RETURN:
+				mState = START;
+				break;
+			}
 		}
 		break;
 
 	case SHOP:
-		
-		if (event.type == SDL_MOUSEBUTTONDOWN) {
-			if (mouse.first >= 230 && mouse.first <= 330 && mouse.second >= 216 && mouse.second <= 291) {
+
+		if (event.type == SDL_KEYDOWN) {
+			switch (event.key.keysym.sym) {
+			case SDLK_DOWN:
+			case SDLK_UP:
+			case SDLK_LEFT:
+			case SDLK_RIGHT:
 				mState = SHOP1;
+				break;
 			}
-			if (mouse.first >= 550 && mouse.first <= 650 && mouse.second >= 216  && mouse.second <= 291) {
-				mState = SHOP2;
-			}
-			if (mouse.first >= 860 && mouse.first <= 960 && mouse.second >= 216 && mouse.second <= 291) {
-				mState = SHOP3;
-			}
-			if (mouse.first >= 500 && mouse.first <= 700 && mouse.second >= 352 && mouse.second <= 427) {
-				mState = SHOP4;
-			}
-		}
-		else if (event.type == SDL_KEYDOWN && (event.key.keysym.sym == SDLK_RIGHT || event.key.keysym.sym == SDLK_LEFT)) {
-			mState = SHOP5;
 		}
 		break;
 
 	case SHOP6:
 
-		if (event.type == SDL_MOUSEBUTTONUP) {
-			mState = SHOP5;
-			if (hero->getCoin() >= 20) {
-				hero->setCoin(hero->getCoin() - 20);
-				hero->addSkill(BUFF_HP_SKILL);
+		if (event.type == SDL_KEYDOWN) {
+			switch (event.key.keysym.sym) {
+			case SDLK_DOWN:
+				mState = SHOP7;
+				break;
+			case SDLK_UP:
+				mState = SHOP9;
+				break;
+			case SDLK_LEFT:
+			case SDLK_RIGHT:
+				mState = SHOP;
+				break;
+			case SDLK_RETURN:
+				mState = SHOP5;
+				if (hero->getCoin() >= 20) {
+					hero->setCoin(hero->getCoin() - 20);
+					hero->addSkill(BUFF_HP_SKILL);
+				}
+				break;
 			}
 		}
 		break;
 
 	case SHOP7:
-		if (event.type == SDL_MOUSEBUTTONUP) {
-			mState = SHOP5;
-			if (hero->getCoin() >= 20) {
-				hero->setCoin(hero->getCoin() - 20);
-				hero->addSkill(BUFF_ATK_SKILL);
+		if (event.type == SDL_KEYDOWN) {
+			switch (event.key.keysym.sym) {
+			case SDLK_DOWN:
+				mState = SHOP8;
+				break;
+			case SDLK_UP:
+				mState = SHOP6;
+				break;
+			case SDLK_LEFT:
+			case SDLK_RIGHT:
+				mState = SHOP;
+				break;
+			case SDLK_RETURN:
+				mState = SHOP5;
+				if (hero->getCoin() >= 20) {
+					hero->setCoin(hero->getCoin() - 20);
+					hero->addSkill(BUFF_ATK_SKILL);
+				}
+				break;
 			}
 		}
 		break;
 
 	case SHOP8:
-		if (event.type == SDL_MOUSEBUTTONUP) {
-			mState = SHOP5;
-			if (hero->getCoin() >= 20) {
-				hero->setCoin(hero->getCoin() - 20);
-				hero->addSkill(SUPER);
+		if (event.type == SDL_KEYDOWN) {
+			switch (event.key.keysym.sym) {
+			case SDLK_DOWN:
+				mState = SHOP9;
+				break;
+			case SDLK_UP:
+				mState = SHOP7;
+				break;
+			case SDLK_LEFT:
+			case SDLK_RIGHT:
+				mState = SHOP;
+				break;
+			case SDLK_RETURN:
+				mState = SHOP5;
+				if (hero->getCoin() >= 20) {
+					hero->setCoin(hero->getCoin() - 20);
+					hero->addSkill(SUPER);
+				}
+				break;
 			}
 		}
 		break;
 
 	case SHOP9:
-		if (event.type == SDL_MOUSEBUTTONUP) {
-			mState = START;
+		if (event.type == SDL_KEYDOWN) {
+			switch (event.key.keysym.sym) {
+			case SDLK_DOWN:
+				mState = SHOP6;
+				break;
+			case SDLK_UP:
+				mState = SHOP8;
+				break;
+			case SDLK_LEFT:
+			case SDLK_RIGHT:
+				mState = SHOP;
+				break;
+			case SDLK_RETURN:
+				mState = START;
+				break;
+			}
 		}
 		break;
 
 	case SHOP5:
-		if (event.type == SDL_MOUSEBUTTONDOWN) {
-			if (mouse.first >= 900 && mouse.first <= 1000 && mouse.second >= 72 && mouse.second <= 147) {
+		if (event.type == SDL_KEYDOWN) {
+			switch (event.key.keysym.sym) {
+			case SDLK_DOWN:
+			case SDLK_UP:
+			case SDLK_LEFT:
+			case SDLK_RIGHT:
 				mState = SHOP6;
+				break;
 			}
-			if (mouse.first >= 900 && mouse.first <= 1000 && mouse.second >= 164 && mouse.second <= 239) {
-				mState = SHOP7;
-			}
-			if (mouse.first >= 860 && mouse.first <= 960 && mouse.second >= 250 && mouse.second <= 325) {
-				mState = SHOP8;
-			}
-			if (mouse.first >= 500 && mouse.first <= 700 && mouse.second >= 352 && mouse.second <= 427) {
-				mState = SHOP9;
-			}
-		}
-		else if (event.type == SDL_KEYDOWN && (event.key.keysym.sym == SDLK_RIGHT || event.key.keysym.sym == SDLK_LEFT)) {
-			mState = SHOP;
 		}
 		break;
 
 	case WIN1:
-		if (event.type == SDL_MOUSEBUTTONUP) {
-			if (oldState == LEVEL1) {
-				mState = LEVEL2;
-				setUpLevel(renderer, LEVEL2);
+		if (event.type == SDL_KEYDOWN) {
+			switch (event.key.keysym.sym) {
+			case SDLK_DOWN:
+				mState = WIN2;
+				break;
+			case SDLK_UP:
+				mState = WIN3;
+				break;
+			case SDLK_LEFT:
+			case SDLK_RIGHT:
+				break;
+			case SDLK_RETURN:
+				if (oldState < LEVEL5) {
+					mState = static_cast<GameState>(int(oldState + 1));
+				}
+				else {
+					mState = LEVEL5;
+				}
+				setUpLevel(renderer, mState);
 				Mix_PlayMusic(mGameMusic, -1);
-			}
-			else if (oldState == LEVEL2) {
-				setUpLevel(renderer, LEVEL3);
-				mState = LEVEL3;
-				Mix_PlayMusic(mGameMusic, -1);
-			}
-			else if (oldState == LEVEL3) {
-				setUpLevel(renderer, LEVEL4);
-				mState = LEVEL4;
-				Mix_PlayMusic(mGameMusic, -1);
-			}
-			else if (oldState == LEVEL4) {
-				setUpLevel(renderer, LEVEL5);
-				mState = LEVEL5;
-				Mix_PlayMusic(mGameMusic, -1);
-			}
-			else if (oldState == LEVEL5) {
-				setUpLevel(renderer, LEVEL5);
-				mState = LEVEL5;
-				Mix_PlayMusic(mGameMusic, -1);
+				break;
 			}
 		}
 		break;
+
 	case WIN2:
 		if (event.type == SDL_MOUSEBUTTONUP) {
-			if (oldState == LEVEL1) {
-				mState = LEVEL1;
-				setUpLevel(renderer, LEVEL1);
+
+		}
+		if (event.type == SDL_KEYDOWN) {
+			switch (event.key.keysym.sym) {
+			case SDLK_DOWN:
+				mState = WIN3;
+				break;
+			case SDLK_UP:
+				mState = WIN1;
+				break;
+			case SDLK_LEFT:
+			case SDLK_RIGHT:
+				break;
+			case SDLK_RETURN:
+				mState = oldState;
+				setUpLevel(renderer, mState);
 				Mix_PlayMusic(mGameMusic, -1);
-			}
-			else if (oldState == LEVEL2) {
-				setUpLevel(renderer, LEVEL2);
-				mState = LEVEL2;
-				Mix_PlayMusic(mGameMusic, -1);
-			}
-			else if (oldState == LEVEL3) {
-				setUpLevel(renderer, LEVEL3);
-				mState = LEVEL3;
-				Mix_PlayMusic(mGameMusic, -1);
-			}
-			else if (oldState == LEVEL4) {
-				setUpLevel(renderer, LEVEL4);
-				mState = LEVEL4;
-				Mix_PlayMusic(mGameMusic, -1);
-			}
-			else if (oldState == LEVEL5) {
-				setUpLevel(renderer, LEVEL5);
-				mState = LEVEL5;
-				Mix_PlayMusic(mGameMusic, -1);
+				break;
 			}
 		}
 		break;
 	case WIN3:
-		if (event.type == SDL_MOUSEBUTTONUP) {
-			mState = START;
+		if (event.type == SDL_KEYDOWN) {
+			switch (event.key.keysym.sym) {
+			case SDLK_DOWN:
+				mState = WIN1;
+				break;
+			case SDLK_UP:
+				mState = WIN2;
+				break;
+			case SDLK_LEFT:
+			case SDLK_RIGHT:
+				break;
+			case SDLK_RETURN:
+				mState = START;
+				break;
+			}
 		}
 		break;
 
 	case WIN:
-		if (event.type == SDL_MOUSEBUTTONDOWN) {
-			if (mouse.first >= 550 && mouse.first <= 650 && mouse.second >= 152 && mouse.second <= 227) {
+		if (event.type == SDL_KEYDOWN) {
+			switch (event.key.keysym.sym) {
+			case SDLK_DOWN:
+			case SDLK_UP:
+			case SDLK_LEFT:
+			case SDLK_RIGHT:
 				mState = WIN1;
-			}
-
-			if (mouse.first >= 540 && mouse.first <= 660 && mouse.second >= 252 && mouse.second <= 327) {
-				mState = WIN2;
-			}
-
-			if (mouse.first >= 500 && mouse.first <= 700 && mouse.second >= 352 && mouse.second <= 427) {
-				mState = WIN3;
+				break;
 			}
 		}
 		break;
 	case UPGRADE1:
-		if (event.type == SDL_MOUSEBUTTONUP) {
-			if (hero->getCoin() >= 20 && hero->getMaxHp() < 110) {
-				hero->setCoin(hero->getCoin() - 20);
-				hero->setMaxHp(hero->getMaxHp() + 20);
+		if (event.type == SDL_KEYDOWN) {
+			switch (event.key.keysym.sym) {
+			case SDLK_DOWN:
+				mState = UPGRADE2;
+				break;
+			case SDLK_UP:
+				mState = UPGRADE4;
+				break;
+			case SDLK_LEFT:
+			case SDLK_RIGHT:
+				break;
+			case SDLK_RETURN:
+				if (hero->getCoin() >= 20 && hero->getMaxHp() < 110) {
+					hero->setCoin(hero->getCoin() - 20);
+					hero->setMaxHp(hero->getMaxHp() + 20);
+				}
+				mState = UPGRADE;
+				break;
 			}
-			mState = UPGRADE;
 		}
 		break;
 
 	case UPGRADE2:
-		if (event.type == SDL_MOUSEBUTTONUP) {
-			if (hero->getCoin() >= 20 && hero->getDef() < 6) {
-				hero->setCoin(hero->getCoin() - 20);
-				hero->setMaxDef(hero->getMaxDef() + 1);
+		if (event.type == SDL_KEYDOWN) {
+			switch (event.key.keysym.sym) {
+			case SDLK_DOWN:
+				mState = UPGRADE3;
+				break;
+			case SDLK_UP:
+				mState = UPGRADE1;
+				break;
+			case SDLK_LEFT:
+			case SDLK_RIGHT:
+				break;
+			case SDLK_RETURN:
+				if (hero->getCoin() >= 20 && hero->getDef() < 6) {
+					hero->setCoin(hero->getCoin() - 20);
+					hero->setMaxDef(hero->getMaxDef() + 1);
+				}
+				mState = UPGRADE;
+				break;
 			}
-			mState = UPGRADE;
 		}
 		break;
 
 	case UPGRADE3:
-		if (event.type == SDL_MOUSEBUTTONUP) {
-			if (hero->getCoin() >= 20 && hero->getAtk() < 17) {
-				hero->setCoin(hero->getCoin() - 20);
-				hero->setMaxAtk(hero->getMaxAtk() + 2);
+		if (event.type == SDL_KEYDOWN) {
+			switch (event.key.keysym.sym) {
+			case SDLK_DOWN:
+				mState = UPGRADE4;
+				break;
+			case SDLK_UP:
+				mState = UPGRADE2;
+				break;
+			case SDLK_LEFT:
+			case SDLK_RIGHT:
+				break;
+			case SDLK_RETURN:
+				if (hero->getCoin() >= 20 && hero->getAtk() < 17) {
+					hero->setCoin(hero->getCoin() - 20);
+					hero->setMaxAtk(hero->getMaxAtk() + 2);
+				}
+				mState = UPGRADE;
+				break;
 			}
-			mState = UPGRADE;
 		}
+
 		break;
 
 	case UPGRADE4:
-		if (event.type == SDL_MOUSEBUTTONUP) {
-			mState = START;
+		if (event.type == SDL_KEYDOWN) {
+			switch (event.key.keysym.sym) {
+			case SDLK_DOWN:
+				mState = UPGRADE1;
+				break;
+			case SDLK_UP:
+				mState = UPGRADE3;
+				break;
+			case SDLK_LEFT:
+			case SDLK_RIGHT:
+				break;
+			case SDLK_RETURN:
+				mState = START;
+				break;
+			}
 		}
 		break;
 
 	case UPGRADE:
-		if (event.type == SDL_MOUSEBUTTONDOWN) {
-			if (mouse.first >= 500 && mouse.first <= 700 && mouse.second >= 352 && mouse.second <= 427) {
-				mState = UPGRADE4;
-			}
-			if (mouse.first >= 1030 && mouse.first <= 1090 && mouse.second >= 119 && mouse.second <= 180) {
+		if (event.type == SDL_KEYDOWN) {
+			switch (event.key.keysym.sym) {
+			case SDLK_DOWN:
+			case SDLK_UP:
+			case SDLK_LEFT:
+			case SDLK_RIGHT:
 				mState = UPGRADE1;
-			}
-			if (mouse.first >= 1030 && mouse.first <= 1090 && mouse.second >= 204 && mouse.second <= 265) {
-				mState = UPGRADE2;
-			}
-			if (mouse.first >= 1030 && mouse.first <= 1090 && mouse.second >= 291 && mouse.second <= 352) {
-				mState = UPGRADE3;
+				break;
 			}
 		}
 		break;
 	}
 }
+
 
 
 void Game::loadResource(SDL_Renderer* renderer) {
