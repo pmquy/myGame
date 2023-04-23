@@ -7,10 +7,10 @@ static std::vector<std::string> BULLET_NAMES = { "RED BALL", "GREEN BALL" , "BLU
 static std::vector<int> BULLET_ATTACKS = { 0, 0, 0, 0, 0, 0 };
 
 enum BulletType {
-	RED_BALL = 0,
-	GREEN_BALL = 1,
-	BLUE_BALL = 2,
-	BLUE_LASER = 3,
+	RED_BALL,
+	GREEN_BALL,
+	BLUE_BALL,
+	BLUE_LASER,
 	RED_LASER,
 	ORANGE_LASER
 };
@@ -28,7 +28,6 @@ public:
 	void setIsAppear(bool t);
 	void setDirection(int, int);
 	void loadImage(SDL_Renderer*, BulletType);
-
 private:
 	bool mIsAppear;
 	bool mIsMove;

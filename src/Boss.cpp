@@ -9,14 +9,9 @@ Boss::Boss() {
 	mRect.x = SCREEN_WIDTH;
 	mRect.y = rand() % 400;
 	mMaxBullet = 6;
-
-	Skill* newSkill = new Skill(10, SkillType::BUFF_HP_SKILL);
-	newSkill->mIsAvailable = true;
-	mSkillList.push_back(newSkill);
-
+	addSkill(SkillType::BUFF_HP_SKILL);
 	mName = new Text();
 }
-
 
 void Boss::handleMove() {
 	Bot::handleMove();
@@ -31,10 +26,9 @@ void Boss::restart(SDL_Renderer* renderer) {
 	mXVal = mYVal = 0;
 }
 
-
+// xử lý skill và sử dụng luôn
 void Boss::handleSkill() {
 	Airplane::handleSkill();
-
 	for (auto it : mSkillList) {
 		useSkill(it);
 	}

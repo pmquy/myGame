@@ -42,11 +42,12 @@ void Airplane::free() {
 }
 
 void Airplane::renderHp(SDL_Renderer *renderer) {
+	// render ra vùng chứa hp
 	SDL_Rect rectBg = { mRect.x, mRect.y + mRect.h - 50, mRect.w, 5 };
 	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 0);
 	SDL_RenderFillRect(renderer, &rectBg);
-
-	SDL_Rect rectHp = { mRect.x, mRect.y + mRect.h - 50, mHp * mRect.w / mMaxHp , 5 };
+	// render ra hp
+	SDL_Rect rectHp = { mRect.x, mRect.y + mRect.h - 50, (mHp * mRect.w) / mMaxHp , 5 };
 	SDL_SetRenderDrawColor(renderer, 255, 0, 0, 0);
 	SDL_RenderFillRect(renderer, &rectHp);
 }
@@ -108,11 +109,11 @@ void Airplane::restart(SDL_Renderer* renderer) {
 		mBulletList.pop_back();
 	}
 	
-	for (auto it : mSkillList) {
+	for (auto &it : mSkillList) {
 		it->mCurrentTime = 0;
 	}
-
 	mXVal = mYVal = 0;
+	setRect(0,0);
 	mHp = mMaxHp;
 	mAtk = mMaxAtk;
 	mDef = mMaxDef;
@@ -120,7 +121,12 @@ void Airplane::restart(SDL_Renderer* renderer) {
 	mCurrentFrame = 0;
 }
 
+void Airplane::addSkill(SkillType t) {
+	mSkillList.push_back(new Skill(20, t));
+}
+
 void Airplane::handleState(SDL_Renderer* renderer) {
+	// nếu frame == 1 thì frame bắt đầu từ cuối và kết thúc ở đầu ảnh
 	if (mHp == 0 && mState != DESTROYED) {
 		mState = DESTROYED;
 		mCurrentFrame = frame*(mMaxFrames[int(mState)] - 1);
@@ -146,7 +152,26 @@ void Airplane::handleState(SDL_Renderer* renderer) {
 }
 
 bool Airplane::checkIsDestroyed() {
+	// nếu frame == 1 thì frame bắt đầu từ cuối và kết thúc ở đầu ảnh
 	return mState == DESTROYED && mCurrentFrame == (1-frame)*(mMaxFrames[int(mState)] - 1);
+}
+
+void Airplane::handleMove() {
+	if(mState != DESTROYED) {
+		BaseClass::handleMove();
+		handleBulletMove();
+	}
+}
+
+void Airplane::handleBulletMove() {
+	for (int i = 0; i < mBulletList.size(); i++) {
+		if (mBulletList[i]->getIsMove()) {
+			mBulletList[i]->handleMove();
+		}
+		if(!mBulletList[i]->getIsAppear()) {
+			mBulletList.erase(mBulletList.begin() + i);
+		}
+	}
 }
 
 bool Airplane::checkToFire(int t) {
@@ -157,7 +182,6 @@ bool Airplane::checkToFire(int t) {
 	return false;
 }
 
-
 bool Airplane::checkToNextFrame(int t) {
 	Uint64 now = SDL_GetTicks64();
 	if (int(now - mFrameTime) >= t) {
@@ -166,7 +190,6 @@ bool Airplane::checkToNextFrame(int t) {
 	}
 	return false;
 }
-
 
 void Airplane::getDamage(int damage) {
 	if (mState != DESTROYED) {
@@ -282,4 +305,23 @@ void Airplane::handleSkill() {
 			}
 		}
 	}
+}
+
+void check(Airplane* a, Airplane* b) {
+	if (b->getHp() > 0 && checkConllision(a, b)) {
+			a->getDamage(a->getMaxHp() / 2);
+			b->getDamage(10000);
+		}
+		for (int i = 0; i < int(a->getBulletList().size()); i++) {
+			if (checkConllision(a->getBulletList()[i], b)) {
+				b->getDamage(a->getAtk());
+				a->getBulletList()[i]->setIsAppear(false);
+			}
+		}
+		for (int i = 0; i < int(b->getBulletList().size()); i++) {
+			if (checkConllision(b->getBulletList()[i], a)) {
+				a->getDamage(b->getAtk());
+				b->getBulletList()[i]->setIsAppear(false);
+			}
+		}
 }

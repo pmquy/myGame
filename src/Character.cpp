@@ -28,12 +28,7 @@ Character::~Character() {
 	delete mSkillText;
 }
 
-void Character::addSkill(SkillType t) {
-	mSkillList.push_back(new Skill(20, t));
-}
-
 void Character::handleAction(const SDL_Event &event, SDL_Renderer* renderer) {
-	
 	if (event.type == SDL_KEYDOWN) {
 		switch (event.key.keysym.sym) {
 		case SDLK_UP:
@@ -76,7 +71,6 @@ void Character::handleAction(const SDL_Event &event, SDL_Renderer* renderer) {
 			break;
 		}
 	}
-
 	else if (event.type == SDL_KEYUP) {
 		switch (event.key.keysym.sym) {
 		case SDLK_UP:
@@ -101,32 +95,22 @@ void Character::handleAction(const SDL_Event &event, SDL_Renderer* renderer) {
 }
 
 void Character::handleMove() {
-	if (mRect.x <= 0 - mRect.h/2) mRect.x = -mRect.h/2;
-	if (mRect.x >= 1200 - mRect.h/2) mRect.x = 1200 - mRect.h/2;
-	if (mRect.y <= -mRect.h/2) mRect.y = -mRect.h/2;
-	if (mRect.y >= 600 - mRect.h/2) mRect.y = 600 - mRect.h/2;
 
 	if (checkToMove(10)) {
-		if (mState == NORMAL || mState == BOOSTING) {
-			BaseClass::handleMove();
-		}
-		handleBulletMove();
+		Airplane::handleMove();
 	}
-}
-
-void Character::handleBulletMove() {
-	for (int i = 0; i < int(mBulletList.size()); i++) {
-		mBulletList[i]->handleMove();
-	}
+	if (mRect.x <= 0 - mRect.h/2) 
+		mRect.x = -mRect.h/2;
+	if (mRect.x >= SCREEN_WIDTH - mRect.h/2) 
+		mRect.x = SCREEN_WIDTH - mRect.h/2;
+	if (mRect.y <= -mRect.h/2) 
+		mRect.y = -mRect.h/2;
+	if (mRect.y >= 600 - mRect.h/2) 
+		mRect.y = 600 - mRect.h/2;
 }
 
 void Character::restart(SDL_Renderer* renderer) {
 	Airplane::restart(renderer);
-	setRect(0, 0);
-	mXVal = mYVal = 0;
-	for (auto& it : mSkillList) {
-		it->mCurrentTime = 0;
-	}
 	mMaxBullet = 1;
 	mScore = 0;
 	mCurrentBullet = BulletType::GREEN_BALL;

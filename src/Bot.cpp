@@ -2,7 +2,6 @@
 
 Bot::Bot() {
 	frame = 1;
-
 	mRect.x = SCREEN_WIDTH + rand() % 1000;
 	mRect.y = rand() % 400;
 	mAtk = mMaxAtk = 2;
@@ -17,23 +16,14 @@ Bot::~Bot() {
 }
 
 void Bot::handleMove() {
-	if (checkToMove(20) && mState != DESTROYED) {
-		BaseClass::handleMove();
-		if (mRect.y <= 0) {
-			mRect.y = 0;
-		}
-		if (mRect.y >= 400) {
-			mRect.y = 400;
-		}
-		handleBulletMove();
+	if (checkToMove(20)) {
+		Airplane::handleMove();
 	}
-}
-
-void Bot::handleBulletMove() {
-	for (int i = 0; i < mBulletList.size(); i++) {
-		if (mBulletList[i]->getIsMove()) {
-			mBulletList[i]->handleMove();
-		}
+	if (mRect.y <= 0) {
+		mRect.y = 0;
+	}
+	if (mRect.y >= 400) {
+		mRect.y = 400;
 	}
 }
 

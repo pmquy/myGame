@@ -66,42 +66,23 @@ public:
 	void setDef(int Def);
 	bool getIsAppear();
 	void setIsAppear(bool t);
-
-	std::vector<Bullet*>& getBulletList();
-	std::vector<Skill*>& getSkillList();	
-	
-	virtual void handleState(SDL_Renderer*);
-	virtual void handleBulletMove() = 0;
-	virtual void render(SDL_Renderer* renderer);
-	virtual void restart(SDL_Renderer*);
-	
-	void free();
-	void loadImage(SDL_Renderer* renderer, const std::vector<std::string>& listName);
-	void handleSkill();
-
-	friend void check(Airplane* a, Airplane* b) {
-		if (b->getHp() > 0 && checkConllision(a, b)) {
-			a->getDamage(a->getMaxHp() / 2);
-			b->getDamage(10000);
-		}
-		for (int i = 0; i < int(a->getBulletList().size()); i++) {
-			if (checkConllision(a->getBulletList()[i], b)) {
-				b->getDamage(a->getAtk());
-				a->getBulletList()[i]->setIsAppear(false);
-			}
-		}
-		for (int i = 0; i < int(b->getBulletList().size()); i++) {
-			if (checkConllision(b->getBulletList()[i], a)) {
-				a->getDamage(b->getAtk());
-				b->getBulletList()[i]->setIsAppear(false);
-			}
-		}
-	}
 	int getMaxBullet();
 	void setMaxBullet(int);
 	bool checkIsDestroyed();
+	std::vector<Skill*>& getSkillList();	
+	std::vector<Bullet*>& getBulletList();
+	void handleSkill();
+	void loadImage(SDL_Renderer* renderer, const std::vector<std::string>& listName);
+	void addSkill(SkillType);
+	friend void check(Airplane* a, Airplane* b);
 
+	virtual void handleState(SDL_Renderer*);
+	virtual void handleMove();
+	virtual void render(SDL_Renderer* renderer);
+	virtual void restart(SDL_Renderer*);
+	virtual void handleBulletMove();
 protected:
+	void free();
 	void renderHp(SDL_Renderer *renderer);
 	void renderBullet(SDL_Renderer *renderer);
 	bool checkToNextFrame(int);
@@ -112,7 +93,7 @@ protected:
 	std::vector<Bullet*> mBulletList = {};
 	std::vector<SDL_Texture*> mTextures = {};
 	std::vector<int> mMaxFrames = {};
-	bool frame;
+	bool frame; // xác định frame đầu tiên ở vị trí đầu hay cuối trong ảnh
 	Uint64 mFrameTime = 0;
 	Uint64 mFireTime = 0;
 	State mState;

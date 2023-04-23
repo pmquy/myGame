@@ -20,7 +20,7 @@ void Bullet::handleMove() {
 		mRect.x += mXVal;
 		mRect.y += mYVal;
 	}
-	if (mRect.x <= 0 || mRect.x >= 1200 || mRect.y <= 0 || mRect.y >= 600) {
+	if (mRect.x <= 0 || mRect.x >= SCREEN_WIDTH || mRect.y <= 0 || mRect.y >= SCREEN_HEIGHT) {
 		mIsAppear = false;
 	}
 }
