@@ -1,13 +1,14 @@
 #include "Character.h"
 
 Character::Character() {
+	frame = 0;
+	
 	mXVal = 0;
 	mYVal = 0;
 	mHp = mMaxHp = 50;
 	mAtk = mMaxAtk = 5;
 	mDef = mMaxDef = 0;
 	mCoin = 300;
-	
 	mRect.x = 0;
 	mRect.y = 200;
 	mScore = 0;
@@ -36,26 +37,22 @@ void Character::handleAction(const SDL_Event &event, SDL_Renderer* renderer) {
 	if (event.type == SDL_KEYDOWN) {
 		switch (event.key.keysym.sym) {
 		case SDLK_UP:
-			if (mState == NORMAL || mState == BOOSTING) {
+			if (mState != DESTROYED) {
 				mYVal = -5;
-				mState = BOOSTING;
 			}
 			break;
 		case SDLK_DOWN:
-			if (mState == NORMAL || mState == BOOSTING) {
+			if (mState != DESTROYED) {
 				mYVal = 5;
-				mState = BOOSTING;
 			}
 			break;
 		case SDLK_RIGHT:
-			if (mState == NORMAL || mState == BOOSTING) {
-				mState = BOOSTING;
+			if (mState != DESTROYED) {
 				mXVal = 5;
 			}
 			break;
 		case SDLK_LEFT:
-			if (mState == NORMAL || mState == BOOSTING) {
-				mState = BOOSTING;
+			if (mState != DESTROYED) {
 				mXVal = -5;
 			}
 			break;
@@ -68,6 +65,8 @@ void Character::handleAction(const SDL_Event &event, SDL_Renderer* renderer) {
 		case SDLK_d:
 			if (mState == NORMAL || mState == BOOSTING) {
 				fire(renderer);
+				mState = FIRING;
+				mCurrentFrame = 0;
 			}
 			break;
 		case SDLK_f:
@@ -79,7 +78,6 @@ void Character::handleAction(const SDL_Event &event, SDL_Renderer* renderer) {
 	}
 
 	else if (event.type == SDL_KEYUP) {
-		
 		switch (event.key.keysym.sym) {
 		case SDLK_UP:
 		case SDLK_DOWN:
@@ -99,16 +97,6 @@ void Character::handleAction(const SDL_Event &event, SDL_Renderer* renderer) {
 			}
 			break;
 		}
-		
-	}
-	else if (event.type == SDL_MOUSEBUTTONDOWN) {
-		
-	}
-	else if (event.type == SDL_MOUSEBUTTONUP) {
-
-	}
-	else {
-
 	}
 }
 
@@ -132,30 +120,8 @@ void Character::handleBulletMove() {
 	}
 }
 
-void Character::handleState(SDL_Renderer* renderer) {
-	if (mHp == 0 && mState != DESTROYED) {
-		mState = DESTROYED;
-		mCurrentFrame = 0;
-	}
-	if (mState == DESTROYED && mCurrentFrame == mMaxFrames[int(mState)] - 1) {
-		restart();
-	}
-	if (mState == FIRING && mCurrentFrame == mMaxFrames[int(mState)] - 1) {
-		mState = NORMAL;
-		mCurrentFrame = 0;
-		for (int i = 0; i < int(mBulletList.size()); i++) {
-			mBulletList[i]->setIsMove(true);
-		}
-	}
-}
-	
-
-bool Character::checkIsDestroyed() {
-	return mHp == 0 && mCurrentFrame == mMaxFrames[int(DESTROYED)] - 1 && mState == DESTROYED;
-}
-
-void Character::restart() {
-	Airplane::restart();
+void Character::restart(SDL_Renderer* renderer) {
+	Airplane::restart(renderer);
 	setRect(0, 0);
 	mXVal = mYVal = 0;
 	for (auto& it : mSkillList) {
@@ -210,7 +176,6 @@ void Character::renderSkill(SDL_Renderer* renderer, TTF_Font* font) {
 		mSkillText->render(renderer);
 	}
 }
-
 
 void Character::fire(SDL_Renderer* renderer) {
 	for (int i = -mMaxBullet / 2; i <= mMaxBullet / 2; i++) {

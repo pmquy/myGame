@@ -13,7 +13,6 @@ public:
 	virtual void handleMove();
 	void handleState(SDL_Renderer*);
 	void handleAction(SDL_Renderer *);
-	bool checkIsDestroyed();
 	void restart(SDL_Renderer*);
 
 protected:

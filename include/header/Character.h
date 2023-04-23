@@ -3,16 +3,13 @@
 #include "Airplane.h"
 #include "Text.h"
 
-
 class Character : public Airplane {
 public:
 	Character();
 	~Character();
 	void handleAction(const SDL_Event &event, SDL_Renderer* renderer);
 	void handleMove();
-	void handleState(SDL_Renderer*);
-	bool checkIsDestroyed();
-	void restart();
+	void restart(SDL_Renderer*);
 	void setCoin(int c);
 	int getScore();
 	void setScore(int c);

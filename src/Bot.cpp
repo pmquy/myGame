@@ -1,6 +1,8 @@
 #include "Bot.h"
 
 Bot::Bot() {
+	frame = 1;
+
 	mRect.x = SCREEN_WIDTH + rand() % 1000;
 	mRect.y = rand() % 400;
 	mAtk = mMaxAtk = 2;
@@ -36,7 +38,7 @@ void Bot::handleBulletMove() {
 }
 
 void Bot::restart(SDL_Renderer* renderer) {
-	Airplane::restart();
+	Airplane::restart(renderer);
 	mXVal = -2;
 	mYVal = 0;
 	this->loadImage(renderer, BOTS_PATHS[rand() % 3]);
@@ -44,36 +46,9 @@ void Bot::restart(SDL_Renderer* renderer) {
 }
 
 void Bot::handleState(SDL_Renderer* renderer) {
-	
-	if (mHp == 0 && mState != DESTROYED) {
-		mState = DESTROYED;
-		mCurrentFrame = mMaxFrames[int(mState)] - 1;
-	}
-	
-	if (mRect.x < -10 || mRect.y < -10 || checkIsDestroyed()) {
+	Airplane::handleState(renderer);
+	if (mRect.x < -10 || mRect.y < -10) {
 		restart(renderer);
-	}
-	
-	if (mState == FIRING && mCurrentFrame == 0) {
-		for (int i = 0; i < int(mBulletList.size()); i++) {
-			mBulletList[i]->setIsMove(true);
-		}
-		if (mXVal == 0 && mYVal == 0) {
-			mState = NORMAL;
-		}
-		else {
-			mState = BOOSTING;
-		}
-		mCurrentFrame = mMaxFrames[int(mState)] - 1;
-	}
-	
-	if (mState == NORMAL && (mXVal || mYVal)) {
-		mState = BOOSTING;
-		mCurrentFrame = mMaxFrames[int(mState)] - 1;
-	}
-	if (mState == BOOSTING && !mXVal && !mYVal) {
-		mState = NORMAL;
-		mCurrentFrame = mMaxFrames[int(mState)] - 1;
 	}
 }
 
@@ -87,7 +62,6 @@ void Bot::changeDirection() {
 		mYVal = (rand() % 3 - 1) * 1;
 	}
 }
-
 
 void Bot::handleAction(SDL_Renderer *renderer) {
 	if (checkToFire(3000) && (mState == NORMAL || mState == BOOSTING)) {
@@ -112,11 +86,6 @@ void Bot::fire(SDL_Renderer* renderer) {
 		newBullet->setDirection(-5, i);
 		mBulletList.push_back(newBullet);
 	}
-}
-
-
-bool Bot::checkIsDestroyed() {
-	return mHp == 0 && mCurrentFrame == 0 && mState == DESTROYED;
 }
 
 bool Bot::checkToTurn(long long t) {

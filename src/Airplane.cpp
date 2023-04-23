@@ -1,6 +1,8 @@
 #include "Airplane.h"
 
 Airplane::Airplane() {
+	frame = 0;
+
 	mHp = mMaxHp = 50;
 	mDef = mMaxDef = 0;
 	mAtk = mMaxAtk = 2;
@@ -49,7 +51,7 @@ void Airplane::renderHp(SDL_Renderer *renderer) {
 	SDL_RenderFillRect(renderer, &rectHp);
 }
 
-void Airplane::render(SDL_Renderer* renderer, int i) {
+void Airplane::render(SDL_Renderer* renderer) {
 	mTexture = mTextures[int(mState)];
 	SDL_Rect rect = { mCurrentFrame * mRect.w, 0, mRect.w, mRect.h };
 	BaseClass::render(renderer, &rect);
@@ -57,7 +59,7 @@ void Airplane::render(SDL_Renderer* renderer, int i) {
 	renderBullet(renderer);
 
 	if (checkToNextFrame(100)) {
-		mCurrentFrame += i;
+		mCurrentFrame += 1 - 2*frame;
 	}
 	if (mCurrentFrame <= 0) {
 		mCurrentFrame = 0;
@@ -98,7 +100,7 @@ void Airplane::loadImage(SDL_Renderer* renderer, const std::vector<std::string>&
 	loadedSurface = nullptr;
 }
 
-void Airplane::restart() {
+void Airplane::restart(SDL_Renderer* renderer) {
 
 	while(!mBulletList.empty()) {
 		mBulletList.back()->free();
@@ -118,8 +120,33 @@ void Airplane::restart() {
 	mCurrentFrame = 0;
 }
 
+void Airplane::handleState(SDL_Renderer* renderer) {
+	if (mHp == 0 && mState != DESTROYED) {
+		mState = DESTROYED;
+		mCurrentFrame = frame*(mMaxFrames[int(mState)] - 1);
+	}
+	if (mState == FIRING && mCurrentFrame == (1-frame)*(mMaxFrames[int(mState)] - 1)) {
+		for (int i = 0; i < int(mBulletList.size()); i++) {
+			mBulletList[i]->setIsMove(true);
+		}
+		mState = NORMAL;
+		mCurrentFrame = frame*(mMaxFrames[int(mState)] - 1);
+	}
+	if (mState == DESTROYED && mCurrentFrame == (1-frame)*(mMaxFrames[int(mState)] - 1)) {
+		restart(renderer);
+	}
+	if (mState == NORMAL && (mXVal || mYVal)) {
+		mState = BOOSTING;
+		mCurrentFrame = frame*(mMaxFrames[int(mState)] - 1);
+	}
+	if (mState == BOOSTING && !mXVal && !mYVal) {
+		mState = NORMAL;
+		mCurrentFrame = frame*(mMaxFrames[int(mState)] - 1);
+	}
+}
+
 bool Airplane::checkIsDestroyed() {
-	return mState == DESTROYED && mCurrentFrame == mMaxFrames[int(mState)] - 1;
+	return mState == DESTROYED && mCurrentFrame == (1-frame)*(mMaxFrames[int(mState)] - 1);
 }
 
 bool Airplane::checkToFire(int t) {

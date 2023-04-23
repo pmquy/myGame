@@ -121,12 +121,16 @@ void Game::handleState(SDL_Renderer* renderer, SDL_Event event) {
 		if (hero->checkIsDestroyed()) {
 			mState = LOSE;
 			setRect(0, 0);
+			Mix_PlayChannel(-1, mGameOverMusic, 0);
 			Mix_PlayMusic(mHomeMusic, -1);
 		}
-		if (boss->getIsAppear() && boss->checkIsDestroyed()) {
-			mState = WIN;
-			setRect(0, 0);
-			Mix_PlayMusic(mHomeMusic, -1);
+		else {
+			if (boss->getIsAppear() && boss->checkIsDestroyed()) {
+				mState = WIN;
+				setRect(0, 0);
+				Mix_PlayChannel(-1, mWinMusic, 0);
+				Mix_PlayMusic(mHomeMusic, -1);
+			}
 		}
 		break;
 	case HOME:
@@ -760,12 +764,12 @@ void Game::loadResource(SDL_Renderer* renderer) {
 
 void Game::updateObject(SDL_Renderer* renderer) {
 
-	hero->handleMove(); hero->handleState(renderer); hero->handleSkill(); hero->render(renderer, 1);
+	hero->handleMove(); hero->handleState(renderer); hero->handleSkill(); hero->render(renderer);
 	hero->renderCoin(renderer, font); hero->renderScore(renderer, font); hero->renderSkill(renderer, font);
 
 	for (int i = 0; i < int(bots.size()); i++) {
 		if (bots[i]->getIsAppear()) {
-			bots[i]->handleAction(renderer); bots[i]->handleMove(); bots[i]->handleState(renderer); bots[i]->render(renderer, -1); bots[i]->handleSkill();
+			bots[i]->handleAction(renderer); bots[i]->handleMove(); bots[i]->handleState(renderer); bots[i]->render(renderer); bots[i]->handleSkill();
 		}
 	}
 
@@ -778,7 +782,7 @@ void Game::updateObject(SDL_Renderer* renderer) {
 	}
 
 	if (boss->getIsAppear()) {
-		boss->handleAction(renderer); boss->handleMove(); boss->handleState(renderer); boss->render(renderer, -1); boss->handleSkill();
+		boss->handleAction(renderer); boss->handleMove(); boss->handleState(renderer); boss->render(renderer); boss->handleSkill();
 		boss->renderText(renderer, font);
 	}
 
@@ -790,7 +794,6 @@ void Game::updateObject(SDL_Renderer* renderer) {
 	}
 	
 }
-
 
 void Game::handleCollision(SDL_Renderer* renderer) {
 	for (int j = 0; j < int(bots.size()); j++) {
@@ -814,18 +817,11 @@ void Game::handleCollision(SDL_Renderer* renderer) {
 	}
 
 	if (boss->getIsAppear() && boss->checkIsDestroyed()) {
-		Mix_PlayChannel(-1, mWinMusic, 0);
 		hero->setScore(hero->getScore() + 10);
 		hero->setCoin(hero->getCoin() + 10);
 	}
 
-
-	if (hero->checkIsDestroyed()) {
-		Mix_PlayChannel(-1, mGameOverMusic, 0);
-	}
-
 	for (int i = 0; i < int(items.size()); i++) {
-
 		if (hero->getHp() > 0 && checkConllision(hero, items[i])) {
 			Mix_PlayChannel(-1, mItemMusic, 0);
 			switch (items[i]->getItemType()) {
@@ -864,7 +860,7 @@ void Game::handleCollision(SDL_Renderer* renderer) {
 }
 
 void Game::restart(SDL_Renderer* renderer) {
-	hero->restart();
+	hero->restart(renderer);
 	for (int j = 0; j < int(bots.size()); j++) {
 		bots[j]->restart(renderer);
 	}

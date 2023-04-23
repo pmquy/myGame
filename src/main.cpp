@@ -18,6 +18,7 @@ void Init() {
 
 void Close() {
 	game.~Game();
+	
 	SDL_DestroyWindow(gWindow);
 	gWindow = nullptr;
 	SDL_DestroyRenderer(gRenderer);
@@ -32,6 +33,10 @@ void gameLoop() {
 	
 	while (true) {
 
+		game.handleState(gRenderer, gEvent);
+		game.render(gRenderer);
+		game.handleMove();
+
 		while (SDL_PollEvent(&gEvent)) {
 			if (gEvent.type == SDL_QUIT) {
 				return;
@@ -42,10 +47,6 @@ void gameLoop() {
 				game.hero->handleAction(gEvent, gRenderer);
 			}
 		}
-
-		game.handleState(gRenderer, gEvent);
-		game.render(gRenderer);
-		game.handleMove();
 
 		if (game.mState == LEVEL1 || game.mState == LEVEL2 || game.mState == LEVEL3 || game.mState == LEVEL4 || game.mState == LEVEL5) {
 			game.updateObject(gRenderer);

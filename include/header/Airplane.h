@@ -70,10 +70,10 @@ public:
 	std::vector<Bullet*>& getBulletList();
 	std::vector<Skill*>& getSkillList();	
 	
-	virtual void handleState(SDL_Renderer*) = 0;
+	virtual void handleState(SDL_Renderer*);
 	virtual void handleBulletMove() = 0;
-	virtual void render(SDL_Renderer* renderer, int i);
-	virtual void restart();
+	virtual void render(SDL_Renderer* renderer);
+	virtual void restart(SDL_Renderer*);
 	
 	void free();
 	void loadImage(SDL_Renderer* renderer, const std::vector<std::string>& listName);
@@ -99,9 +99,9 @@ public:
 	}
 	int getMaxBullet();
 	void setMaxBullet(int);
+	bool checkIsDestroyed();
 
 protected:
-	virtual bool checkIsDestroyed();
 	void renderHp(SDL_Renderer *renderer);
 	void renderBullet(SDL_Renderer *renderer);
 	bool checkToNextFrame(int);
@@ -112,6 +112,7 @@ protected:
 	std::vector<Bullet*> mBulletList = {};
 	std::vector<SDL_Texture*> mTextures = {};
 	std::vector<int> mMaxFrames = {};
+	bool frame;
 	Uint64 mFrameTime = 0;
 	Uint64 mFireTime = 0;
 	State mState;
