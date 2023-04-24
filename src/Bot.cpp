@@ -4,15 +4,15 @@ Bot::Bot() {
 	frame = 1;
 	mRect.x = SCREEN_WIDTH + rand() % 1000;
 	mRect.y = rand() % 400;
-	mAtk = mMaxAtk = 2;
-	mMaxHp = mHp = 50;
-	mDef = mMaxDef = 0;
+	mAtk = mNormalAtk = 2;
+	mNormalHp = mHp = 50;
+	mDef = mNormalDef = 0;
 	mXVal = -2;
 	mYVal = 0;
 };
 
 Bot::~Bot() {
-	free();
+	
 }
 
 void Bot::handleMove() {
@@ -66,7 +66,7 @@ void Bot::handleAction(SDL_Renderer *renderer) {
 }
 
 void Bot::fire(SDL_Renderer* renderer) {
-	int max = 1 + rand() % mMaxBullet;
+	int max = 1 + rand() % mNormalBullet;
 	for (int i = -max / 2; i <= max / 2; i++) {
 		if (i == 0 && max % 2 == 0)
 			continue;

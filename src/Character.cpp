@@ -2,17 +2,16 @@
 
 Character::Character() {
 	frame = 0;
-	
 	mXVal = 0;
 	mYVal = 0;
-	mHp = mMaxHp = 50;
-	mAtk = mMaxAtk = 5;
-	mDef = mMaxDef = 0;
+	mHp = mNormalHp = 50;
+	mAtk = mNormalAtk = 5;
+	mDef = mNormalDef = 0;
 	mCoin = 300;
 	mRect.x = 0;
 	mRect.y = 200;
 	mScore = 0;
-	mMaxBullet = 1;
+	mNormalBullet = 1;
 	mCurrentSkill = 0;
 	mCurrentBullet = BulletType::GREEN_BALL;
 
@@ -22,7 +21,6 @@ Character::Character() {
 }
 
 Character::~Character() {
-	free();
 	delete mScoreText;
 	delete mCoinText;
 	delete mSkillText;
@@ -111,7 +109,7 @@ void Character::handleMove() {
 
 void Character::restart(SDL_Renderer* renderer) {
 	Airplane::restart(renderer);
-	mMaxBullet = 1;
+	mNormalBullet = 1;
 	mScore = 0;
 	mCurrentBullet = BulletType::GREEN_BALL;
 	mCurrentSkill = 0;
@@ -162,12 +160,11 @@ void Character::renderSkill(SDL_Renderer* renderer, TTF_Font* font) {
 }
 
 void Character::fire(SDL_Renderer* renderer) {
-	for (int i = -mMaxBullet / 2; i <= mMaxBullet / 2; i++) {
-		if (i == 0 && mMaxBullet % 2 == 0)
+	for (int i = -mNormalBullet / 2; i <= mNormalBullet / 2; i++) {
+		if (i == 0 && mNormalBullet % 2 == 0)
 			continue;
 		Bullet* newBullet = new Bullet();
 		newBullet->loadImage(renderer, mCurrentBullet);
-		newBullet->setRect(mRect.x + mRect.w, mRect.y + mRect.h / 2);
 		newBullet->setDirection(5, i);
 		mBulletList.push_back(newBullet);
 	}

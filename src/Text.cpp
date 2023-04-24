@@ -5,7 +5,7 @@ Text::Text() {
 }
 
 Text::~Text() {
-	BaseClass::free();
+
 }
 
 void Text::loadText(SDL_Renderer* renderer,TTF_Font* font, std::string content, SDL_Color color) {

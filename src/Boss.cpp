@@ -1,14 +1,14 @@
 #include "Boss.h"
 
 Boss::Boss() {
-	mHp = mMaxHp = 200;
+	mHp = mNormalHp = 200;
 	mTurnTime = 0;
 	mIsAppear = false;
 	mXVal = -2;
-	mAtk = mMaxAtk = 5;
+	mAtk = mNormalAtk = 5;
 	mRect.x = SCREEN_WIDTH;
 	mRect.y = rand() % 400;
-	mMaxBullet = 6;
+	mNormalBullet = 6;
 	addSkill(SkillType::BUFF_HP_SKILL);
 	mName = new Text();
 }

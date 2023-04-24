@@ -1,8 +1,9 @@
-#ifndef AIRPLANE_
-#define AIRPLANE_
+#ifndef AIRPLANE_H_
+#define AIRPLANE_H_
 
 #include "BaseClass.h"
 #include "Bullet.h"
+#include "Item.h"
 
 static std::vector<std::string> HERO1_PATHS = { "Image_Folder/Airplane/Hero/Fighter/Idle.png", "Image_Folder/Airplane/Hero/Fighter/Destroyed.png", "Image_Folder/Airplane/Hero/Fighter/Attack_1.png","Image_Folder/Airplane/Hero/Fighter/Boost.png" };
 static std::vector<std::string> HERO2_PATHS = { "Image_Folder/Airplane/Hero/Bomber/Idle.png", "Image_Folder/Airplane/Hero/Bomber/Destroyed.png", "Image_Folder/Airplane/Hero/Bomber/Attack_1.png","Image_Folder/Airplane/Hero/Bomber/Boost.png" };
@@ -88,7 +89,7 @@ protected:
 	bool checkToNextFrame(int);
 	bool checkToFire(int t);
 	void useSkill(Skill*);
-	int mMaxBullet;
+	int mNormalBullet;
 	std::vector<Skill*> mSkillList = {};
 	std::vector<Bullet*> mBulletList = {};
 	std::vector<SDL_Texture*> mTextures = {};
@@ -99,11 +100,11 @@ protected:
 	State mState;
 	int mCurrentFrame = 0;
 	int mHp;
-	int mMaxHp;
+	int mNormalHp;
 	int mAtk;
-	int mMaxAtk;
+	int mNormalAtk;
 	int mDef;
-	int mMaxDef;
+	int mNormalDef;
 	bool mIsAppear;
 };
 

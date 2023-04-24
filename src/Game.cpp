@@ -1,4 +1,4 @@
-#include"Game.h"
+#include "Game.h"
 
 Game::Game() {
 	mRect.x = mRect.y = 0;
@@ -791,8 +791,7 @@ void Game::updateObject(SDL_Renderer* renderer) {
 
 	if (hero->getScore() >= 2 * int(mState)) {
 		boss->setIsAppear(true);
-	}
-	
+	}	
 }
 
 void Game::handleCollision(SDL_Renderer* renderer) {
@@ -802,11 +801,14 @@ void Game::handleCollision(SDL_Renderer* renderer) {
 		}
 		if (bots[j]->checkIsDestroyed() && bots[j]->getIsAppear()) {
 			hero->setScore(hero->getScore() + 2);
-			hero->setCoin(hero->getCoin() + 3);
 			Mix_PlayChannel(-1, mBonkMusic, 0);
 
 			Item* newItem = new Item();
 			newItem->loadImage(renderer, static_cast<ItemType>(rand() % 5));
+			newItem->setRect(bots[j]->getRect().x + 10, bots[j]->getRect().y + bots[j]->getRect().h / 2);
+			items.push_back(newItem);
+			newItem = new Item();
+			newItem->loadImage(renderer, ADD_COIN);
 			newItem->setRect(bots[j]->getRect().x + 10, bots[j]->getRect().y + bots[j]->getRect().h / 2);
 			items.push_back(newItem);
 		}
@@ -818,11 +820,16 @@ void Game::handleCollision(SDL_Renderer* renderer) {
 
 	if (boss->getIsAppear() && boss->checkIsDestroyed()) {
 		hero->setScore(hero->getScore() + 10);
-		hero->setCoin(hero->getCoin() + 10);
 	}
 
 	for (int i = 0; i < int(items.size()); i++) {
-		if (hero->getHp() > 0 && checkConllision(hero, items[i])) {
+		if(items[i]->getRect().x < 0) {
+			if(items[i] != nullptr) {
+				delete items[i];
+				items.erase(items.begin() + i);
+			}
+		}
+		else if (hero->getHp() > 0 && checkConllision(hero, items[i])) {
 			Mix_PlayChannel(-1, mItemMusic, 0);
 			switch (items[i]->getItemType()) {
 			case BUFF_HP:
@@ -849,6 +856,10 @@ void Game::handleCollision(SDL_Renderer* renderer) {
 					hero->setCurrentBullet(static_cast<BulletType>(items[i]->getItemType()));
 					hero->setMaxBullet(1);
 				}
+				break;
+
+			case ADD_COIN:
+				hero->setCoin(hero->getCoin() + 10);				
 				break;
 			}
 			if (items[i] != nullptr) {

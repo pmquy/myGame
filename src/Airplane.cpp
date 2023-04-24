@@ -2,12 +2,11 @@
 
 Airplane::Airplane() {
 	frame = 0;
-
-	mHp = mMaxHp = 50;
-	mDef = mMaxDef = 0;
-	mAtk = mMaxAtk = 2;
+	mHp = mNormalHp = 50;
+	mDef = mNormalDef = 0;
+	mAtk = mNormalAtk = 2;
 	mFireTime = mFrameTime = mMoveTime = 0;
-	mMaxBullet = 3;
+	mNormalBullet = 3;
 	mState = NORMAL;
 	mCurrentFrame = 0;
 	mIsAppear = true;
@@ -18,8 +17,14 @@ Airplane::Airplane() {
 }
 
 Airplane::~Airplane() {
-	BaseClass::free();
 	free();
+	for(auto &it : mSkillList) {
+		if(it != nullptr) {
+			delete it;
+			it = nullptr;
+		}
+	}
+	mSkillList = {};
 }
 
 void Airplane::free() {
@@ -31,7 +36,6 @@ void Airplane::free() {
 	}
 	for (auto& it : mBulletList) {
 		if (it != nullptr) {
-			it->free();
 			delete it;
 			it = nullptr;
 		}
@@ -47,7 +51,7 @@ void Airplane::renderHp(SDL_Renderer *renderer) {
 	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 0);
 	SDL_RenderFillRect(renderer, &rectBg);
 	// render ra hp
-	SDL_Rect rectHp = { mRect.x, mRect.y + mRect.h - 50, (mHp * mRect.w) / mMaxHp , 5 };
+	SDL_Rect rectHp = { mRect.x, mRect.y + mRect.h - 50, (mHp * mRect.w) / mNormalHp , 5 };
 	SDL_SetRenderDrawColor(renderer, 255, 0, 0, 0);
 	SDL_RenderFillRect(renderer, &rectHp);
 }
@@ -114,9 +118,9 @@ void Airplane::restart(SDL_Renderer* renderer) {
 	}
 	mXVal = mYVal = 0;
 	setRect(0,0);
-	mHp = mMaxHp;
-	mAtk = mMaxAtk;
-	mDef = mMaxDef;
+	mHp = mNormalHp;
+	mAtk = mNormalAtk;
+	mDef = mNormalDef;
 	mState = NORMAL;
 	mCurrentFrame = 0;
 }
@@ -126,14 +130,17 @@ void Airplane::addSkill(SkillType t) {
 }
 
 void Airplane::handleState(SDL_Renderer* renderer) {
-	// nếu frame == 1 thì frame bắt đầu từ cuối và kết thúc ở đầu ảnh
+	// nếu frame == true thì frame bắt đầu từ cuối và kết thúc ở đầu ảnh
 	if (mHp == 0 && mState != DESTROYED) {
 		mState = DESTROYED;
 		mCurrentFrame = frame*(mMaxFrames[int(mState)] - 1);
 	}
 	if (mState == FIRING && mCurrentFrame == (1-frame)*(mMaxFrames[int(mState)] - 1)) {
 		for (int i = 0; i < int(mBulletList.size()); i++) {
-			mBulletList[i]->setIsMove(true);
+			if(mBulletList[i]->getIsMove() == false) {
+				mBulletList[i]->setIsMove(true);
+				mBulletList[i]->setRect((1-frame)*(mRect.x + mRect.w) + frame*mRect.x, mRect.y + mRect.h / 2);
+			}
 		}
 		mState = NORMAL;
 		mCurrentFrame = frame*(mMaxFrames[int(mState)] - 1);
@@ -152,7 +159,7 @@ void Airplane::handleState(SDL_Renderer* renderer) {
 }
 
 bool Airplane::checkIsDestroyed() {
-	// nếu frame == 1 thì frame bắt đầu từ cuối và kết thúc ở đầu ảnh
+	// nếu frame == true thì frame bắt đầu từ cuối và kết thúc ở đầu ảnh
 	return mState == DESTROYED && mCurrentFrame == (1-frame)*(mMaxFrames[int(mState)] - 1);
 }
 
@@ -203,25 +210,25 @@ int Airplane::getHp() {
 	return mHp;
 }
 int Airplane::getMaxHp() {
-	return mMaxHp;
+	return mNormalHp;
 }
 void Airplane::setHp(int Hp) {
 	mHp = Hp;
-	if (mHp >= mMaxHp) {
-		mHp = mMaxHp;
+	if (mHp >= mNormalHp) {
+		mHp = mNormalHp;
 	}
 	if (mHp <= 0) {
 		mHp = 0;
 	}
 }
 void Airplane::setMaxHp(int mh) {
-	mMaxHp = mh;
+	mNormalHp = mh;
 }
 void Airplane::setMaxDef(int mh) {
-	mMaxDef = mh;
+	mNormalDef = mh;
 }
 void Airplane::setMaxAtk(int mh) {
-	mMaxAtk = mh;
+	mNormalAtk = mh;
 }
 int Airplane::getAtk() {
 	return mAtk;
@@ -242,10 +249,10 @@ void Airplane::setIsAppear(bool t) {
 	mIsAppear = t;
 }
 int Airplane::getMaxDef() {
-	return mMaxDef;
+	return mNormalDef;
 }
 int Airplane::getMaxAtk() {
-	return mMaxAtk;
+	return mNormalAtk;
 }
 
 std::vector<Bullet*>& Airplane::getBulletList() {
@@ -255,10 +262,10 @@ std::vector<Skill*>& Airplane::getSkillList() {
 	return mSkillList;
 }
 int Airplane::getMaxBullet() {
-	return mMaxBullet;
+	return mNormalBullet;
 }
 void Airplane::setMaxBullet(int t) {
-	mMaxBullet = t;
+	mNormalBullet = t;
 }
 
 void Airplane::useSkill(Skill* sk) {
@@ -266,9 +273,9 @@ void Airplane::useSkill(Skill* sk) {
 		switch (sk->mType) {
 		case BUFF_HP_SKILL:
 			if (mHp > 0) {
-				mHp += int(0.25 * mMaxHp);
-				if (mHp >= mMaxHp) {
-					mHp = mMaxHp;
+				mHp += int(0.25 * mNormalHp);
+				if (mHp >= mNormalHp) {
+					mHp = mNormalHp;
 				}
 			}
 			break;
@@ -279,7 +286,7 @@ void Airplane::useSkill(Skill* sk) {
 			break;
 		case SUPER:
 			if (mHp > 0) {
-				mMaxBullet += 3;
+				mNormalBullet += 3;
 			}
 			break;
 		}
@@ -300,7 +307,7 @@ void Airplane::handleSkill() {
 					mAtk -= 10;
 				}
 				if (it->mCurrentTime == 15 && it->mType == SUPER) {
-					mMaxBullet -= 3;
+					mNormalBullet -= 3;
 				}
 			}
 		}
