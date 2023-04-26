@@ -55,9 +55,7 @@ public:
 	std::vector<Bot*> bots;
 	std::vector<Item*> items;
 	std::vector<SDL_Texture*> mTextures;
-	std::vector<Text*> texts;
-
-	GameState mState, oldState;
+	GameState mState;
 	
 	void loadResource(SDL_Renderer*);
 	void handleMove();
@@ -74,7 +72,8 @@ public:
 	}
 private:
 	void restart(SDL_Renderer*);
-	void setUpLevel(SDL_Renderer*, GameState);
+	void handleEffect();
+	void setUpLevel(SDL_Renderer*, int);
 
 	Mix_Chunk* mBonkMusic;
 	Mix_Music* mGameMusic;
@@ -84,9 +83,14 @@ private:
 	Mix_Music* mHomeMusic;
 	Mix_Music* mIntroMusic;
 
+	Text* mLevelText;
+	int mLevel;
+
 	TTF_Font* font;
 	SDL_Color color;
 	void handleCollision(SDL_Renderer*);
+
+	Uint64 mBossTime = 0;
 };
 
 

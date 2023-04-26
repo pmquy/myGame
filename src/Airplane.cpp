@@ -106,18 +106,16 @@ void Airplane::loadImage(SDL_Renderer* renderer, const std::vector<std::string>&
 }
 
 void Airplane::restart(SDL_Renderer* renderer) {
-
 	while(!mBulletList.empty()) {
 		mBulletList.back()->free();
 		delete mBulletList.back();
 		mBulletList.pop_back();
 	}
-	
 	for (auto &it : mSkillList) {
 		it->mCurrentTime = 0;
 	}
-	mXVal = mYVal = 0;
 	setRect(0,0);
+	mXVal = mYVal = 0;
 	mHp = mNormalHp;
 	mAtk = mNormalAtk;
 	mDef = mNormalDef;
@@ -125,8 +123,8 @@ void Airplane::restart(SDL_Renderer* renderer) {
 	mCurrentFrame = 0;
 }
 
-void Airplane::addSkill(SkillType t) {
-	mSkillList.push_back(new Skill(20, t));
+void Airplane::addSkill(SkillType t, int tm) {
+	mSkillList.push_back(new Skill(tm, t));
 }
 
 void Airplane::handleState(SDL_Renderer* renderer) {
@@ -254,7 +252,12 @@ int Airplane::getMaxDef() {
 int Airplane::getMaxAtk() {
 	return mNormalAtk;
 }
-
+State& Airplane::getCurrentState() {
+	return mState; 
+}
+int Airplane::getCurrentFrame() {
+	return mCurrentFrame;
+}
 std::vector<Bullet*>& Airplane::getBulletList() {
 	return mBulletList;
 }
@@ -314,21 +317,25 @@ void Airplane::handleSkill() {
 	}
 }
 
-void check(Airplane* a, Airplane* b) {
-	if (b->getHp() > 0 && checkConllision(a, b)) {
-			a->getDamage(a->getMaxHp() / 2);
-			b->getDamage(10000);
+
+void handleCollide(Airplane* a, Airplane* b, int hpAGet = 1000, int hpBGet = 1000) {
+	if(a->getHp() <= 0 || b->getHp() <= 0) {
+		return;
+	}
+	if (checkConllision(a, b)) {
+		a->getDamage(hpAGet);
+		b->getDamage(hpBGet);
+	}
+	for (int i = 0; i < int(a->getBulletList().size()); i++) {
+		if (checkConllision(a->getBulletList()[i], b)) {
+			b->getDamage(a->getAtk());
+			a->getBulletList()[i]->setIsAppear(false);
 		}
-		for (int i = 0; i < int(a->getBulletList().size()); i++) {
-			if (checkConllision(a->getBulletList()[i], b)) {
-				b->getDamage(a->getAtk());
-				a->getBulletList()[i]->setIsAppear(false);
-			}
+	}
+	for (int i = 0; i < int(b->getBulletList().size()); i++) {
+		if (checkConllision(b->getBulletList()[i], a)) {
+			a->getDamage(b->getAtk());
+			b->getBulletList()[i]->setIsAppear(false);
 		}
-		for (int i = 0; i < int(b->getBulletList().size()); i++) {
-			if (checkConllision(b->getBulletList()[i], a)) {
-				a->getDamage(b->getAtk());
-				b->getBulletList()[i]->setIsAppear(false);
-			}
-		}
+	}
 }

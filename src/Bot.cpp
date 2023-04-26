@@ -21,9 +21,11 @@ void Bot::handleMove() {
 	}
 	if (mRect.y <= 0) {
 		mRect.y = 0;
+		mYVal = 0;
 	}
 	if (mRect.y >= 400) {
 		mRect.y = 400;
+		mXVal = 0;
 	}
 }
 

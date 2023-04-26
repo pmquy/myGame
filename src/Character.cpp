@@ -2,12 +2,12 @@
 
 Character::Character() {
 	frame = 0;
-	mXVal = 0;
-	mYVal = 0;
+	mXVal = 0; mNormalXVal = 4;
+	mYVal = 0; mNormalYVal = 4;
 	mHp = mNormalHp = 50;
-	mAtk = mNormalAtk = 5;
+	mAtk = mNormalAtk = 20;
 	mDef = mNormalDef = 0;
-	mCoin = 300;
+	mCoin = 0;
 	mRect.x = 0;
 	mRect.y = 200;
 	mScore = 0;
@@ -18,6 +18,12 @@ Character::Character() {
 	mScoreText = new Text(); mScoreText->setRect(0, 0);
 	mCoinText = new Text(); mCoinText->setRect(0, 50);
 	mSkillText = new Text(); mSkillText->setRect(0, 550);
+
+	for(int i = 0; i < int(EFFECT_PATHS.size()); i++) {
+		EffectRender* temp = new EffectRender();
+		mEffectList.push_back(temp);
+	}
+
 }
 
 Character::~Character() {
@@ -31,22 +37,22 @@ void Character::handleAction(const SDL_Event &event, SDL_Renderer* renderer) {
 		switch (event.key.keysym.sym) {
 		case SDLK_UP:
 			if (mState != DESTROYED) {
-				mYVal = -5;
+				mYVal = -mNormalYVal;
 			}
 			break;
 		case SDLK_DOWN:
 			if (mState != DESTROYED) {
-				mYVal = 5;
+				mYVal = mNormalYVal;
 			}
 			break;
 		case SDLK_RIGHT:
 			if (mState != DESTROYED) {
-				mXVal = 5;
+				mXVal = mNormalXVal;
 			}
 			break;
 		case SDLK_LEFT:
 			if (mState != DESTROYED) {
-				mXVal = -5;
+				mXVal = -mNormalXVal;
 			}
 			break;
 		case SDLK_c:
@@ -109,10 +115,7 @@ void Character::handleMove() {
 
 void Character::restart(SDL_Renderer* renderer) {
 	Airplane::restart(renderer);
-	mNormalBullet = 1;
-	mScore = 0;
-	mCurrentBullet = BulletType::GREEN_BALL;
-	mCurrentSkill = 0;
+	mNormalXVal = mNormalYVal = 5;
 }
 
 int Character::getCoin() {
@@ -172,4 +175,42 @@ void Character::fire(SDL_Renderer* renderer) {
 	mState = FIRING;
 }
 
+void Character::loadImage(SDL_Renderer* renderer, std::vector<std::string> &path) {
+	Airplane::loadImage(renderer, path);
+	for(int i = 0; i < int(EFFECT_PATHS.size()); i++) {
+		mEffectList[i]->mEffectImg->loadImage(renderer, EFFECT_PATHS[i]);
+	}
+} 
 
+void Character::handleEffect() {
+	for(int i = 0; i < int(mEffectList.size()); i++) {
+		if (SDL_GetTicks64() - mEffectList[i]->mTime > 1000) {
+			mEffectList[i]->mCurrentTime--;
+			mEffectList[i]->mTime = SDL_GetTicks64();
+			if(mEffectList[i]->mCurrentTime <= 0) {
+				mEffectList[i]->mCurrentTime = 0;
+				mNormalXVal = mNormalYVal = 5;
+			}
+			else {
+				if(i == int(SPEED_UP_EFFECT)) {
+					mNormalXVal = mNormalYVal = 7;
+				}
+			}		
+		}
+	}
+}
+void Character::useEffect(EffectType t) {
+	mEffectList[int(t)]->mCurrentTime = 30;
+}
+
+void Character::renderEffect(SDL_Renderer* renderer, TTF_Font* font) {
+	int i = 0;
+	for(auto it : mEffectList) {
+		if(it->mCurrentTime != 0) {
+			it->mEffectImg->setRect(1000, i*70); it->mEffectImg->render(renderer);
+			it->mTimeText->setRect(1100, i * 70 + 10);
+			it->mTimeText->loadText(renderer, font, std::to_string(it->mCurrentTime)); it->mTimeText->render(renderer);
+			i++;
+		}
+	}
+}

@@ -9,7 +9,6 @@ class Text : public BaseClass {
 		~Text();
 		void loadText(SDL_Renderer *renderer, TTF_Font*, std::string content, SDL_Color = { 255, 255, 255 });
 	private:
-		
 };
 
 #endif

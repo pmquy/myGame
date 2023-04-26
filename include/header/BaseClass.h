@@ -8,6 +8,7 @@
 #include <string>
 #include <iostream>
 #include <vector>
+#include <math.h>
 
 const int SCREEN_WIDTH = 1200;
 const int SCREEN_HEIGHT = 600;
@@ -57,6 +58,8 @@ class BaseClass {
 			return true;
 		}
 
+		int mXVal;
+		int mYVal;
 	protected:
 		SDL_Texture* mTexture;
 		SDL_Rect mRect;
@@ -66,8 +69,6 @@ class BaseClass {
 		int mDy;
 		int mHeight;
 		int mWidth;
-		int mXVal;
-		int mYVal;
 };
 
 

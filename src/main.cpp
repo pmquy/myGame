@@ -32,7 +32,6 @@ void Close() {
 void gameLoop() {
 	
 	while (true) {
-
 		game.handleState(gRenderer, gEvent);
 		game.render(gRenderer);
 		game.handleMove();
@@ -42,13 +41,9 @@ void gameLoop() {
 				return;
 			}
 			game.handleState(gRenderer, gEvent);
-
-			if (game.mState == LEVEL1 || game.mState == LEVEL2 || game.mState == LEVEL3 || game.mState == LEVEL4 || game.mState == LEVEL5) {
-				game.hero->handleAction(gEvent, gRenderer);
-			}
 		}
 
-		if (game.mState == LEVEL1 || game.mState == LEVEL2 || game.mState == LEVEL3 || game.mState == LEVEL4 || game.mState == LEVEL5) {
+		if ((game.mState >= LEVEL1 && game.mState <= LEVEL5)) {
 			game.updateObject(gRenderer);
 		}
 

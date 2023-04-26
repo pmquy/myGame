@@ -44,9 +44,12 @@ struct Skill {
 		mType = tp;
 		mCurrentTime = 0;
 		mIsAvailable = true;
-		mTime = 0;
+		mTime = SDL_GetTicks64();
 	}
 };
+
+
+
 
 class Airplane :public BaseClass {
 public:
@@ -74,14 +77,15 @@ public:
 	std::vector<Bullet*>& getBulletList();
 	void handleSkill();
 	void loadImage(SDL_Renderer* renderer, const std::vector<std::string>& listName);
-	void addSkill(SkillType);
-	friend void check(Airplane* a, Airplane* b);
-
+	void addSkill(SkillType, int = 20);
 	virtual void handleState(SDL_Renderer*);
 	virtual void handleMove();
 	virtual void render(SDL_Renderer* renderer);
 	virtual void restart(SDL_Renderer*);
 	virtual void handleBulletMove();
+	friend void handleCollide(Airplane* a, Airplane* b, int , int);
+	int getCurrentFrame();
+	State& getCurrentState();
 protected:
 	void free();
 	void renderHp(SDL_Renderer *renderer);
@@ -105,6 +109,8 @@ protected:
 	int mNormalAtk;
 	int mDef;
 	int mNormalDef;
+	int mNormalXVal;
+	int mNormalYVal;
 	bool mIsAppear;
 };
 
