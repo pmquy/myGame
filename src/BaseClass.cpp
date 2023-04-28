@@ -4,7 +4,6 @@ BaseClass::BaseClass() {
 	mTexture = nullptr;
 	mRect = { 0, 0, 0, 0 };
 	mXVal = mYVal = mDx = mDy = mWidth = mHeight = 0;
-
 }
 
 BaseClass::~BaseClass() {

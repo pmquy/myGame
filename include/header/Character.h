@@ -10,7 +10,8 @@ enum EffectType {
 	SPEED_UP_EFFECT,
 };
 
-struct EffectRender {
+class EffectRender {
+public:
 	Text* mTimeText = nullptr;
 	BaseClass *mEffectImg = nullptr;
 	int mCurrentTime = 0;
@@ -18,6 +19,16 @@ struct EffectRender {
 	EffectRender() {
 		mEffectImg = new BaseClass();
 		mTimeText = new Text();
+	}
+	~EffectRender() {
+		if(mEffectImg) {
+			delete mEffectImg;
+			mEffectImg = nullptr;
+		}
+		if(mTimeText) {
+			delete mTimeText; 
+			mTimeText = nullptr;
+		}
 	}
 };
 

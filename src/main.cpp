@@ -17,8 +17,6 @@ void Init() {
 }
 
 void Close() {
-	game.~Game();
-	
 	SDL_DestroyWindow(gWindow);
 	gWindow = nullptr;
 	SDL_DestroyRenderer(gRenderer);

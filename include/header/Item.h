@@ -21,6 +21,7 @@ public:
 	void handleMove();
 	ItemType getItemType();
 	Item();
+	~Item();
 private:
 	ItemType mItemType = BUFF_HP;
 };

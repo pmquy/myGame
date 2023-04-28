@@ -9,6 +9,7 @@
 #include <iostream>
 #include <vector>
 #include <math.h>
+#include <fstream>
 
 const int SCREEN_WIDTH = 1200;
 const int SCREEN_HEIGHT = 600;

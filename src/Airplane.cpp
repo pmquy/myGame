@@ -58,19 +58,19 @@ void Airplane::renderHp(SDL_Renderer *renderer) {
 
 void Airplane::render(SDL_Renderer* renderer) {
 	mTexture = mTextures[int(mState)];
-	SDL_Rect rect = { mCurrentFrame * mRect.w, 0, mRect.w, mRect.h };
+	SDL_Rect rect;
+	if(!frame) {
+		rect = { mCurrentFrame * mRect.w, 0, mRect.w, mRect.h };
+	}
+	else {
+		rect = { (mMaxFrames[mState] - 1 - mCurrentFrame) * mRect.w, 0, mRect.w, mRect.h };
+	}
 	BaseClass::render(renderer, &rect);
 	renderHp(renderer);
 	renderBullet(renderer);
 
-	if (checkToNextFrame(100)) {
-		mCurrentFrame += 1 - 2*frame;
-	}
-	if (mCurrentFrame <= 0) {
-		mCurrentFrame = 0;
-	}
-	if (mCurrentFrame == mMaxFrames[int(mState)]) {
-		mCurrentFrame = mMaxFrames[int(mState)] - 1;
+	if (checkToNextFrame(100) && mCurrentFrame < mMaxFrames[mState]) {
+		mCurrentFrame++;
 	}
 }
 
@@ -90,7 +90,7 @@ void Airplane::renderBullet(SDL_Renderer* renderer) {
 
 void Airplane::loadImage(SDL_Renderer* renderer, const std::vector<std::string>& listName) {
 	free();
-	SDL_Surface* loadedSurface = nullptr;
+	SDL_Surface* loadedSurface;
 	for (int i = 0; i < int(listName.size()); i++) {
 		loadedSurface = IMG_Load(listName[i].c_str());
 		SDL_Texture* temp = SDL_CreateTextureFromSurface(renderer, loadedSurface);
@@ -100,17 +100,20 @@ void Airplane::loadImage(SDL_Renderer* renderer, const std::vector<std::string>&
 		}
 		mTextures.push_back(temp);
 		mMaxFrames.push_back(loadedSurface->w / mRect.w);
+		SDL_FreeSurface(loadedSurface);
 	}
-	SDL_FreeSurface(loadedSurface);
 	loadedSurface = nullptr;
 }
 
 void Airplane::restart(SDL_Renderer* renderer) {
-	while(!mBulletList.empty()) {
-		mBulletList.back()->free();
-		delete mBulletList.back();
-		mBulletList.pop_back();
+	for(auto &it : mBulletList) {
+		if(it) {
+			delete it;
+			it = nullptr;
+		}
 	}
+	mBulletList = {};
+	
 	for (auto &it : mSkillList) {
 		it->mCurrentTime = 0;
 	}
@@ -131,9 +134,9 @@ void Airplane::handleState(SDL_Renderer* renderer) {
 	// nếu frame == true thì frame bắt đầu từ cuối và kết thúc ở đầu ảnh
 	if (mHp == 0 && mState != DESTROYED) {
 		mState = DESTROYED;
-		mCurrentFrame = frame*(mMaxFrames[int(mState)] - 1);
+		mCurrentFrame = 0;
 	}
-	if (mState == FIRING && mCurrentFrame == (1-frame)*(mMaxFrames[int(mState)] - 1)) {
+	if (mState >= FIRING_RED && mState <= FIRING_BLUE && mCurrentFrame == mMaxFrames[int(mState)]) {
 		for (int i = 0; i < int(mBulletList.size()); i++) {
 			if(mBulletList[i]->getIsMove() == false) {
 				mBulletList[i]->setIsMove(true);
@@ -141,24 +144,28 @@ void Airplane::handleState(SDL_Renderer* renderer) {
 			}
 		}
 		mState = NORMAL;
-		mCurrentFrame = frame*(mMaxFrames[int(mState)] - 1);
+		mCurrentFrame = 0;
 	}
-	if (mState == DESTROYED && mCurrentFrame == (1-frame)*(mMaxFrames[int(mState)] - 1)) {
+	if (mState == DESTROYED && mCurrentFrame == mMaxFrames[int(mState)]) {
 		restart(renderer);
 	}
 	if (mState == NORMAL && (mXVal || mYVal)) {
 		mState = BOOSTING;
-		mCurrentFrame = frame*(mMaxFrames[int(mState)] - 1);
+		mCurrentFrame = 0;
 	}
 	if (mState == BOOSTING && !mXVal && !mYVal) {
 		mState = NORMAL;
-		mCurrentFrame = frame*(mMaxFrames[int(mState)] - 1);
+		mCurrentFrame = 0;
+	}
+
+	if((mState == NORMAL || mState == BOOSTING) && mCurrentFrame == mMaxFrames[mState]) {
+		mCurrentFrame = 0;
 	}
 }
 
 bool Airplane::checkIsDestroyed() {
 	// nếu frame == true thì frame bắt đầu từ cuối và kết thúc ở đầu ảnh
-	return mState == DESTROYED && mCurrentFrame == (1-frame)*(mMaxFrames[int(mState)] - 1);
+	return mState == DESTROYED && mCurrentFrame == mMaxFrames[int(mState)];
 }
 
 void Airplane::handleMove() {
@@ -174,6 +181,7 @@ void Airplane::handleBulletMove() {
 			mBulletList[i]->handleMove();
 		}
 		if(!mBulletList[i]->getIsAppear()) {
+			delete mBulletList[i];
 			mBulletList.erase(mBulletList.begin() + i);
 		}
 	}
@@ -219,13 +227,13 @@ void Airplane::setHp(int Hp) {
 		mHp = 0;
 	}
 }
-void Airplane::setMaxHp(int mh) {
+void Airplane::setNormalHp(int mh) {
 	mNormalHp = mh;
 }
-void Airplane::setMaxDef(int mh) {
+void Airplane::setNormalDef(int mh) {
 	mNormalDef = mh;
 }
-void Airplane::setMaxAtk(int mh) {
+void Airplane::setNormalAtk(int mh) {
 	mNormalAtk = mh;
 }
 int Airplane::getAtk() {
@@ -252,11 +260,18 @@ int Airplane::getMaxDef() {
 int Airplane::getMaxAtk() {
 	return mNormalAtk;
 }
-State& Airplane::getCurrentState() {
+void Airplane::setCurrentState(State t) {
+	mState = t;
+	mCurrentFrame = 0;
+}
+State Airplane::getCurrentState() {
 	return mState; 
 }
 int Airplane::getCurrentFrame() {
 	return mCurrentFrame;
+}
+void Airplane::setCurrentFrame(int t) {
+	mCurrentFrame = t;
 }
 std::vector<Bullet*>& Airplane::getBulletList() {
 	return mBulletList;
@@ -267,7 +282,7 @@ std::vector<Skill*>& Airplane::getSkillList() {
 int Airplane::getMaxBullet() {
 	return mNormalBullet;
 }
-void Airplane::setMaxBullet(int t) {
+void Airplane::setNormalBullet(int t) {
 	mNormalBullet = t;
 }
 

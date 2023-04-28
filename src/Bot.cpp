@@ -57,9 +57,10 @@ void Bot::changeDirection() {
 
 void Bot::handleAction(SDL_Renderer *renderer) {
 	if (checkToFire(3000) && (mState == NORMAL || mState == BOOSTING)) {
-		fire(renderer);
-		mState = FIRING;
-		mCurrentFrame = mMaxFrames[int(FIRING)] - 1;
+		BulletType type = static_cast<BulletType>(rand()%3);
+		fire(renderer, type);
+		mState = static_cast<State>(FIRING_RED + int(type));
+		mCurrentFrame = 0;
 	}
 	if (checkToTurn(3000)) {
 		changeDirection();
@@ -67,13 +68,13 @@ void Bot::handleAction(SDL_Renderer *renderer) {
 
 }
 
-void Bot::fire(SDL_Renderer* renderer) {
+void Bot::fire(SDL_Renderer* renderer, BulletType bulletType) {
 	int max = 1 + rand() % mNormalBullet;
 	for (int i = -max / 2; i <= max / 2; i++) {
 		if (i == 0 && max % 2 == 0)
 			continue;
 		Bullet* newBullet = new Bullet();
-		newBullet->loadImage(renderer, static_cast<BulletType>(rand() % 3));
+		newBullet->loadImage(renderer, bulletType);
 		newBullet->setRect(mRect.x + 10, mRect.y + mRect.h / 2);
 		newBullet->setDirection(-5, i);
 		mBulletList.push_back(newBullet);

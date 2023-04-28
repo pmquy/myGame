@@ -42,10 +42,13 @@ enum GameState {
 	UPGRADE2,
 	UPGRADE3,
 	UPGRADE4,
+	HIGHSCORE,
+	HIGHSCORE1,
+	HIGHSCORE2,
 	HOME2,
 };
 
-static std::vector<std::string> GAME_PATHS = {"Image_Folder/Background/Home/0.png", "Image_Folder/Background/Home/1.png","Image_Folder/Background/Start/0.png", "Image_Folder/Background/Start/1.png", "Image_Folder/Background/Start/2.png", "Image_Folder/Background/Start/3.png",  "Image_Folder/Background/Level/1.png", "Image_Folder/Background/Level/2.png", "Image_Folder/Background/Level/3.png", "Image_Folder/Background/Level/4.png", "Image_Folder/Background/Level/5.png", "Image_Folder/Background/Lose/0.png", "Image_Folder/Background/Lose/1.png", "Image_Folder/Background/Lose/2.png", "Image_Folder/Background/Shop/0.png", "Image_Folder/Background/Shop/1.png", "Image_Folder/Background/Shop/2.png", "Image_Folder/Background/Shop/3.png", "Image_Folder/Background/Shop/4.png", "Image_Folder/Background/Shop/5.png","Image_Folder/Background/Shop/6.png","Image_Folder/Background/Shop/7.png","Image_Folder/Background/Shop/8.png","Image_Folder/Background/Shop/9.png", "Image_Folder/Background/Win/0.png", "Image_Folder/Background/Win/1.png", "Image_Folder/Background/Win/2.png", "Image_Folder/Background/Win/3.png", "Image_Folder/Background/Upgrade/0.png", "Image_Folder/Background/Upgrade/1.png", "Image_Folder/Background/Upgrade/2.png", "Image_Folder/Background/Upgrade/3.png", "Image_Folder/Background/Upgrade/4.png" };
+static std::vector<std::string> GAME_PATHS = {"Image_Folder/Background/Home/0.png", "Image_Folder/Background/Home/1.png","Image_Folder/Background/Start/0.png", "Image_Folder/Background/Start/1.png", "Image_Folder/Background/Start/2.png", "Image_Folder/Background/Start/3.png",  "Image_Folder/Background/Level/1.png", "Image_Folder/Background/Level/2.png", "Image_Folder/Background/Level/3.png", "Image_Folder/Background/Level/4.png", "Image_Folder/Background/Level/5.png", "Image_Folder/Background/Lose/0.png", "Image_Folder/Background/Lose/1.png", "Image_Folder/Background/Lose/2.png", "Image_Folder/Background/Shop/0.png", "Image_Folder/Background/Shop/1.png", "Image_Folder/Background/Shop/2.png", "Image_Folder/Background/Shop/3.png", "Image_Folder/Background/Shop/4.png", "Image_Folder/Background/Shop/5.png","Image_Folder/Background/Shop/6.png","Image_Folder/Background/Shop/7.png","Image_Folder/Background/Shop/8.png","Image_Folder/Background/Shop/9.png", "Image_Folder/Background/Win/0.png", "Image_Folder/Background/Win/1.png", "Image_Folder/Background/Win/2.png", "Image_Folder/Background/Win/3.png", "Image_Folder/Background/Upgrade/0.png", "Image_Folder/Background/Upgrade/1.png", "Image_Folder/Background/Upgrade/2.png", "Image_Folder/Background/Upgrade/3.png", "Image_Folder/Background/Upgrade/4.png", "Image_Folder/Background/Highscore/0.png", "Image_Folder/Background/Highscore/1.png", "Image_Folder/Background/Highscore/2.png"};
 
 class Game : public BaseClass {
 public:
@@ -74,7 +77,13 @@ private:
 	void restart(SDL_Renderer*);
 	void handleEffect();
 	void setUpLevel(SDL_Renderer*, int);
-
+	void addHighScore(SDL_Renderer*, int, std::string);
+	void renderHighScore(SDL_Renderer*);
+	std::vector<Text*> mHighScoreTexts;
+	std::vector<std::pair<std::string, int>> mHighScores;
+	std::string userName = "";
+	Text* userNameText
+	;
 	Mix_Chunk* mBonkMusic;
 	Mix_Music* mGameMusic;
 	Mix_Chunk* mWinMusic;
@@ -83,8 +92,7 @@ private:
 	Mix_Music* mHomeMusic;
 	Mix_Music* mIntroMusic;
 
-	Text* mLevelText;
-	int mLevel;
+	Text* mLevelText; int mLevel;
 
 	TTF_Font* font;
 	SDL_Color color;

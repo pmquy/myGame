@@ -7,12 +7,7 @@ Bullet::Bullet() {
 };
 
 Bullet::~Bullet() {
-	free();
-}
-
-void Bullet::free() {
-	BaseClass::free();
-	mIsAppear = mIsMove = false;
+	mIsMove = mIsAppear = false;
 }
 
 void Bullet::handleMove() {
@@ -24,6 +19,7 @@ void Bullet::handleMove() {
 		mIsAppear = false;
 	}
 }
+
 void Bullet::setIsMove(bool state) {
 	mIsMove = state;
 }

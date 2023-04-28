@@ -21,6 +21,10 @@ Item::Item() {
 	mYVal = 2 - 2 * rand()%3; // -2 0 2
 	mItemType = BUFF_HP;
 }
+Item::~Item() {
+	
+}
+
 ItemType Item::getItemType() {
 	return mItemType;
 }

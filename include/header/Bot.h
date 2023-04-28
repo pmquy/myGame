@@ -18,7 +18,7 @@ protected:
 	Uint64 mTurnTime = 0;
 	bool checkToTurn(long long);
 	void changeDirection();
-	void fire(SDL_Renderer*);
+	void fire(SDL_Renderer*, BulletType);
 };
 
 

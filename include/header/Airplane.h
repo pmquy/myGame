@@ -5,24 +5,26 @@
 #include "Bullet.h"
 #include "Item.h"
 
-static std::vector<std::string> HERO1_PATHS = { "Image_Folder/Airplane/Hero/Fighter/Idle.png", "Image_Folder/Airplane/Hero/Fighter/Destroyed.png", "Image_Folder/Airplane/Hero/Fighter/Attack_1.png","Image_Folder/Airplane/Hero/Fighter/Boost.png" };
-static std::vector<std::string> HERO2_PATHS = { "Image_Folder/Airplane/Hero/Bomber/Idle.png", "Image_Folder/Airplane/Hero/Bomber/Destroyed.png", "Image_Folder/Airplane/Hero/Bomber/Attack_1.png","Image_Folder/Airplane/Hero/Bomber/Boost.png" };
-static std::vector<std::string> HERO3_PATHS = { "Image_Folder/Airplane/Hero/Corvette/Idle.png", "Image_Folder/Airplane/Hero/Corvette/Destroyed.png", "Image_Folder/Airplane/Hero/Corvette/Attack_1.png","Image_Folder/Airplane/Hero/Corvette/Boost.png" };
+static std::vector<std::string> HERO1_PATHS = { "Image_Folder/Airplane/Hero/Fighter/Idle.png", "Image_Folder/Airplane/Hero/Fighter/Destroyed.png", "Image_Folder/Airplane/Hero/Fighter/Attack_Red.png", "Image_Folder/Airplane/Hero/Fighter/Attack_Green.png","Image_Folder/Airplane/Hero/Fighter/Attack_Blue.png","Image_Folder/Airplane/Hero/Fighter/Boost.png" };
+static std::vector<std::string> HERO2_PATHS = { "Image_Folder/Airplane/Hero/Bomber/Idle.png", "Image_Folder/Airplane/Hero/Bomber/Destroyed.png", "Image_Folder/Airplane/Hero/Bomber/Attack_Red.png", "Image_Folder/Airplane/Hero/Bomber/Attack_Green.png", "Image_Folder/Airplane/Hero/Bomber/Attack_Blue.png","Image_Folder/Airplane/Hero/Bomber/Boost.png" };
+static std::vector<std::string> HERO3_PATHS = { "Image_Folder/Airplane/Hero/Corvette/Idle.png", "Image_Folder/Airplane/Hero/Corvette/Destroyed.png", "Image_Folder/Airplane/Hero/Corvette/Attack_Red.png", "Image_Folder/Airplane/Hero/Corvette/Attack_Green.png", "Image_Folder/Airplane/Hero/Corvette/Attack_Blue.png","Image_Folder/Airplane/Hero/Corvette/Boost.png" };
 static std::vector<std::vector<std::string>> HEROES_PATHS = { HERO1_PATHS, HERO2_PATHS, HERO3_PATHS };
 
 static std::vector<int> PLANE_ATK = { 3, 4, 5 };
 static std::vector<int> PLANE_HP = { 50, 60, 70 };
 static std::vector<int> PLANE_DEF = { 1, 2, 3 };
 
-static std::vector<std::string> BOT1_PATHS = { "Image_Folder/Airplane/Bot/Fighter/Idle.png", "Image_Folder/Airplane/Bot/Fighter/Destroyed.png", "Image_Folder/Airplane/Bot/Fighter/Attack_1.png", "Image_Folder/Airplane/Bot/Fighter/Boost.png" };
-static std::vector<std::string> BOT2_PATHS = { "Image_Folder/Airplane/Bot/Bomber/Idle.png", "Image_Folder/Airplane/Bot/Bomber/Destroyed.png", "Image_Folder/Airplane/Bot/Bomber/Attack_1.png", "Image_Folder/Airplane/Bot/Bomber/Boost.png" };
-static std::vector<std::string> BOT3_PATHS = { "Image_Folder/Airplane/Bot/Corvette/Idle.png", "Image_Folder/Airplane/Bot/Corvette/Destroyed.png", "Image_Folder/Airplane/Bot/Corvette/Attack_1.png" , "Image_Folder/Airplane/Bot/Corvette/Boost.png" };
+static std::vector<std::string> BOT1_PATHS = { "Image_Folder/Airplane/Bot/Fighter/Idle.png", "Image_Folder/Airplane/Bot/Fighter/Destroyed.png", "Image_Folder/Airplane/Bot/Fighter/Attack_Red.png", "Image_Folder/Airplane/Bot/Fighter/Attack_Green.png","Image_Folder/Airplane/Bot/Fighter/Attack_Blue.png" , "Image_Folder/Airplane/Bot/Fighter/Boost.png" };
+static std::vector<std::string> BOT2_PATHS = { "Image_Folder/Airplane/Bot/Bomber/Idle.png", "Image_Folder/Airplane/Bot/Bomber/Destroyed.png", "Image_Folder/Airplane/Bot/Bomber/Attack_Red.png", "Image_Folder/Airplane/Bot/Bomber/Attack_Green.png", "Image_Folder/Airplane/Bot/Bomber/Attack_Blue.png", "Image_Folder/Airplane/Bot/Bomber/Boost.png" };
+static std::vector<std::string> BOT3_PATHS = { "Image_Folder/Airplane/Bot/Corvette/Idle.png", "Image_Folder/Airplane/Bot/Corvette/Destroyed.png", "Image_Folder/Airplane/Bot/Corvette/Attack_Red.png" , "Image_Folder/Airplane/Bot/Corvette/Attack_Green.png" , "Image_Folder/Airplane/Bot/Corvette/Attack_Blue.png" , "Image_Folder/Airplane/Bot/Corvette/Boost.png" };
 static std::vector<std::vector<std::string>> BOTS_PATHS = { BOT1_PATHS, BOT2_PATHS, BOT3_PATHS };
 
 enum State {
 	NORMAL,
 	DESTROYED,
-	FIRING,
+	FIRING_RED,
+	FIRING_GREEN,
+	FIRING_BLUE,
 	BOOSTING
 };
 
@@ -59,9 +61,9 @@ public:
 	int getHp();
 	int getMaxHp();
 	void setHp(int Hp);
-	void setMaxAtk(int);
-	void setMaxDef(int);
-	void setMaxHp(int mh);
+	void setNormalAtk(int);
+	void setNormalDef(int);
+	void setNormalHp(int mh);
 	int getAtk();
 	int getMaxAtk();
 	int getMaxDef();
@@ -71,8 +73,13 @@ public:
 	bool getIsAppear();
 	void setIsAppear(bool t);
 	int getMaxBullet();
-	void setMaxBullet(int);
+	void setNormalBullet(int);
 	bool checkIsDestroyed();
+	int getCurrentFrame();
+	State getCurrentState();
+	void setCurrentFrame(int );
+	void setCurrentState(State);
+
 	std::vector<Skill*>& getSkillList();	
 	std::vector<Bullet*>& getBulletList();
 	void handleSkill();
@@ -84,8 +91,6 @@ public:
 	virtual void restart(SDL_Renderer*);
 	virtual void handleBulletMove();
 	friend void handleCollide(Airplane* a, Airplane* b, int , int);
-	int getCurrentFrame();
-	State& getCurrentState();
 protected:
 	void free();
 	void renderHp(SDL_Renderer *renderer);

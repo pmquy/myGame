@@ -30,6 +30,13 @@ Character::~Character() {
 	delete mScoreText;
 	delete mCoinText;
 	delete mSkillText;
+	for(auto &it : mEffectList) {
+		if(it) {
+			delete it;
+			it = nullptr;
+		}
+	}
+	mEffectList = {};
 }
 
 void Character::handleAction(const SDL_Event &event, SDL_Renderer* renderer) {
@@ -63,8 +70,8 @@ void Character::handleAction(const SDL_Event &event, SDL_Renderer* renderer) {
 			break;
 		case SDLK_d:
 			if (mState == NORMAL || mState == BOOSTING) {
+				mState = static_cast<State>(FIRING_RED + mCurrentBullet);
 				fire(renderer);
-				mState = FIRING;
 				mCurrentFrame = 0;
 			}
 			break;
@@ -80,7 +87,7 @@ void Character::handleAction(const SDL_Event &event, SDL_Renderer* renderer) {
 		case SDLK_UP:
 		case SDLK_DOWN:
 			mYVal = 0;
-			if (mState != FIRING) {
+			if (mState == BOOSTING) {
 				mCurrentFrame = 0;
 				mState = NORMAL;
 			}
@@ -89,7 +96,7 @@ void Character::handleAction(const SDL_Event &event, SDL_Renderer* renderer) {
 		case SDLK_LEFT:
 		case SDLK_RIGHT:
 			mXVal = 0;
-			if (mState != FIRING) {
+			if (mState == BOOSTING) {
 				mCurrentFrame = 0;
 				mState = NORMAL;
 			}
@@ -115,6 +122,9 @@ void Character::handleMove() {
 
 void Character::restart(SDL_Renderer* renderer) {
 	Airplane::restart(renderer);
+	for(auto &it : mEffectList) {
+		it->mCurrentTime = 0;
+	}
 	mNormalXVal = mNormalYVal = 5;
 }
 
@@ -171,8 +181,6 @@ void Character::fire(SDL_Renderer* renderer) {
 		newBullet->setDirection(5, i);
 		mBulletList.push_back(newBullet);
 	}
-	mCurrentFrame = 0;
-	mState = FIRING;
 }
 
 void Character::loadImage(SDL_Renderer* renderer, std::vector<std::string> &path) {
@@ -186,7 +194,7 @@ void Character::handleEffect() {
 	for(int i = 0; i < int(mEffectList.size()); i++) {
 		if (SDL_GetTicks64() - mEffectList[i]->mTime > 1000) {
 			mEffectList[i]->mCurrentTime--;
-			mEffectList[i]->mTime = SDL_GetTicks64();
+			mEffectList[i]->mTime = SDL_GetTicks64();			
 			if(mEffectList[i]->mCurrentTime <= 0) {
 				mEffectList[i]->mCurrentTime = 0;
 				mNormalXVal = mNormalYVal = 5;

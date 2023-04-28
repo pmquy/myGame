@@ -27,6 +27,21 @@ Game::~Game() {
 		}
 	}
 	mTextures = {};
+
+	std::ofstream file("highscore.txt");
+	for(int i = 0; i < 10; i++) {
+		file << mHighScores[i].first << " " << mHighScores[i].second << "\n";
+	}
+	file.close();
+
+	for(auto &it : mHighScoreTexts) {
+		if(it) {
+			delete it;
+			it = nullptr;
+		}
+	}
+	mHighScoreTexts = {};
+
 }
 
 void Game::handleMove() {
@@ -50,7 +65,27 @@ void Game::render(SDL_Renderer* renderer, const SDL_Rect* clip) {
 		mRect.x -= SCREEN_WIDTH;
 		mLevelText->render(renderer);
 
-		
+		if(!hero->checkIsDestroyed()) {
+			hero->render(renderer);hero->renderCoin(renderer, font); hero->renderScore(renderer, font); hero->renderSkill(renderer, font); hero->renderEffect(renderer, font);
+			
+			if(!boss->checkIsDestroyed()) {
+				for (int i = 0; i < int(bots.size()); i++) {
+					if (bots[i]->getIsAppear()) {
+						bots[i]->render(renderer);
+					}
+				}
+
+				if (boss->getIsAppear()) {
+					boss->renderText(renderer, font);boss->render(renderer); 
+				}
+
+				for (int i = 0; i < int(items.size()); i++) {
+					items[i]->render(renderer);
+				}
+			}
+		}
+
+
 	}
 	else if (mState == HOME2) {
 		SDL_Rect oldRect = mRect;
@@ -87,6 +122,13 @@ void Game::render(SDL_Renderer* renderer, const SDL_Rect* clip) {
 	if (mState >= SHOP && mState <= SHOP9) {
 		hero->renderCoin(renderer, font);
 	}	
+
+	if(mState >= HIGHSCORE && mState <= HIGHSCORE2) {
+		renderHighScore(renderer);
+		if(mState == HIGHSCORE) {
+			userNameText->render(renderer);
+		}
+	}
 }
 
 void Game::loadImage(SDL_Renderer* renderer, const std::vector<std::string>& listName) {
@@ -106,13 +148,19 @@ void Game::handleState(SDL_Renderer* renderer, SDL_Event event) {
 	case LEVEL4:
 	case LEVEL5:
 		if (hero->checkIsDestroyed()) {
-			mState = LOSE;
 			setRect(0, 0);
 			Mix_PlayChannel(-1, mGameOverMusic, 0);
 			Mix_PlayMusic(mHomeMusic, -1);
+
+			for(auto it : mHighScores) {
+				if(it.second <= hero->getScore()) {
+					mState = HIGHSCORE;
+					return;
+				}
+			}
+			mState = HIGHSCORE1;
 		}
 		else {
-			
 			if (boss->checkIsDestroyed() && hero->getRect().x >= SCREEN_WIDTH - hero->getRect().w/2) {
 				mState = WIN;
 				setRect(0, 0);
@@ -122,6 +170,48 @@ void Game::handleState(SDL_Renderer* renderer, SDL_Event event) {
 			if(!boss->checkIsDestroyed() && !hero->checkIsDestroyed()) {
 				hero->handleAction(event, renderer);
 			}
+		}
+		break;
+
+	case HIGHSCORE:
+		if(event.type == SDL_KEYDOWN) {
+			if(event.key.keysym.sym >= SDLK_a && event.key.keysym.sym <= SDLK_z) {
+				if(userName.size() < 20) {
+					userName.push_back(event.key.keysym.sym - SDLK_a + 'a');
+					userNameText->loadText(renderer, font, userName);
+				}
+			}
+			else if(event.key.keysym.sym == SDLK_BACKSPACE) {
+				if(userName.size() != 0) {
+					userName.pop_back();
+					userNameText->loadText(renderer, font, userName);
+				}
+			}
+			if(event.key.keysym.sym == SDLK_RETURN) {
+				addHighScore(renderer, hero->getScore(), userName);
+				userName = "";
+				userNameText->loadText(renderer, font, userName);
+				mState = HIGHSCORE1;
+			}
+		}
+		break;
+
+	case HIGHSCORE1:
+		if (event.type == SDL_KEYDOWN) {
+			switch (event.key.keysym.sym) {
+			case SDLK_DOWN:
+			case SDLK_UP:
+			case SDLK_LEFT:
+			case SDLK_RIGHT:
+				mState = HIGHSCORE2;
+				break;
+			}
+		}
+		break;
+
+	case HIGHSCORE2:
+		if(event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_RETURN) {
+			mState = LOSE;
 		}
 		break;
 
@@ -176,7 +266,6 @@ void Game::handleState(SDL_Renderer* renderer, SDL_Event event) {
 				break;
 			}
 		}
-
 		break;
 
 	case START2:
@@ -252,7 +341,6 @@ void Game::handleState(SDL_Renderer* renderer, SDL_Event event) {
 			case SDLK_RETURN:
 				mLevel = 1;
 				setUpLevel(renderer, mLevel);
-				hero->setScore(0);
 				break;
 			}
 		}
@@ -272,7 +360,7 @@ void Game::handleState(SDL_Renderer* renderer, SDL_Event event) {
 			case SDLK_RIGHT:
 				break;
 			case SDLK_RETURN:
-				hero->setScore(0);
+				mLevel = 1;
 				mState = START;
 				break;
 			}
@@ -281,6 +369,7 @@ void Game::handleState(SDL_Renderer* renderer, SDL_Event event) {
 
 	case LOSE:
 		if (event.type == SDL_KEYDOWN) {
+
 			switch (event.key.keysym.sym) {
 			case SDLK_DOWN:
 				mState = LOSE1;
@@ -585,6 +674,7 @@ void Game::handleState(SDL_Renderer* renderer, SDL_Event event) {
 				break;
 			case SDLK_RETURN:
 				hero->setScore(0);
+				mLevel = 1;
 				mState = START;
 				break;
 			}
@@ -621,7 +711,7 @@ void Game::handleState(SDL_Renderer* renderer, SDL_Event event) {
 			case SDLK_RETURN:
 				if (hero->getCoin() >= 20 && hero->getMaxHp() < 110) {
 					hero->setCoin(hero->getCoin() - 20);
-					hero->setMaxHp(hero->getMaxHp() + 20);
+					hero->setNormalHp(hero->getMaxHp() + 20);
 				}
 				break;
 			}
@@ -643,7 +733,7 @@ void Game::handleState(SDL_Renderer* renderer, SDL_Event event) {
 			case SDLK_RETURN:
 				if (hero->getCoin() >= 20 && hero->getDef() < 6) {
 					hero->setCoin(hero->getCoin() - 20);
-					hero->setMaxDef(hero->getMaxDef() + 1);
+					hero->setNormalDef(hero->getMaxDef() + 1);
 				}
 				break;
 			}
@@ -665,7 +755,7 @@ void Game::handleState(SDL_Renderer* renderer, SDL_Event event) {
 			case SDLK_RETURN:
 				if (hero->getCoin() >= 20 && hero->getMaxAtk() < 20 + 12) {
 					hero->setCoin(hero->getCoin() - 20);
-					hero->setMaxAtk(hero->getMaxAtk() + 2);
+					hero->setNormalAtk(hero->getMaxAtk() + 2);
 				}
 				break;
 			}
@@ -733,6 +823,25 @@ void Game::loadResource(SDL_Renderer* renderer) {
 	mGameOverMusic = Mix_LoadWAV("Music_Folder/game_over.wav");;
 
 	font = TTF_OpenFont("Font_Folder/font2.ttf", 30);
+
+	userNameText = new Text();
+	userNameText->setRect(700, 200);
+	userNameText->loadText(renderer, font, userName);
+
+	std::ifstream file("highscore.txt");
+	std::string user;
+	int score;
+	
+	for(int i = 0; i < 10; i++) {
+		file >> user; file >> score;
+		mHighScores.push_back(std::pair<std::string, int> (user, score));
+		Text *t = new Text();
+		t->setRect(100, i*30 + 100);
+		t->loadText(renderer, font, user + " : " + std::to_string(score));
+		mHighScoreTexts.push_back(t);	
+	}
+	file.close();
+
 	mLevelText = new Text(); mLevelText->setRect(500, 0);
 	mLevel = 1;
 	mState = GameState::HOME;
@@ -740,29 +849,30 @@ void Game::loadResource(SDL_Renderer* renderer) {
 
 
 void Game::updateObject(SDL_Renderer* renderer) {
+
 	if(hero->checkIsDestroyed()) {
 		return;
 	}
 
 	if(boss->checkIsDestroyed()) {
-		hero->mXVal = 5; hero->mYVal = 0; hero->handleMove();
-		hero->render(renderer); hero->renderCoin(renderer, font); hero->renderScore(renderer, font);
+		hero->mXVal = 5; hero->mYVal = 0; hero->handleMove(); hero->setCurrentState(BOOSTING);
 		return;
 	}
 
+	this->handleCollision(renderer);
+
+
 	hero->handleMove(); hero->handleState(renderer); hero->handleSkill(); hero->handleEffect(); 
-	hero->render(renderer);hero->renderCoin(renderer, font); hero->renderScore(renderer, font); hero->renderSkill(renderer, font); hero->renderEffect(renderer, font);
 	this->handleEffect();
 
 	for (int i = 0; i < int(bots.size()); i++) {
 		if (bots[i]->getIsAppear()) {
-			bots[i]->handleAction(renderer); bots[i]->handleMove(); bots[i]->handleState(renderer); bots[i]->render(renderer); bots[i]->handleSkill();
+			bots[i]->handleAction(renderer); bots[i]->handleMove(); bots[i]->handleState(renderer); bots[i]->handleSkill();
 		}
 	}
 
 	if (boss->getIsAppear()) {
-		boss->handleAction(renderer); boss->handleMove(); boss->handleState(renderer); boss->render(renderer); boss->handleSkill();
-		boss->renderText(renderer, font);
+		boss->handleAction(renderer); boss->handleMove(); boss->handleState(renderer); boss->handleSkill();
 	}
 
 	if(!boss->getIsAppear() && (SDL_GetTicks64() - mBossTime > 10000)) {
@@ -770,13 +880,13 @@ void Game::updateObject(SDL_Renderer* renderer) {
 	}
 
 	for (int i = 0; i < int(items.size()); i++) {
-		items[i]->handleMove(); items[i]->render(renderer);
+		items[i]->handleMove(); 
 		if (items[i]->getRect().x <= 0) {
 			delete items[i];
 			items.erase(items.begin() + i);
 		}
 	}
-	this->handleCollision(renderer);
+
 }
 
 void Game::handleCollision(SDL_Renderer* renderer) {
@@ -784,7 +894,7 @@ void Game::handleCollision(SDL_Renderer* renderer) {
 		if (bots[j]->getIsAppear()) {
 			handleCollide(hero, bots[j], hero->getMaxHp()/2, bots[j]->getMaxHp());
 
-			if (bots[j]->checkIsDestroyed() && bots[j]->getIsAppear()) {
+			if (bots[j]->checkIsDestroyed()) {
 				hero->setScore(hero->getScore() + 2);
 				Mix_PlayChannel(-1, mBonkMusic, 0);
 
@@ -828,7 +938,7 @@ void Game::handleCollision(SDL_Renderer* renderer) {
 
 			case ADD_BULLET:
 				if (hero->getMaxBullet() < 5) {
-					hero->setMaxBullet(hero->getMaxBullet() + 1);
+					hero->setNormalBullet(hero->getMaxBullet() + 1);
 				}
 				break;
 
@@ -836,14 +946,14 @@ void Game::handleCollision(SDL_Renderer* renderer) {
 			case ADD_GREEN_BALL:
 			case ADD_RED_BALL:
 				if (int(hero->getCurrentBullet()) == int(items[i]->getItemType())) {
-					hero->setMaxBullet(hero->getMaxBullet() + 1);
+					hero->setNormalBullet(hero->getMaxBullet() + 1);
 					if (hero->getMaxBullet() >= 5) {
-						hero->setMaxBullet(5);
+						hero->setNormalBullet(5);
 					}
 				}
 				else {
 					hero->setCurrentBullet(static_cast<BulletType>(items[i]->getItemType()));
-					hero->setMaxBullet(1);
+					hero->setNormalBullet(1);
 				}
 				break;
 
@@ -905,6 +1015,11 @@ void Game::restart(SDL_Renderer* renderer) {
 }
 
 void Game::setUpLevel(SDL_Renderer* renderer, int level) {
+	if(level == 1) {
+		hero->setScore(0);
+		hero->setNormalBullet(1);
+		hero->setCurrentBullet(GREEN_BALL);
+	}
 	mState = static_cast<GameState> (int(LEVEL1) + rand()%5);
 	mLevelText->loadText(renderer, font, "LEVEL " + std::to_string(mLevel));
 	if(level <= 3) {
@@ -919,4 +1034,28 @@ void Game::setUpLevel(SDL_Renderer* renderer, int level) {
 	}
 	mBossTime = SDL_GetTicks64();
 	this->restart(renderer);
+}
+
+void Game::addHighScore(SDL_Renderer* renderer, int score, std::string user) {
+	int i = 0;
+	while(i < int(mHighScores.size()) && mHighScores[i].second > score) {
+		i++;
+	}
+	for(int j = mHighScores.size() - 1; j > i; j--) {
+		mHighScores[j] = mHighScores[j-1];
+	}
+
+	if(i < int(mHighScores.size())) {
+		mHighScores[i] = std::pair<std::string, int> (user, score);
+	}
+
+	for(int i = 0; i < int(mHighScores.size()); i++) {
+		mHighScoreTexts[i]->loadText(renderer, font, mHighScores[i].first + " : " + std::to_string(mHighScores[i].second));
+	}
+}
+
+void Game::renderHighScore(SDL_Renderer* renderer) {
+	for(int i = 0; i < int(mHighScoreTexts.size()); i++) {
+		mHighScoreTexts[i]->render(renderer);
+	}
 }
