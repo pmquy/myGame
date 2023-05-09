@@ -28,7 +28,6 @@ void Close() {
 }
 
 void gameLoop() {
-	
 	while (true) {
 		game.handleState(gRenderer, gEvent);
 		game.render(gRenderer);
@@ -41,7 +40,7 @@ void gameLoop() {
 			game.handleState(gRenderer, gEvent);
 		}
 
-		if ((game.mState >= LEVEL1 && game.mState <= LEVEL5)) {
+		if ((game.getState() == LEVEL)) {
 			game.updateObject(gRenderer);
 		}
 

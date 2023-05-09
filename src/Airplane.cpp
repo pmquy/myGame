@@ -117,13 +117,13 @@ void Airplane::restart(SDL_Renderer* renderer) {
 	for (auto &it : mSkillList) {
 		it->mCurrentTime = 0;
 	}
+
 	setRect(0,0);
 	mXVal = mYVal = 0;
 	mHp = mNormalHp;
 	mAtk = mNormalAtk;
 	mDef = mNormalDef;
-	mState = NORMAL;
-	mCurrentFrame = 0;
+	setCurrentState(NORMAL);
 }
 
 void Airplane::addSkill(SkillType t, int tm) {
@@ -131,10 +131,8 @@ void Airplane::addSkill(SkillType t, int tm) {
 }
 
 void Airplane::handleState(SDL_Renderer* renderer) {
-	// nếu frame == true thì frame bắt đầu từ cuối và kết thúc ở đầu ảnh
 	if (mHp == 0 && mState != DESTROYED) {
-		mState = DESTROYED;
-		mCurrentFrame = 0;
+		setCurrentState(DESTROYED);
 	}
 	if (mState >= FIRING_RED && mState <= FIRING_BLUE && mCurrentFrame == mMaxFrames[int(mState)]) {
 		for (int i = 0; i < int(mBulletList.size()); i++) {
@@ -143,21 +141,15 @@ void Airplane::handleState(SDL_Renderer* renderer) {
 				mBulletList[i]->setRect((1-frame)*(mRect.x + mRect.w) + frame*mRect.x, mRect.y + mRect.h / 2);
 			}
 		}
-		mState = NORMAL;
-		mCurrentFrame = 0;
+		setCurrentState(NORMAL);
 	}
-	if (mState == DESTROYED && mCurrentFrame == mMaxFrames[int(mState)]) {
-		restart(renderer);
-	}
+	
 	if (mState == NORMAL && (mXVal || mYVal)) {
-		mState = BOOSTING;
-		mCurrentFrame = 0;
+		setCurrentState(BOOSTING);
 	}
 	if (mState == BOOSTING && !mXVal && !mYVal) {
-		mState = NORMAL;
-		mCurrentFrame = 0;
+		setCurrentState(NORMAL);
 	}
-
 	if((mState == NORMAL || mState == BOOSTING) && mCurrentFrame == mMaxFrames[mState]) {
 		mCurrentFrame = 0;
 	}
@@ -215,7 +207,7 @@ void Airplane::getDamage(int damage) {
 int Airplane::getHp() {
 	return mHp;
 }
-int Airplane::getMaxHp() {
+int Airplane::getNormalHp() {
 	return mNormalHp;
 }
 void Airplane::setHp(int Hp) {
@@ -254,10 +246,10 @@ bool Airplane::getIsAppear() {
 void Airplane::setIsAppear(bool t) {
 	mIsAppear = t;
 }
-int Airplane::getMaxDef() {
+int Airplane::getNormalDef() {
 	return mNormalDef;
 }
-int Airplane::getMaxAtk() {
+int Airplane::getNormalAtk() {
 	return mNormalAtk;
 }
 void Airplane::setCurrentState(State t) {
@@ -279,7 +271,7 @@ std::vector<Bullet*>& Airplane::getBulletList() {
 std::vector<Skill*>& Airplane::getSkillList() {
 	return mSkillList;
 }
-int Airplane::getMaxBullet() {
+int Airplane::getNormalBullet() {
 	return mNormalBullet;
 }
 void Airplane::setNormalBullet(int t) {
@@ -302,7 +294,7 @@ void Airplane::useSkill(Skill* sk) {
 				mAtk += 10;
 			}
 			break;
-		case SUPER:
+		case SUPER_SKILL:
 			if (mHp > 0) {
 				mNormalBullet += 3;
 			}
@@ -324,7 +316,7 @@ void Airplane::handleSkill() {
 				if (it->mCurrentTime == 15 && it->mType == BUFF_ATK_SKILL) {
 					mAtk -= 10;
 				}
-				if (it->mCurrentTime == 15 && it->mType == SUPER) {
+				if (it->mCurrentTime == 15 && it->mType == SUPER_SKILL) {
 					mNormalBullet -= 3;
 				}
 			}
@@ -333,22 +325,22 @@ void Airplane::handleSkill() {
 }
 
 
-void handleCollide(Airplane* a, Airplane* b, int hpAGet = 1000, int hpBGet = 1000) {
+void handleCollide(Airplane* a, Airplane* b, int dmgAGet = 1000, int dmgBGet = 1000) {
 	if(a->getHp() <= 0 || b->getHp() <= 0) {
 		return;
 	}
-	if (checkConllision(a, b)) {
-		a->getDamage(hpAGet);
-		b->getDamage(hpBGet);
+	if (checkCollision(a, b)) {
+		a->getDamage(dmgAGet);
+		b->getDamage(dmgBGet);
 	}
 	for (int i = 0; i < int(a->getBulletList().size()); i++) {
-		if (checkConllision(a->getBulletList()[i], b)) {
+		if (checkCollision(a->getBulletList()[i], b)) {
 			b->getDamage(a->getAtk());
 			a->getBulletList()[i]->setIsAppear(false);
 		}
 	}
 	for (int i = 0; i < int(b->getBulletList().size()); i++) {
-		if (checkConllision(b->getBulletList()[i], a)) {
+		if (checkCollision(b->getBulletList()[i], a)) {
 			a->getDamage(b->getAtk());
 			b->getBulletList()[i]->setIsAppear(false);
 		}

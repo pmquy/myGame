@@ -18,8 +18,7 @@ void Item::handleMove() {
 Item::Item() {
 	mHeight = mWidth = 0;
 	mXVal = -3;
-	mYVal = 2 - 2 * rand()%3; // -2 0 2
-	mItemType = BUFF_HP;
+	mItemType = HP_ITEM;
 }
 Item::~Item() {
 	

@@ -31,7 +31,7 @@ enum State {
 enum SkillType {
 	BUFF_HP_SKILL,
 	BUFF_ATK_SKILL,
-	SUPER,
+	SUPER_SKILL,
 };
 
 struct Skill {
@@ -50,29 +50,26 @@ struct Skill {
 	}
 };
 
-
-
-
 class Airplane :public BaseClass {
 public:
 	Airplane();
 	~Airplane();
 	void getDamage(int damage);
 	int getHp();
-	int getMaxHp();
+	int getNormalHp();
 	void setHp(int Hp);
 	void setNormalAtk(int);
 	void setNormalDef(int);
 	void setNormalHp(int mh);
 	int getAtk();
-	int getMaxAtk();
-	int getMaxDef();
+	int getNormalAtk();
+	int getNormalDef();
 	void setAtk(int Atk);
 	int getDef();
 	void setDef(int Def);
 	bool getIsAppear();
 	void setIsAppear(bool t);
-	int getMaxBullet();
+	int getNormalBullet();
 	void setNormalBullet(int);
 	bool checkIsDestroyed();
 	int getCurrentFrame();
@@ -103,7 +100,7 @@ protected:
 	std::vector<Bullet*> mBulletList = {};
 	std::vector<SDL_Texture*> mTextures = {};
 	std::vector<int> mMaxFrames = {};
-	bool frame; // xác định frame đầu tiên ở vị trí đầu hay cuối trong ảnh
+	bool frame; // xác định frame đầu tiên ở vị trí đầu hay cuối ảnh
 	Uint64 mFrameTime = 0;
 	Uint64 mFireTime = 0;
 	State mState;
@@ -118,7 +115,5 @@ protected:
 	int mNormalYVal;
 	bool mIsAppear;
 };
-
-
 
 #endif

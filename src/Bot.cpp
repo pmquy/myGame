@@ -25,33 +25,36 @@ void Bot::handleMove() {
 	}
 	if (mRect.y >= 400) {
 		mRect.y = 400;
-		mXVal = 0;
+		mYVal = 0;
 	}
 }
 
 void Bot::restart(SDL_Renderer* renderer) {
 	Airplane::restart(renderer);
-	mXVal = -2;
-	mYVal = 0;
 	this->loadImage(renderer, BOTS_PATHS[rand() % 3]);
-	setRect(SCREEN_WIDTH + rand() % 1000, rand() % 400);
+	setRect(SCREEN_WIDTH, rand() % 400);
 }
 
 void Bot::handleState(SDL_Renderer* renderer) {
 	Airplane::handleState(renderer);
+	
+	if (mState == DESTROYED && mCurrentFrame == mMaxFrames[int(mState)]) {
+		restart(renderer);
+	}
 	if (mRect.x < -10 || mRect.y < -10) {
 		restart(renderer);
 	}
 }
 
 void Bot::changeDirection() {
-	if ((mRect.x >= 1000) || rand()%2) {
+	// tang ti le
+	if ((mRect.x >= 1000) || rand()%3 == 0) {
 		mXVal = -2;
 		mYVal = 0;
 	}
 	else {
-		mXVal = (rand() % 3 - 1) * 2;
-		mYVal = (rand() % 3 - 1) * 1;
+		mXVal = (rand() % 5 - 2);
+		mYVal = (rand() % 5 - 2);
 	}
 }
 
@@ -59,13 +62,11 @@ void Bot::handleAction(SDL_Renderer *renderer) {
 	if (checkToFire(3000) && (mState == NORMAL || mState == BOOSTING)) {
 		BulletType type = static_cast<BulletType>(rand()%3);
 		fire(renderer, type);
-		mState = static_cast<State>(FIRING_RED + int(type));
-		mCurrentFrame = 0;
+		setCurrentState(static_cast<State>(FIRING_RED + int(type)));
 	}
 	if (checkToTurn(3000)) {
 		changeDirection();
 	}
-
 }
 
 void Bot::fire(SDL_Renderer* renderer, BulletType bulletType) {

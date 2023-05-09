@@ -3,11 +3,13 @@
 #include "Airplane.h"
 #include "Text.h"
 
-static std::vector<std::string> EFFECT_PATHS = {"Image_Folder/Item/Magnet_Bonus.png", "Image_Folder/Item/Speed_Bonus.png"};
+static std::vector<std::string> EFFECT_PATHS = {"Image_Folder/Item/Magnet_Bonus.png", "Image_Folder/Item/Speed_Bonus.png", "Image_Folder/Item/Speed_Debuff.png", "Image_Folder/Item/Armor_Bonus.png"};
 
 enum EffectType {
 	MAGNET_EFFECT,
 	SPEED_UP_EFFECT,
+	SPEED_DOWN_EFFECT,
+	ARMOR_EFFECT,
 };
 
 class EffectRender {
@@ -51,7 +53,7 @@ public:
 	void loadImage(SDL_Renderer*, std::vector<std::string>&);
 	void handleEffect();
 	void renderEffect(SDL_Renderer*, TTF_Font*);
-	void useEffect(EffectType);
+	void useEffect(EffectType, int =30);
 	BulletType getCurrentBullet();
 	std::vector<EffectRender*> mEffectList;
 

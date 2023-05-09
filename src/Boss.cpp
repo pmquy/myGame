@@ -23,7 +23,6 @@ void Boss::handleMove() {
 void Boss::restart(SDL_Renderer* renderer) {
 	Bot::restart(renderer);
 	mIsAppear = false;
-	mXVal = mYVal = 0;
 }
 
 // xử lý skill và sử dụng luôn

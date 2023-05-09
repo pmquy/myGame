@@ -27,10 +27,10 @@ static SDL_Texture* loadTexture(SDL_Renderer* renderer, std::string path) {
 		if (loadedTexture == nullptr) {
 			std::cout << "loaded texture failed";
 		}
+		SDL_FreeSurface(loadedSurface);
 	}
 	return loadedTexture;
 }
-
 
 class BaseClass {
 	public:
@@ -44,7 +44,7 @@ class BaseClass {
 		virtual void handleMove();
 		void free();
 
-		friend bool checkConllision(BaseClass *a, BaseClass *b) {
+		friend bool checkCollision(BaseClass *a, BaseClass *b) {
 			int x11 = a->getRect().x + a->mDx;
 			int y11 = a->getRect().y + a->mDy;
 			int x12 = x11 + a->mWidth;

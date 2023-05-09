@@ -2,12 +2,12 @@
 
 Character::Character() {
 	frame = 0;
-	mXVal = 0; mNormalXVal = 4;
-	mYVal = 0; mNormalYVal = 4;
+	mXVal = 0; mNormalXVal = 5;
+	mYVal = 0; mNormalYVal = 5;
 	mHp = mNormalHp = 50;
 	mAtk = mNormalAtk = 20;
 	mDef = mNormalDef = 0;
-	mCoin = 0;
+	mCoin = 1000;
 	mRect.x = 0;
 	mRect.y = 200;
 	mScore = 0;
@@ -70,9 +70,8 @@ void Character::handleAction(const SDL_Event &event, SDL_Renderer* renderer) {
 			break;
 		case SDLK_d:
 			if (mState == NORMAL || mState == BOOSTING) {
-				mState = static_cast<State>(FIRING_RED + mCurrentBullet);
+				setCurrentState(static_cast<State>(FIRING_RED + mCurrentBullet));
 				fire(renderer);
-				mCurrentFrame = 0;
 			}
 			break;
 		case SDLK_f:
@@ -87,26 +86,16 @@ void Character::handleAction(const SDL_Event &event, SDL_Renderer* renderer) {
 		case SDLK_UP:
 		case SDLK_DOWN:
 			mYVal = 0;
-			if (mState == BOOSTING) {
-				mCurrentFrame = 0;
-				mState = NORMAL;
-			}
 			break;
-
 		case SDLK_LEFT:
 		case SDLK_RIGHT:
 			mXVal = 0;
-			if (mState == BOOSTING) {
-				mCurrentFrame = 0;
-				mState = NORMAL;
-			}
 			break;
 		}
 	}
 }
 
 void Character::handleMove() {
-
 	if (checkToMove(10)) {
 		Airplane::handleMove();
 	}
@@ -148,11 +137,11 @@ void Character::setCurrentBullet(BulletType t) {
 }
 
 void Character::renderCoin(SDL_Renderer* renderer, TTF_Font* font) {
-	mCoinText->loadText(renderer, font, "Coin : " + std::to_string(mCoin));
+	mCoinText->loadText(renderer, font, "Coin : " + std::to_string(mCoin), {255, 255, 255});
 	mCoinText->render(renderer);
 }
 void Character::renderScore(SDL_Renderer* renderer, TTF_Font* font) {
-	mScoreText->loadText(renderer, font, "Score : " + std::to_string(mScore));
+	mScoreText->loadText(renderer, font, "Score : " + std::to_string(mScore), {255, 255, 255});
 	mScoreText->render(renderer);
 }
 void Character::renderSkill(SDL_Renderer* renderer, TTF_Font* font) {
@@ -164,7 +153,7 @@ void Character::renderSkill(SDL_Renderer* renderer, TTF_Font* font) {
 		else if (mSkillList[mCurrentSkill]->mType == BUFF_ATK_SKILL) {
 			name = "buff atk : ";
 		}
-		else if (mSkillList[mCurrentSkill]->mType == SUPER) {
+		else if (mSkillList[mCurrentSkill]->mType == SUPER_SKILL) {
 			name = "super : ";
 		}
 		mSkillText->loadText(renderer, font, name + std::to_string(mSkillList[mCurrentSkill]->mCurrentTime));
@@ -190,6 +179,7 @@ void Character::loadImage(SDL_Renderer* renderer, std::vector<std::string> &path
 	}
 } 
 
+
 void Character::handleEffect() {
 	for(int i = 0; i < int(mEffectList.size()); i++) {
 		if (SDL_GetTicks64() - mEffectList[i]->mTime > 1000) {
@@ -197,18 +187,32 @@ void Character::handleEffect() {
 			mEffectList[i]->mTime = SDL_GetTicks64();			
 			if(mEffectList[i]->mCurrentTime <= 0) {
 				mEffectList[i]->mCurrentTime = 0;
-				mNormalXVal = mNormalYVal = 5;
 			}
-			else {
-				if(i == int(SPEED_UP_EFFECT)) {
-					mNormalXVal = mNormalYVal = 7;
-				}
-			}		
 		}
 	}
+
+	if(mEffectList[SPEED_DOWN_EFFECT]->mCurrentTime == 0 && mEffectList[SPEED_UP_EFFECT]->mCurrentTime == 0) {
+		mNormalXVal = mNormalYVal = 5;
+	}
+
+	if(mEffectList[ARMOR_EFFECT]->mCurrentTime == 0) {
+		mDef = mNormalDef;
+	}	
 }
-void Character::useEffect(EffectType t) {
-	mEffectList[int(t)]->mCurrentTime = 30;
+
+void Character::useEffect(EffectType t, int time) {
+	mEffectList[int(t)]->mCurrentTime = time;
+	if(t == SPEED_UP_EFFECT) {
+		mNormalXVal = mNormalYVal = 7;
+		mEffectList[SPEED_DOWN_EFFECT]->mCurrentTime = 0;
+	}
+	if(t == SPEED_DOWN_EFFECT) {
+		mNormalXVal = mNormalYVal = 3;
+		mEffectList[SPEED_UP_EFFECT]->mCurrentTime = 0;
+	}
+	if(t == ARMOR_EFFECT) {
+		mDef = 10;
+	}
 }
 
 void Character::renderEffect(SDL_Renderer* renderer, TTF_Font* font) {
