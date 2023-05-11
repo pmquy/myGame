@@ -1,5 +1,5 @@
-#ifndef AIRPLANE_H_
-#define AIRPLANE_H_
+#ifndef AIRPLANE_H
+#define AIRPLANE_H
 
 #include "BaseClass.h"
 #include "Bullet.h"

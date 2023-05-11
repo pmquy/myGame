@@ -1,5 +1,5 @@
-#ifndef BOSS_H_
-#define BOSS_H_
+#ifndef BOSS_H
+#define BOSS_H
 #include "Bot.h"
 #include "Text.h"
 

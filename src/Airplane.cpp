@@ -318,6 +318,8 @@ void Airplane::handleSkill() {
 				}
 				if (it->mCurrentTime == 15 && it->mType == SUPER_SKILL) {
 					mNormalBullet -= 3;
+					if(mNormalBullet < 1) 
+						mNormalBullet = 1;
 				}
 			}
 		}

@@ -1,5 +1,5 @@
-#ifndef CHARACTER_H_
-#define CHARACTER_H_
+#ifndef CHARACTER_H
+#define CHARACTER_H
 #include "Airplane.h"
 #include "Text.h"
 

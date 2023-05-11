@@ -1,5 +1,5 @@
 # 1. Run
-  - ./main
+  - main
 # 2. Luật chơi
   - Dùng mũi tên để di chuyển
   - Nhấn 'C' để chuyển đổi skill (nếu có)

@@ -1,5 +1,5 @@
-#ifndef GAME_H_
-#define GAME_H_
+#ifndef GAME_H
+#define GAME_H
 
 #include "BaseClass.h"
 #include "Character.h"
@@ -77,6 +77,7 @@ private:
 	std::vector<SDL_Texture*> mTextures;
 	GameState mState;
 	Mix_Chunk* mBonkMusic;
+	Mix_Chunk* mClickMusic;
 	Mix_Music* mGameMusic;
 	Mix_Chunk* mWinMusic;
 	Mix_Chunk* mItemMusic;

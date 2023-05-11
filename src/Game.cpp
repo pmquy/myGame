@@ -167,7 +167,6 @@ void Game::handleState(SDL_Renderer* renderer, SDL_Event event) {
 			if(boss->checkIsDestroyed() && hero->getRect().x >= SCREEN_WIDTH - hero->getRect().w/2) {
 				Mix_PlayMusic(mHomeMusic, -1);
 				mState = WIN;
-				Mix_PlayChannel(-1, mWinMusic, 0);
 			}
 			if(!boss->checkIsDestroyed() && !hero->checkIsDestroyed()) {
 				hero->handleAction(event, renderer);
@@ -190,6 +189,7 @@ void Game::handleState(SDL_Renderer* renderer, SDL_Event event) {
 				}
 			}
 			if(event.key.keysym.sym == SDLK_RETURN) {
+				Mix_PlayChannel(-1, mClickMusic, 1);
 				addHighScore(renderer, hero->getScore(), userName);
 				userName = "";
 				userNameText->loadText(renderer, font, userName);
@@ -213,6 +213,7 @@ void Game::handleState(SDL_Renderer* renderer, SDL_Event event) {
 
 	case HIGHSCORE2:
 		if(event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_RETURN) {
+			Mix_PlayChannel(-1, mClickMusic, 1);
 			mState = LOSE;
 		}
 		break;
@@ -232,6 +233,7 @@ void Game::handleState(SDL_Renderer* renderer, SDL_Event event) {
 
 	case HOME1:
 		if (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_RETURN) {
+			Mix_PlayChannel(-1, mClickMusic, 1);
 			mState = HOME2;
 			Mix_PlayMusic(mIntroMusic, -1);
 			mYVal = -1; mXVal = 0;
@@ -240,6 +242,7 @@ void Game::handleState(SDL_Renderer* renderer, SDL_Event event) {
 
 	case HOME2:
 		if ((event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_RETURN) || mRect.y <= -SCREEN_HEIGHT) {
+			Mix_PlayChannel(-1, mClickMusic, 1);
 			setRect(0, 0);
 			mState = START;
 			Mix_PlayMusic(mHomeMusic, -1);
@@ -261,6 +264,7 @@ void Game::handleState(SDL_Renderer* renderer, SDL_Event event) {
 			case SDLK_RIGHT:
 				break;
 			case SDLK_RETURN:
+				Mix_PlayChannel(-1, mClickMusic, 1);
 				mState = LEVEL;
 				setUpLevel(renderer, mLevel);
 				break;
@@ -282,6 +286,7 @@ void Game::handleState(SDL_Renderer* renderer, SDL_Event event) {
 			case SDLK_RIGHT:
 				break;
 			case SDLK_RETURN:
+				Mix_PlayChannel(-1, mClickMusic, 1);
 				mState = SHOP;
 				break;
 			}
@@ -302,6 +307,7 @@ void Game::handleState(SDL_Renderer* renderer, SDL_Event event) {
 			case SDLK_RIGHT:
 				break;
 			case SDLK_RETURN:
+				Mix_PlayChannel(-1, mClickMusic, 1);
 				mState = UPGRADE;
 				break;
 			}
@@ -338,6 +344,7 @@ void Game::handleState(SDL_Renderer* renderer, SDL_Event event) {
 			case SDLK_RIGHT:
 				break;
 			case SDLK_RETURN:
+				Mix_PlayChannel(-1, mClickMusic, 1);
 				mState = LEVEL;
 				mLevel = 1;
 				setUpLevel(renderer, mLevel);
@@ -360,6 +367,7 @@ void Game::handleState(SDL_Renderer* renderer, SDL_Event event) {
 			case SDLK_RIGHT:
 				break;
 			case SDLK_RETURN:
+				Mix_PlayChannel(-1, mClickMusic, 1);
 				mState = START;
 				mLevel = 1;
 				break;
@@ -399,6 +407,7 @@ void Game::handleState(SDL_Renderer* renderer, SDL_Event event) {
 				mState = SHOP2;
 				break;
 			case SDLK_RETURN:
+				Mix_PlayChannel(-1, mClickMusic, 1);
 				if (hero->getCoin() >= 50) {
 					hero->setCoin(hero->getCoin() - 50);
 					hero->loadImage(renderer, HERO1_PATHS);
@@ -424,6 +433,7 @@ void Game::handleState(SDL_Renderer* renderer, SDL_Event event) {
 				mState = SHOP3;
 				break;
 			case SDLK_RETURN:
+				Mix_PlayChannel(-1, mClickMusic, 1);
 				if (hero->getCoin() >= 50) {
 					hero->setCoin(hero->getCoin() - 50);
 					hero->loadImage(renderer, HERO3_PATHS);
@@ -449,6 +459,7 @@ void Game::handleState(SDL_Renderer* renderer, SDL_Event event) {
 				mState = SHOP5;
 				break;
 			case SDLK_RETURN:
+				Mix_PlayChannel(-1, mClickMusic, 1);
 				if (hero->getCoin() >= 50) {
 					hero->setCoin(hero->getCoin() - 50);
 					hero->loadImage(renderer, HERO2_PATHS);
@@ -474,6 +485,7 @@ void Game::handleState(SDL_Renderer* renderer, SDL_Event event) {
 				mState = SHOP3;
 				break;
 			case SDLK_RETURN:
+				Mix_PlayChannel(-1, mClickMusic, 1);
 				mState = START;
 				break;
 			}
@@ -515,6 +527,7 @@ void Game::handleState(SDL_Renderer* renderer, SDL_Event event) {
 				mState = SHOP;
 				break;
 			case SDLK_RETURN:
+				Mix_PlayChannel(-1, mClickMusic, 1);
 				if (hero->getCoin() >= 20) {
 					hero->setCoin(hero->getCoin() - 20);
 					hero->addSkill(BUFF_HP_SKILL);
@@ -540,6 +553,7 @@ void Game::handleState(SDL_Renderer* renderer, SDL_Event event) {
 				mState = SHOP;
 				break;
 			case SDLK_RETURN:
+				Mix_PlayChannel(-1, mClickMusic, 1);
 				if (hero->getCoin() >= 20) {
 					hero->setCoin(hero->getCoin() - 20);
 					hero->addSkill(BUFF_ATK_SKILL);
@@ -565,6 +579,7 @@ void Game::handleState(SDL_Renderer* renderer, SDL_Event event) {
 				mState = SHOP;
 				break;
 			case SDLK_RETURN:
+				Mix_PlayChannel(-1, mClickMusic, 1);
 				if (hero->getCoin() >= 20) {
 					hero->setCoin(hero->getCoin() - 20);
 					hero->addSkill(SUPER_SKILL);
@@ -590,6 +605,7 @@ void Game::handleState(SDL_Renderer* renderer, SDL_Event event) {
 				mState = SHOP;
 				break;
 			case SDLK_RETURN:
+				Mix_PlayChannel(-1, mClickMusic, 1);
 				mState = START;
 				break;
 			}
@@ -626,6 +642,7 @@ void Game::handleState(SDL_Renderer* renderer, SDL_Event event) {
 			case SDLK_RIGHT:
 				break;
 			case SDLK_RETURN:
+				Mix_PlayChannel(-1, mClickMusic, 1);
 				mState = LEVEL;
 				mLevel++;
 				setUpLevel(renderer, mLevel);
@@ -645,6 +662,7 @@ void Game::handleState(SDL_Renderer* renderer, SDL_Event event) {
 			case SDLK_RIGHT:
 				break;
 			case SDLK_RETURN:
+				Mix_PlayChannel(-1, mClickMusic, 1);
 				mLevel = 1;
 				mState = START;
 				break;
@@ -681,9 +699,10 @@ void Game::handleState(SDL_Renderer* renderer, SDL_Event event) {
 			case SDLK_RIGHT:
 				break;
 			case SDLK_RETURN:
+				Mix_PlayChannel(-1, mClickMusic, 1);
 				if (hero->getCoin() >= 20 && hero->getNormalHp() < 110) {
 					hero->setCoin(hero->getCoin() - 20);
-					hero->setNormalHp(hero->getNormalHp() + 20);
+					hero->setNormalHp(hero->getNormalHp() + 10);
 				}
 				break;
 			}
@@ -703,6 +722,7 @@ void Game::handleState(SDL_Renderer* renderer, SDL_Event event) {
 			case SDLK_RIGHT:
 				break;
 			case SDLK_RETURN:
+				Mix_PlayChannel(-1, mClickMusic, 1);
 				if (hero->getCoin() >= 20 && hero->getDef() < 6) {
 					hero->setCoin(hero->getCoin() - 20);
 					hero->setNormalDef(hero->getNormalDef() + 1);
@@ -725,6 +745,7 @@ void Game::handleState(SDL_Renderer* renderer, SDL_Event event) {
 			case SDLK_RIGHT:
 				break;
 			case SDLK_RETURN:
+				Mix_PlayChannel(-1, mClickMusic, 1);
 				if (hero->getCoin() >= 20 && hero->getNormalAtk() < 20 + 12) {
 					hero->setCoin(hero->getCoin() - 20);
 					hero->setNormalAtk(hero->getNormalAtk() + 2);
@@ -747,6 +768,7 @@ void Game::handleState(SDL_Renderer* renderer, SDL_Event event) {
 			case SDLK_RIGHT:
 				break;
 			case SDLK_RETURN:
+				Mix_PlayChannel(-1, mClickMusic, 1);
 				mState = START;
 				break;
 			}
@@ -788,6 +810,7 @@ void Game::loadResource(SDL_Renderer* renderer) {
 	mBonkMusic = Mix_LoadWAV("Music_Folder/bonk.wav");
 	mItemMusic = Mix_LoadWAV("Music_Folder/item.wav");
 	mWinMusic = Mix_LoadWAV("Music_Folder/win.wav");
+	mClickMusic = Mix_LoadWAV("Music_Folder/click.wav");
 	mGameOverMusic = Mix_LoadWAV("Music_Folder/game_over.wav");;
 
 	font = TTF_OpenFont("Font_Folder/font3.ttf", 30);
@@ -820,6 +843,7 @@ void Game::updateObject(SDL_Renderer* renderer) {
 		if(boss->getIsAppear()) {
 			hero->setCoin(hero->getCoin() + 10);
 			hero->setScore(hero->getScore() + 10);
+			Mix_PlayChannel(-1, mWinMusic, 0);
 			boss->setIsAppear(false);
 		}
 		return;
@@ -890,7 +914,6 @@ void Game::handleCollision(SDL_Renderer* renderer) {
 					hero->setNormalBullet(hero->getNormalBullet() + 1);
 				}
 				break;
-
 			case BLUE_BULLET_ITEM:
 			case GREEN_BULLET_ITEM:
 			case RED_BULLET_ITEM:
@@ -905,15 +928,12 @@ void Game::handleCollision(SDL_Renderer* renderer) {
 					hero->setNormalBullet(1);
 				}
 				break;
-
 			case COIN_ITEM:
 				hero->setCoin(hero->getCoin() + 1);				
-				break;
-			
+				break;			
 			case MAGNET_ITEM:
 				hero->useEffect(MAGNET_EFFECT, 30);
-				break;
-			
+				break;			
 			case SPEED_UP_ITEM:
 				hero->useEffect(SPEED_UP_EFFECT, 30);
 				break;
@@ -979,7 +999,7 @@ void Game::setUpLevel(SDL_Renderer* renderer, int level) {
 		SDL_DestroyTexture(mTextures[LEVEL]);
 	}
 
-	std::string path = "Image_Folder/Background/Level/" + std::to_string(1 + rand()%17) + ".png";
+	std::string path = "Image_Folder/Background/Level/" + std::to_string(1 + rand()%33) + ".png";
 	SDL_Surface* loadedSurface = IMG_Load(path.c_str());
 	mTextures[LEVEL] = SDL_CreateTextureFromSurface(renderer, loadedSurface);
 	mRect.w = loadedSurface->w;

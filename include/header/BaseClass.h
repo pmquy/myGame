@@ -1,5 +1,5 @@
-#ifndef BASECLASS_H_
-#define BASECLASS_H_
+#ifndef BASECLASS_H
+#define BASECLASS_H
 
 #include <SDL.h>
 #include <SDL_image.h>

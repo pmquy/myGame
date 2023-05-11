@@ -1,5 +1,5 @@
-#ifndef  BULLET_H_
-#define BULLET_H_
+#ifndef  BULLET_H
+#define BULLET_H
 #include "BaseClass.h"
 
 static std::vector<std::string> BULLET_PATHS = { "Image_folder/Airplane/Bullet/red_ball.png", "Image_folder/Airplane/Bullet/green_ball.png", "Image_folder/Airplane/Bullet/blue_ball.png"};

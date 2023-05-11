@@ -32,7 +32,7 @@ void Bot::handleMove() {
 void Bot::restart(SDL_Renderer* renderer) {
 	Airplane::restart(renderer);
 	this->loadImage(renderer, BOTS_PATHS[rand() % 3]);
-	setRect(SCREEN_WIDTH, rand() % 400);
+	setRect(SCREEN_WIDTH + rand()%2000, rand() % 400);
 }
 
 void Bot::handleState(SDL_Renderer* renderer) {

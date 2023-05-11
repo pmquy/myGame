@@ -1,5 +1,5 @@
-#ifndef TEXT_
-#define TEXT_
+#ifndef TEXT_H
+#define TEXT_H
 #include "BaseClass.h"
 
 

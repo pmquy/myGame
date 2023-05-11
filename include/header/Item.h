@@ -1,5 +1,5 @@
-#ifndef ITEM_H_
-#define ITEM_H_
+#ifndef ITEM_H
+#define ITEM_H
 
 #include "BaseClass.h"
 enum ItemType {

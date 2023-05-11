@@ -1,5 +1,5 @@
-#ifndef  BOT_H_
-#define BOT_H_
+#ifndef  BOT_H
+#define BOT_H
 
 #include "Airplane.h"
 #include "Bullet.h"
