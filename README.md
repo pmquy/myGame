@@ -11,5 +11,5 @@
   - Sau khi giết được bot có thể nhận được một số item
   - Có thể nâng cấp skill, hp, atk,..
 # Một số hình ảnh trong game
-![example](image_Folder/Background/Level/18.png)
-![example](image_Folder/Background/Shop/0.png)
+![example](image_folder/Background/Level/18.png)
+![example](image_folder/Background/Shop/0.png)
